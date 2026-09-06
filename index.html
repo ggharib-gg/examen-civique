@@ -230,7 +230,15 @@
     margin-bottom:24px;
   }
   /* laisse de la place sous la barre sticky quand #question-card est amenée en haut de vue */
-  #question-card{ scroll-margin-top:100px; }
+  #question-card{
+    scroll-margin-top:100px;
+    transition:background-color .2s ease, border-color .2s ease, color .2s ease, box-shadow .2s ease, transform .18s ease, opacity .18s ease;
+    touch-action:pan-y; /* laisse le scroll vertical natif ; le swipe horizontal est géré en JS */
+  }
+  /* pendant le drag / le repositionnement instantané avant l'animation d'entrée : pas de transition */
+  #question-card.swipe-instant{ transition:none; }
+  /* pendant l'interaction de swipe : force sa propre couche de composition (évite les saccades sur mobile) */
+  #question-card.swipe-active{ will-change:transform, opacity; }
   .exam-bar-row{display:flex; justify-content:space-between; align-items:center; gap:12px;}
   .qcount{font-family:var(--serif); font-size:15.5px; color:var(--ink-soft);}
   .qcount b{color:var(--ink); font-weight:700;}
@@ -1009,6 +1017,7 @@ function selectOption(i){
 // scrollIntoView + scroll-margin-top gère correctement le décalage de la barre sticky, y compris sur iOS Safari
 // (getBoundingClientRect() sur .exam-bar renverrait toujours top:0 une fois la barre "collée", donc inutilisable ici)
 // rAF laisse le DOM se mettre à jour avant de lancer le scroll (nécessaire sur iOS Safari)
+// pas utilisée par le swipe : voir la note dans completeSwipe()
 function scrollExamToTop(){
   const card = document.getElementById('question-card');
   if(!card) return;
@@ -1017,19 +1026,135 @@ function scrollExamToTop(){
   });
 }
 
+// déplace state.current de `delta` (-1 ou +1) si possible ; renvoie false si on est déjà à une extrémité
+function stepQuestion(delta){
+  const next = state.current + delta;
+  if(next < 0 || next > state.questions.length-1) return false;
+  state.current = next;
+  renderQuestion();
+  scrollExamToTop();
+  return true;
+}
+
 document.getElementById('flag-btn').addEventListener('click', ()=>{
   state.flagged[state.current] = !state.flagged[state.current];
   renderQuestion();
 });
 
 document.getElementById('btn-prev').addEventListener('click', ()=>{
-  if(state.current>0){ state.current--; renderQuestion(); scrollExamToTop(); }
+  stepQuestion(-1);
 });
 document.getElementById('btn-next').addEventListener('click', ()=>{
-  if(state.current < state.questions.length-1){ state.current++; renderQuestion(); scrollExamToTop(); }
-  else { openFinishModal(); }
+  if(!stepQuestion(1)) openFinishModal();
 });
 document.getElementById('btn-finish').addEventListener('click', openFinishModal);
+
+/* ---- navigation par swipe horizontal (mobile) ----
+   Alternative tactile aux boutons Précédente/Suivante, sur la carte de question
+   uniquement (pas sur les flashcards, qui utilisent le tap pour se retourner). */
+(function initSwipeNav(){
+  const card = document.getElementById('question-card');
+  if(!card) return;
+
+  const SWIPE_THRESHOLD = 50;  // px minimum pour valider un swipe (évite les touches accidentelles)
+  const AXIS_LOCK = 10;        // px avant de déterminer si le geste est horizontal ou vertical
+
+  let touchId = null;
+  let startX = 0, startY = 0;
+  let dx = 0;
+  let axis = null; // null = pas encore déterminé, 'x' = swipe horizontal, 'y' = scroll vertical (laissé au navigateur)
+
+  // les écritures de style pendant le drag sont regroupées dans un seul rAF par frame :
+  // un touchmove par événement tactile brut serait plus fréquent que le taux de rafraîchissement
+  // de l'écran et donnerait une impression de saccade sur mobile
+  let rafId = null;
+  let pendingPx = 0;
+
+  function setX(px, animate){
+    card.classList.toggle('swipe-instant', !animate);
+    // translate3d plutôt que translateX : force la carte sur sa propre couche de composition
+    // (device courant utile en particulier sur iOS Safari, sinon le drag peut saccader)
+    card.style.transform = px===0 ? '' : `translate3d(${px}px,0,0)`;
+    card.style.opacity = px===0 ? '' : String(Math.max(1 - Math.abs(px)/220, 0.5));
+  }
+
+  function scheduleSetX(px){
+    pendingPx = px;
+    if(rafId !== null) return;
+    rafId = requestAnimationFrame(()=>{
+      rafId = null;
+      setX(pendingPx, false);
+    });
+  }
+
+  // petit rebond en cas de tentative de swipe au-delà de la première/dernière question
+  function bounce(direction){
+    setX(direction * 18, true);
+    setTimeout(()=> setX(0, true), 130);
+  }
+
+  // anime la sortie de la carte actuelle, met à jour la question, puis anime l'entrée depuis le côté opposé
+  function completeSwipe(direction){
+    const delta = direction < 0 ? 1 : -1; // swipe vers la gauche (direction<0) => question suivante
+    const next = state.current + delta;
+    if(next < 0 || next > state.questions.length-1){ bounce(direction); return; }
+
+    setX(direction * 60, true);
+    setTimeout(()=>{
+      // pas de scrollExamToTop ici : un swipe ne peut démarrer que sur une carte déjà
+      // touchée par le doigt, donc déjà visible — forcer un scroll (même instantané) en
+      // plus de l'animation de la carte est ce qui secouait toute la page sur mobile
+      state.current += delta;
+      renderQuestion();
+      setX(direction * -60, false); // repositionne instantanément de l'autre côté avant l'entrée
+      requestAnimationFrame(()=>{
+        requestAnimationFrame(()=> setX(0, true));
+      });
+    }, 180);
+  }
+
+  card.addEventListener('touchstart', (e)=>{
+    if(e.touches.length !== 1) return;
+    const t = e.touches[0];
+    touchId = t.identifier;
+    startX = t.clientX; startY = t.clientY; dx = 0; axis = null;
+    card.classList.add('swipe-active');
+  }, {passive:true});
+
+  card.addEventListener('touchmove', (e)=>{
+    if(touchId===null) return;
+    const t = Array.from(e.touches).find(tt=>tt.identifier===touchId);
+    if(!t) return;
+    const curDx = t.clientX - startX;
+    const curDy = t.clientY - startY;
+
+    if(axis===null){
+      if(Math.abs(curDx) < AXIS_LOCK && Math.abs(curDy) < AXIS_LOCK) return;
+      axis = Math.abs(curDx) > Math.abs(curDy) ? 'x' : 'y';
+    }
+    if(axis !== 'x') return; // geste vertical : on laisse le scroll natif faire son travail, on ne touche à rien
+
+    e.preventDefault(); // geste horizontal confirmé : on bloque le scroll natif pour ce doigt
+    dx = curDx;
+    scheduleSetX(Math.max(-140, Math.min(140, dx*0.9)));
+  }, {passive:false});
+
+  function onTouchEnd(){
+    card.classList.remove('swipe-active');
+    if(rafId !== null){ cancelAnimationFrame(rafId); rafId = null; }
+    if(touchId===null) return;
+    if(axis === 'x'){
+      if(Math.abs(dx) >= SWIPE_THRESHOLD){
+        completeSwipe(dx < 0 ? -1 : 1);
+      } else {
+        setX(0, true);
+      }
+    }
+    touchId = null; dx = 0; axis = null;
+  }
+  card.addEventListener('touchend', onTouchEnd, {passive:true});
+  card.addEventListener('touchcancel', onTouchEnd, {passive:true});
+})();
 
 /* ---- carte des questions ---- */
 function buildQMap(){
