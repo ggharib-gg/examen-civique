@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Examen Civique — Simulation officielle</title>
+<style>
+  :root{
+    --paper:#F1EEE3;
+    --paper-2:#EAE6D8;
+    --ink:#1B2233;
+    --ink-soft:#4B5468;
+    --navy:#1F3A63;
+    --navy-deep:#152A49;
+    --red:#A23B34;
+    --red-deep:#7E2C27;
+    --gold:#96762E;
+    --green:#3E6B4F;
+    --rule-h:#C9D2DE;
+    --rule-v:#C98F86;
+    --line:#D8D1BC;
+    --card:#FBFAF5;
+    --shadow: 0 1px 0 rgba(27,34,51,.06);
+    --radius: 3px;
+    --serif: Georgia, 'Iowan Old Style', 'Times New Roman', serif;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --surface-selected:#EFF3F8;
+    --surface-success:#E9F3EC;
+    --surface-success-strong:#E1EFE5;
+    --surface-danger:#F7E9E8;
+    --surface-danger-strong:#F5E3E1;
+    --surface-tag:#E4E9F1;
+    --surface-tag-danger:#F3E4E2;
+    --surface-pass:#F0F6F1;
+    --surface-fail:#FBF0EF;
+  }
+
+  html[data-theme="dark"]{
+    --paper:#171A21;
+    --paper-2:#1E222C;
+    --ink:#E8E6DD;
+    --ink-soft:#9BA2B0;
+    --navy:#6E97CC;
+    --navy-deep:#9DBEE8;
+    --red:#DD7C71;
+    --red-deep:#EA9990;
+    --gold:#D8B968;
+    --green:#82C29A;
+    --rule-h:#2E3340;
+    --rule-v:#6B4A42;
+    --line:#2E3340;
+    --card:#1F2430;
+    --shadow: 0 1px 0 rgba(0,0,0,.5);
+    --surface-selected:#22314A;
+    --surface-success:#1E3327;
+    --surface-success-strong:#234832;
+    --surface-danger:#3A2220;
+    --surface-danger-strong:#452625;
+    --surface-tag:#202C42;
+    --surface-tag-danger:#3A2420;
+    --surface-pass:#17261C;
+    --surface-fail:#2E1B19;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:var(--sans);
+    color:var(--ink);
+    background:var(--paper);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.5;
+    transition:background-color .2s ease, color .2s ease;
+  }
+  .card, .option, .flip-face, .mode-card, .timer, .chip, .theme-tag, .verdict, .review-item, .exam-bar, .qmap button{
+    transition:background-color .2s ease, border-color .2s ease, color .2s ease;
+  }
+
+  .top-actions{display:flex; align-items:center; gap:8px; flex:none; flex-wrap:wrap; justify-content:flex-end;}
+  .home-btn{
+    display:inline-flex; align-items:center; gap:6px;
+    border:1.5px solid var(--line); background:var(--card); color:var(--ink);
+    border-radius:50px; padding:7px 14px; cursor:pointer; font-size:13px; font-family:var(--sans);
+  }
+  .home-btn:hover{border-color:var(--navy);}
+
+  .theme-toggle{
+    display:inline-flex; align-items:center; gap:8px;
+    border:1.5px solid var(--line); background:var(--card); color:var(--ink);
+    border-radius:50px; padding:7px 14px; cursor:pointer; font-size:13px; font-family:var(--sans);
+    flex:none;
+  }
+  .theme-toggle:hover{border-color:var(--navy);}
+  .theme-toggle .icon{font-size:14px;}
+
+  .sheet{
+    max-width:700px;
+    margin:0 auto;
+    min-height:100vh;
+    position:relative;
+    padding:0 22px 60px 30px;
+    border-left:2px solid var(--rule-v);
+  }
+  @media (min-width:520px){
+    .sheet{padding:0 40px 70px 44px;}
+  }
+
+  header.masthead{
+    padding:28px 0 18px;
+    border-bottom:2px solid var(--ink);
+  }
+  .masthead-top{
+    display:flex; justify-content:space-between; align-items:flex-start; gap:12px;
+  }
+  .masthead-eyebrow{
+    font-size:11px; letter-spacing:.04em; color:var(--ink-soft); font-family:var(--sans);
+  }
+  h1.title{
+    font-family:var(--serif);
+    font-weight:400;
+    font-size:clamp(28px,7vw,38px);
+    margin:4px 0 6px;
+    color:var(--navy-deep);
+    letter-spacing:-.01em;
+  }
+  .subtitle{
+    font-size:14px; color:var(--ink-soft); font-style:italic; font-family:var(--serif);
+  }
+  .ref-line{
+    margin-top:12px; font-size:11.5px; color:var(--ink-soft);
+    border-top:1px solid var(--line); padding-top:8px;
+  }
+
+  main{padding-top:24px;}
+
+  /* ---- Cards / generic ---- */
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:22px;
+    margin-bottom:18px;
+    box-shadow:var(--shadow);
+  }
+  .card h2{
+    font-family:var(--serif); font-weight:400; font-size:21px; margin:0 0 12px; color:var(--navy-deep);
+  }
+  .card p{margin:0 0 12px; color:var(--ink);}
+  .fineprint{font-size:13px; color:var(--ink-soft);}
+
+  /* ---- Start screen ---- */
+  .rules-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:10px 18px; margin:16px 0;
+  }
+  @media (max-width:420px){ .rules-grid{grid-template-columns:1fr;} }
+  .rule-item{
+    display:flex; gap:10px; align-items:flex-start; font-size:14px;
+  }
+  .rule-item .num{
+    font-family:var(--serif); font-size:19px; color:var(--red-deep); min-width:22px;
+  }
+  .rule-item .lbl{color:var(--ink-soft); display:block; font-size:11.5px; text-transform:uppercase; letter-spacing:.03em;}
+  .rule-item .val{font-weight:600;}
+
+  .mode-choice{
+    display:grid; gap:10px; margin:16px 0 6px;
+  }
+  .mode-card{
+    border:1px solid var(--line); background:var(--card); border-radius:var(--radius);
+    padding:14px 16px; cursor:pointer; transition:border-color .15s, background .15s;
+    display:flex; justify-content:space-between; align-items:center; gap:10px;
+  }
+  .mode-card:hover{border-color:var(--navy);}
+  .mode-card.selected{border-color:var(--navy); background:var(--surface-selected);}
+  .mode-card .mc-title{font-weight:600; font-size:15px;}
+  .mode-card .mc-sub{font-size:12.5px; color:var(--ink-soft); margin-top:2px;}
+  .mode-card .mc-radio{
+    width:16px; height:16px; border-radius:50%; border:2px solid var(--ink-soft); flex:none;
+    position:relative;
+  }
+  .mode-card.selected .mc-radio{border-color:var(--navy);}
+  .mode-card.selected .mc-radio::after{
+    content:''; position:absolute; inset:3px; background:var(--navy); border-radius:50%;
+  }
+
+  button.btn{
+    font-family:var(--sans); font-size:15px; font-weight:600; letter-spacing:.01em;
+    padding:13px 22px; border-radius:var(--radius); border:none; cursor:pointer;
+    background:var(--navy); color:#fff; transition:background .15s, transform .05s;
+  }
+  button.btn:hover{background:var(--navy-deep);}
+  button.btn:active{transform:translateY(1px);}
+  button.btn.secondary{
+    background:transparent; color:var(--navy); border:1.5px solid var(--navy);
+  }
+  button.btn.secondary:hover{background:var(--surface-selected);}
+  button.btn:disabled{opacity:.4; cursor:not-allowed;}
+  button.btn.full{width:100%;}
+  button.btn.danger{background:var(--red);}
+  button.btn.danger:hover{background:var(--red-deep);}
+
+  .start-actions{display:flex; gap:10px; margin-top:18px; flex-wrap:wrap;}
+
+  /* ---- Exam top bar ---- */
+  .exam-bar{
+    position:sticky; top:0; z-index:5;
+    background:var(--paper); padding:14px 0 10px;
+    border-bottom:1px solid var(--line);
+    margin-bottom:20px;
+  }
+  .exam-bar-row{display:flex; justify-content:space-between; align-items:center; gap:12px;}
+  .qcount{font-family:var(--serif); font-size:15px; color:var(--ink-soft);}
+  .qcount b{color:var(--ink); font-weight:700;}
+  .timer{
+    font-family:var(--serif); font-size:20px; font-weight:700;
+    border:1.5px solid var(--ink); border-radius:50px; padding:4px 16px;
+    letter-spacing:.02em; color:var(--navy-deep); background:var(--card);
+    min-width:82px; text-align:center;
+  }
+  .timer.warn{border-color:var(--red); color:var(--red-deep); animation:pulse 1s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.55;}}
+  .progress-track{
+    height:5px; background:var(--paper-2); border-radius:3px; margin-top:10px; overflow:hidden;
+  }
+  .progress-fill{
+    height:100%; background:var(--navy); border-radius:3px; transition:width .25s ease;
+  }
+
+  /* ---- Question ---- */
+  .theme-tag{
+    display:inline-block; font-size:11px; text-transform:uppercase; letter-spacing:.05em;
+    color:var(--navy); background:var(--surface-tag); padding:3px 9px; border-radius:20px; margin-bottom:14px;
+    font-family:var(--sans); font-weight:600;
+  }
+  .theme-tag.situation{color:var(--red-deep); background:var(--surface-tag-danger);}
+  .question-text{
+    font-family:var(--serif); font-size:clamp(18px,4.4vw,21px); line-height:1.4; margin:0 0 20px; color:var(--ink);
+  }
+  .options{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px;}
+  .option{
+    display:flex; align-items:flex-start; gap:12px;
+    border:1.5px solid var(--line); border-radius:var(--radius); padding:13px 14px;
+    cursor:pointer; background:var(--card); transition:border-color .12s, background .12s;
+    font-size:15px;
+  }
+  .option:hover{border-color:var(--navy);}
+  .option.selected{border-color:var(--navy); background:var(--surface-selected);}
+  .option .letter{
+    font-family:var(--serif); font-weight:700; color:var(--ink-soft);
+    border:1.5px solid var(--ink-soft); border-radius:50%; width:24px; height:24px;
+    display:flex; align-items:center; justify-content:center; font-size:13px; flex:none;
+  }
+  .option.selected .letter{border-color:var(--navy); color:#fff; background:var(--navy);}
+
+  .option.correct{border-color:var(--green); background:var(--surface-success);}
+  .option.correct .letter{border-color:var(--green); background:var(--green); color:#fff;}
+  .option.incorrect{border-color:var(--red); background:var(--surface-danger);}
+  .option.incorrect .letter{border-color:var(--red); background:var(--red); color:#fff;}
+
+  .nav-row{
+    display:flex; justify-content:space-between; align-items:center; margin-top:26px; gap:10px; flex-wrap:wrap;
+  }
+  .nav-row .right-group{display:flex; gap:10px;}
+
+  .flagbar{margin-top:14px;}
+  .flag-btn{
+    background:none; border:none; color:var(--ink-soft); font-size:12.5px; cursor:pointer;
+    text-decoration:underline; padding:0; font-family:var(--sans);
+  }
+  .flag-btn.on{color:var(--gold); font-weight:700;}
+
+  /* ---- Question map ---- */
+  .qmap{display:flex; flex-wrap:wrap; gap:6px; margin-top:6px;}
+  .qmap button{
+    width:30px; height:30px; border-radius:4px; border:1.5px solid var(--line); background:var(--card);
+    font-size:12px; font-family:var(--sans); color:var(--ink-soft); cursor:pointer;
+  }
+  .qmap button.answered{border-color:var(--navy); color:var(--navy); background:var(--surface-selected); font-weight:700;}
+  .qmap button.current{outline:2px solid var(--gold); outline-offset:1px;}
+  .qmap button.flagged{border-color:var(--gold);}
+
+  /* ---- Results ---- */
+  .verdict{
+    text-align:center; padding:30px 16px 26px; border-radius:var(--radius);
+    border:2px solid var(--ink); margin-bottom:20px; background:var(--card);
+  }
+  .verdict.pass{border-color:var(--green); background:var(--surface-pass);}
+  .verdict.fail{border-color:var(--red); background:var(--surface-fail);}
+  .verdict .stamp{
+    font-family:var(--serif); font-size:15px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--ink-soft); margin-bottom:6px;
+  }
+  .verdict .big-word{
+    font-family:var(--serif); font-size:clamp(30px,8vw,42px); font-weight:700; margin:0 0 6px;
+  }
+  .verdict.pass .big-word{color:var(--green);}
+  .verdict.fail .big-word{color:var(--red-deep);}
+  .verdict .score-line{font-size:16px; color:var(--ink-soft);}
+  .verdict .score-line b{color:var(--ink); font-size:20px; font-family:var(--serif);}
+
+  .theme-bars{display:flex; flex-direction:column; gap:14px; margin-top:6px;}
+  .theme-bar-row .tb-top{display:flex; justify-content:space-between; font-size:13.5px; margin-bottom:5px;}
+  .tb-top .tb-name{font-weight:600;}
+  .tb-top .tb-score{color:var(--ink-soft);}
+  .tb-track{height:9px; background:var(--paper-2); border-radius:5px; overflow:hidden;}
+  .tb-fill{height:100%; background:var(--navy); border-radius:5px;}
+
+  .review-filters{display:flex; gap:8px; margin:4px 0 16px; flex-wrap:wrap;}
+  .chip{
+    font-size:12.5px; padding:6px 13px; border-radius:20px; border:1.5px solid var(--line);
+    background:var(--card); cursor:pointer; color:var(--ink-soft); font-family:var(--sans);
+  }
+  .chip.active{border-color:var(--navy); color:var(--navy); background:var(--surface-selected); font-weight:700;}
+
+  .review-item{
+    border:1px solid var(--line); border-radius:var(--radius); padding:16px; margin-bottom:12px; background:var(--card);
+  }
+  .review-item .ri-head{display:flex; gap:8px; align-items:center; margin-bottom:8px; flex-wrap:wrap;}
+  .badge{
+    font-size:11px; font-weight:700; padding:2px 9px; border-radius:20px; text-transform:uppercase; letter-spacing:.03em;
+  }
+  .badge.ok{background:var(--surface-success-strong); color:var(--green);}
+  .badge.ko{background:var(--surface-danger-strong); color:var(--red-deep);}
+  .review-item .rq{font-family:var(--serif); font-size:16px; margin:0 0 10px;}
+  .review-item .ans-line{font-size:13.5px; margin:3px 0;}
+  .review-item .ans-line.wrong{color:var(--red-deep);}
+  .review-item .ans-line.right{color:var(--green);}
+  .review-item .explain{
+    margin-top:8px; padding-top:8px; border-top:1px dashed var(--line);
+    font-size:13.5px; color:var(--ink-soft);
+  }
+
+  .end-actions{display:flex; gap:10px; margin-top:20px; flex-wrap:wrap;}
+
+  .modal-backdrop{
+    position:fixed; inset:0; background:rgba(21,42,73,.45); display:flex; align-items:center; justify-content:center;
+    padding:20px; z-index:20;
+  }
+  .modal{
+    background:var(--card); border-radius:var(--radius); padding:24px; max-width:400px; width:100%;
+    border:1px solid var(--line);
+  }
+  .modal h3{font-family:var(--serif); margin:0 0 10px; font-size:19px;}
+  .modal p{font-size:14px; color:var(--ink-soft); margin:0 0 18px;}
+  .modal .modal-actions{display:flex; gap:10px; justify-content:flex-end;}
+
+  /* ---- Flashcards ---- */
+  .fc-grid{
+    display:grid; grid-template-columns:1fr; gap:14px; margin-bottom:20px;
+  }
+  @media (min-width:560px){ .fc-grid{grid-template-columns:1fr 1fr;} }
+
+  .flip-card{
+    perspective:1200px; height:190px; cursor:pointer;
+  }
+  .flip-card-inner{
+    position:relative; width:100%; height:100%;
+    transition:transform .5s; transform-style:preserve-3d;
+  }
+  .flip-card.flipped .flip-card-inner{transform:rotateY(180deg);}
+  .flip-face{
+    position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden;
+    border:1.5px solid var(--line); border-radius:var(--radius); background:var(--card);
+    padding:16px; display:flex; flex-direction:column; box-shadow:var(--shadow);
+  }
+  .flip-front{justify-content:space-between;}
+  .flip-front .fc-q{
+    font-family:var(--serif); font-size:16px; line-height:1.4; color:var(--ink); overflow:auto;
+  }
+  .flip-front .fc-hint{font-size:11px; color:var(--ink-soft); text-align:right; text-transform:uppercase; letter-spacing:.03em;}
+  .flip-back{
+    transform:rotateY(180deg); background:var(--surface-selected); border-color:var(--navy); overflow:auto;
+  }
+  .flip-back .fc-a{font-weight:700; color:var(--navy-deep); font-size:15px; margin-bottom:8px; font-family:var(--serif);}
+  .flip-back .fc-e{font-size:12.5px; color:var(--ink-soft); line-height:1.45;}
+
+  .hidden{display:none !important;}
+
+  footer.credits{
+    margin-top:36px; padding-top:14px; border-top:1px solid var(--line);
+    font-size:11.5px; color:var(--ink-soft); text-align:center;
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <header class="masthead">
+    <div class="masthead-top">
+      <div>
+        <div class="masthead-eyebrow">RÉPUBLIQUE FRANÇAISE · MINISTÈRE DE L'INTÉRIEUR</div>
+        <h1 class="title">Examen civique</h1>
+        <div class="subtitle">Entraînement — Naturalisation, carte de résident, titre pluriannuel</div>
+      </div>
+      <div class="top-actions">
+        <button class="home-btn" id="btn-home-top">🏠 Accueil</button>
+        <button class="theme-toggle" id="theme-toggle" aria-label="Changer de thème">
+          <span class="icon" id="theme-icon">🌙</span><span id="theme-label">Sombre</span>
+        </button>
+      </div>
+    </div>
+    <div class="ref-line">Simulation reproduisant le format officiel : décret n° 2025-648 du 15 juillet 2025 et arrêté du 10 octobre 2025 — QCM de 40 questions, 45 minutes, seuil de réussite 80&nbsp;% (32/40). Outil d'entraînement indépendant, non affilié à l'administration.</div>
+  </header>
+
+  <main>
+
+    <!-- ============ START SCREEN ============ -->
+    <section id="screen-start">
+      <div class="card">
+        <h2>Conditions de l'épreuve</h2>
+        <div class="rules-grid">
+          <div class="rule-item"><span class="num">40</span><span><span class="lbl">Questions</span><span class="val">tirées au sort</span></span></div>
+          <div class="rule-item"><span class="num">45</span><span><span class="lbl">Minutes</span><span class="val">chronométrées</span></span></div>
+          <div class="rule-item"><span class="num">4</span><span><span class="lbl">Choix par question</span><span class="val">une seule réponse correcte</span></span></div>
+          <div class="rule-item"><span class="num">80%</span><span><span class="lbl">Seuil de réussite</span><span class="val">32 bonnes réponses / 40</span></span></div>
+        </div>
+        <p class="fineprint">Le tirage mélange environ 28 questions de connaissances (histoire, institutions, citoyenneté, France en Europe et dans le monde) et 12 mises en situation, comme dans l'épreuve réelle passée en centre agréé (CCI Paris, France Éducation International). Le chronomètre démarre dès que vous cliquez sur « Commencer ».</p>
+      </div>
+
+      <div class="card">
+        <h2>Choisir un format</h2>
+        <div class="mode-choice" id="mode-choice">
+          <div class="mode-card selected" data-mode="full" data-n="40" data-t="2700">
+            <div>
+              <div class="mc-title">Examen officiel</div>
+              <div class="mc-sub">40 questions · 45 minutes · conditions réelles</div>
+            </div>
+            <div class="mc-radio"></div>
+          </div>
+          <div class="mode-card" data-mode="short" data-n="15" data-t="1000">
+            <div>
+              <div class="mc-title">Entraînement rapide</div>
+              <div class="mc-sub">15 questions · ≈ 17 minutes · pour réviser un thème vite</div>
+            </div>
+            <div class="mc-radio"></div>
+          </div>
+          <div class="mode-card" data-mode="untimed" data-n="40" data-t="0">
+            <div>
+              <div class="mc-title">Sans chronomètre</div>
+              <div class="mc-sub">40 questions · temps libre · pour apprendre sans pression</div>
+            </div>
+            <div class="mc-radio"></div>
+          </div>
+        </div>
+        <div class="start-actions">
+          <button class="btn full" id="btn-start">Commencer l'examen</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Fiches de révision</h2>
+        <p class="fineprint">Question devant, réponse et explication au dos — pour réviser par thème avant de te lancer dans l'examen chronométré, comme sur Francopass.</p>
+        <div class="start-actions">
+          <button class="btn secondary full" id="btn-flashcards">Ouvrir les flashcards</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Banque de questions</h2>
+        <p class="fineprint" id="bank-stats">Chargement…</p>
+      </div>
+    </section>
+
+    <!-- ============ FLASHCARDS SCREEN ============ -->
+    <section id="screen-flashcards" class="hidden">
+      <div class="card">
+        <h2>Fiches de révision</h2>
+        <p class="fineprint">Touche une carte pour la retourner. Utilise les onglets pour changer de thème.</p>
+        <div class="review-filters" id="fc-tabs"></div>
+      </div>
+
+      <div class="fc-grid" id="fc-grid"></div>
+
+      <div class="end-actions">
+        <button class="btn secondary" id="btn-fc-back">← Retour à l'accueil</button>
+      </div>
+    </section>
+
+    <!-- ============ EXAM SCREEN ============ -->
+    <section id="screen-exam" class="hidden">
+      <div class="exam-bar">
+        <div class="exam-bar-row">
+          <div class="qcount">Question <b id="q-index">1</b> / <span id="q-total">40</span></div>
+          <div class="timer" id="timer">45:00</div>
+        </div>
+        <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:2.5%"></div></div>
+      </div>
+
+      <div class="card" id="question-card">
+        <span class="theme-tag" id="theme-tag">Histoire de France</span>
+        <p class="question-text" id="question-text">…</p>
+        <ul class="options" id="options-list"></ul>
+        <div class="flagbar">
+          <button class="flag-btn" id="flag-btn">🔖 Marquer pour révision</button>
+        </div>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn secondary" id="btn-prev">← Précédente</button>
+        <div class="right-group">
+          <button class="btn secondary" id="btn-next">Suivante →</button>
+          <button class="btn danger" id="btn-finish">Terminer</button>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:22px;">
+        <h2 style="font-size:15px; margin-bottom:8px;">Plan des questions</h2>
+        <div class="qmap" id="qmap"></div>
+      </div>
+
+      <div class="end-actions">
+        <button class="btn secondary" id="btn-home-exam">🏠 Retour à l'accueil</button>
+      </div>
+    </section>
+
+    <!-- ============ RESULTS SCREEN ============ -->
+    <section id="screen-results" class="hidden">
+      <div class="verdict" id="verdict-box">
+        <div class="stamp">Résultat de la simulation</div>
+        <div class="big-word" id="verdict-word">ADMIS</div>
+        <div class="score-line"><b id="score-fraction">32/40</b> bonnes réponses · <span id="score-pct">80%</span> · seuil requis 80%</div>
+      </div>
+
+      <div class="card">
+        <h2>Résultat par thème</h2>
+        <div class="theme-bars" id="theme-bars"></div>
+      </div>
+
+      <div class="card">
+        <h2>Corrigé détaillé</h2>
+        <div class="review-filters">
+          <button class="chip active" data-filter="all">Toutes (<span id="cnt-all">40</span>)</button>
+          <button class="chip" data-filter="wrong">Erreurs (<span id="cnt-wrong">0</span>)</button>
+          <button class="chip" data-filter="flagged">Marquées (<span id="cnt-flag">0</span>)</button>
+        </div>
+        <div id="review-list"></div>
+      </div>
+
+      <div class="end-actions">
+        <button class="btn" id="btn-retry-same">Refaire ce tirage</button>
+        <button class="btn secondary" id="btn-retry-new">Nouveau tirage aléatoire</button>
+        <button class="btn secondary" id="btn-retry-errors">Revoir seulement mes erreurs</button>
+        <button class="btn secondary" id="btn-home-results">🏠 Retour à l'accueil</button>
+      </div>
+    </section>
+
+    <!-- ============ CONFIRM MODAL ============ -->
+    <div class="modal-backdrop hidden" id="confirm-modal">
+      <div class="modal">
+        <h3 id="modal-title">Terminer l'examen ?</h3>
+        <p id="modal-body">Vous avez répondu à toutes les questions. Une fois terminé, vous ne pourrez plus modifier vos réponses.</p>
+        <div class="modal-actions">
+          <button class="btn secondary" id="modal-cancel">Continuer l'examen</button>
+          <button class="btn danger" id="modal-confirm">Valider et voir mon score</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="credits">Outil d'entraînement personnel · les questions couvrent le programme officiel (histoire, institutions, citoyenneté, Europe et monde) mais ne proviennent pas de la base de données de l'administration, qui n'est pas rendue publique.</footer>
+</div>
+
+<script>
+/* ============================================================
+   THÈME CLAIR / SOMBRE
+   ============================================================ */
+(function initTheme(){
+  const saved = localStorage.getItem('examen-civique-theme');
+  const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const theme = saved || (systemDark ? 'dark' : 'light');
+  applyTheme(theme);
+})();
+
+function applyTheme(theme){
+  document.documentElement.setAttribute('data-theme', theme);
+  const icon = document.getElementById('theme-icon');
+  const label = document.getElementById('theme-label');
+  if(theme === 'dark'){
+    icon.textContent = '☀️';
+    label.textContent = 'Clair';
+  } else {
+    icon.textContent = '🌙';
+    label.textContent = 'Sombre';
+  }
+  localStorage.setItem('examen-civique-theme', theme);
+}
+
+document.getElementById('theme-toggle').addEventListener('click', ()=>{
+  const current = document.documentElement.getAttribute('data-theme');
+  applyTheme(current === 'dark' ? 'light' : 'dark');
+});
+
+/* ---- retour à l'accueil, depuis n'importe quel écran ---- */
+function goHome(){
+  const examVisible = !screens.exam.classList.contains('hidden');
+  if(examVisible && !state.finished){
+    const ok = confirm("Quitter l'examen en cours ? Ta progression sera perdue.");
+    if(!ok) return;
+  }
+  clearInterval(state.timerId);
+  showScreen('start');
+}
+document.getElementById('btn-home-top').addEventListener('click', goHome);
+document.getElementById('btn-home-exam').addEventListener('click', goHome);
+document.getElementById('btn-home-results').addEventListener('click', goHome);
+document.getElementById('btn-fc-back').addEventListener('click', goHome);
+
+/* ============================================================
+   BANQUE DE QUESTIONS
+   theme: 'histoire' | 'institutions' | 'citoyennete' | 'europe'
+   type:  'connaissance' | 'situation'
+   ============================================================ */
+const BANK = [
+// ---------------- HISTOIRE ----------------
+{theme:'histoire', type:'connaissance', q:"En quelle année a eu lieu la Révolution française ?", o:["1789","1750","1804","1815"], a:0, e:"La Révolution française débute en 1789 avec la prise de la Bastille le 14 juillet."},
+{theme:'histoire', type:'connaissance', q:"Comment s'appelle le texte fondamental adopté le 26 août 1789 ?", o:["La Déclaration des droits de l'homme et du citoyen","La Constitution de l'an I","L'Édit de Nantes","Le Code civil"], a:0, e:"La DDHC de 1789 proclame les droits naturels et inaliénables de l'homme (liberté, égalité, propriété, sûreté...)."},
+{theme:'histoire', type:'connaissance', q:"Quel événement est commémoré le 14 juillet, jour de la fête nationale ?", o:["La prise de la Bastille en 1789","La victoire de Valmy","Le sacre de Napoléon","L'armistice de 1918"], a:0, e:"Le 14 juillet commémore la prise de la Bastille (1789) et la Fête de la Fédération (1790)."},
+{theme:'histoire', type:'connaissance', q:"Quel roi de France a été exécuté en 1793 ?", o:["Louis XIV","Louis XV","Louis XVI","Charles X"], a:2, e:"Louis XVI est guillotiné le 21 janvier 1793, place de la Révolution à Paris."},
+{theme:'histoire', type:'connaissance', q:"En quelle année les femmes ont-elles obtenu le droit de vote en France ?", o:["1848","1918","1944","1965"], a:2, e:"Le droit de vote des femmes est instauré par une ordonnance d'avril 1944 ; elles votent pour la première fois en 1945."},
+{theme:'histoire', type:'connaissance', q:"Qui a œuvré pour l'abolition définitive de l'esclavage en France, en 1848 ?", o:["Victor Hugo","Victor Schoelcher","Jean Jaurès","Jules Ferry"], a:1, e:"Victor Schoelcher est à l'origine du décret d'abolition de l'esclavage du 27 avril 1848."},
+{theme:'histoire', type:'connaissance', q:"Quel régime politique la France connaît-elle depuis 1958 ?", o:["La IVe République","La Ve République","Le Consulat","Le Directoire"], a:1, e:"La Ve République est instaurée par la Constitution de 1958, portée par Charles de Gaulle."},
+{theme:'histoire', type:'connaissance', q:"Qui a fondé la Ve République et en a été le premier président ?", o:["Georges Pompidou","Charles de Gaulle","François Mitterrand","Vincent Auriol"], a:1, e:"Charles de Gaulle devient le premier président de la Ve République en 1959."},
+{theme:'histoire', type:'connaissance', q:"Quelle organisation Charles de Gaulle dirige-t-il depuis Londres pendant la Seconde Guerre mondiale ?", o:["La France libre","Le Conseil national de la Résistance","La SFIO","Le Front populaire"], a:0, e:"Depuis l'appel du 18 juin 1940, de Gaulle organise la France libre depuis Londres."},
+{theme:'histoire', type:'connaissance', q:"En quelle année la Seconde Guerre mondiale se termine-t-elle en Europe ?", o:["1943","1944","1945","1946"], a:2, e:"L'Allemagne nazie capitule le 8 mai 1945."},
+{theme:'histoire', type:'connaissance', q:"Qui est l'auteur des paroles et de la musique de « La Marseillaise » ?", o:["Claude Joseph Rouget de Lisle","Hector Berlioz","Victor Hugo","Georges Bizet"], a:0, e:"Rouget de Lisle compose ce chant à Strasbourg en 1792."},
+{theme:'histoire', type:'connaissance', q:"En quelle année la loi sur la séparation des Églises et de l'État est-elle votée ?", o:["1882","1905","1946","1958"], a:1, e:"La loi du 9 décembre 1905 fonde le principe de laïcité en France."},
+{theme:'histoire', type:'connaissance', q:"Quel mouvement social majeur marque la France en mai 1968 ?", o:["La Commune de Paris","Mai 68","Le Front populaire","La Résistance"], a:1, e:"Mai 68 est un vaste mouvement étudiant et social qui transforme la société française."},
+{theme:'histoire', type:'connaissance', q:"En quelle année la peine de mort est-elle abolie en France ?", o:["1969","1975","1981","1990"], a:2, e:"La peine de mort est abolie le 9 octobre 1981, sous l'impulsion de Robert Badinter."},
+{theme:'histoire', type:'connaissance', q:"En quelle année Napoléon Bonaparte se proclame-t-il empereur des Français ?", o:["1799","1804","1812","1815"], a:1, e:"Napoléon est sacré empereur le 2 décembre 1804."},
+{theme:'histoire', type:'connaissance', q:"Quel traité, signé en 1992, crée l'Union européenne ?", o:["Le traité de Rome","Le traité de Maastricht","Le traité de Lisbonne","Le traité de Versailles"], a:1, e:"Le traité de Maastricht (1992) crée l'Union européenne et pose les bases de l'euro."},
+{theme:'histoire', type:'connaissance', q:"Qui préside le Conseil national de la Résistance pendant l'Occupation ?", o:["Jean Moulin","Léon Blum","Georges Clemenceau","Pierre Laval"], a:0, e:"Jean Moulin unifie les mouvements de Résistance et préside le CNR à partir de 1943."},
+{theme:'histoire', type:'connaissance', q:"Quelle bataille de 1916 est restée un symbole de la Première Guerre mondiale ?", o:["La bataille de Verdun","La bataille de Marignan","La bataille d'Austerlitz","La bataille de Waterloo"], a:0, e:"La bataille de Verdun (1916) est l'une des plus meurtrières de la Première Guerre mondiale."},
+{theme:'histoire', type:'connaissance', q:"En quelle année la Déclaration universelle des droits de l'homme est-elle adoptée à Paris ?", o:["1945","1948","1958","1968"], a:1, e:"Elle est adoptée le 10 décembre 1948 au Palais de Chaillot, à Paris."},
+{theme:'histoire', type:'connaissance', q:"Quel roi a fait construire le château de Versailles ?", o:["François Ier","Henri IV","Louis XIV","Louis XVI"], a:2, e:"Louis XIV, le « Roi-Soleil », fait de Versailles le siège du pouvoir royal."},
+{theme:'histoire', type:'connaissance', q:"Quel animal est traditionnellement associé à la France comme symbole national ?", o:["Le coq gaulois","L'aigle","Le lion","La colombe"], a:0, e:"Le coq gaulois est un symbole populaire de la France, notamment dans le sport."},
+{theme:'histoire', type:'connaissance', q:"Quel est l'hymne national français ?", o:["La Marseillaise","Le Chant du Départ","La Carmagnole","L'Internationale"], a:0, e:"La Marseillaise est l'hymne national depuis 1795 (puis confirmé en 1879 et par la Constitution de 1958)."},
+{theme:'histoire', type:'connaissance', q:"Quelle statue, offerte par la France aux États-Unis en 1886, symbolise la liberté ?", o:["La statue de la Liberté","La tour Eiffel","L'Arc de Triomphe","Le Sacré-Cœur"], a:0, e:"Offerte pour le centenaire de l'indépendance américaine, elle symbolise l'amitié franco-américaine."},
+{theme:'histoire', type:'connaissance', q:"Quel monument parisien est construit pour l'Exposition universelle de 1889 ?", o:["La tour Eiffel","Le Louvre","Notre-Dame","Le Panthéon"], a:0, e:"La tour Eiffel, conçue par Gustave Eiffel, devient le symbole de Paris dans le monde."},
+{theme:'histoire', type:'connaissance', q:"Quelle date marque l'armistice qui met fin à la Première Guerre mondiale ?", o:["Le 11 novembre 1918","Le 8 mai 1945","Le 14 juillet 1919","Le 1er septembre 1939"], a:0, e:"L'armistice est signé le 11 novembre 1918 à Rethondes."},
+{theme:'histoire', type:'connaissance', q:"Quelle date commémore la capitulation de l'Allemagne nazie en 1945 ?", o:["Le 8 mai","Le 11 novembre","Le 6 juin","Le 25 août"], a:0, e:"Le 8 mai 1945 marque la fin de la Seconde Guerre mondiale en Europe."},
+
+// ---------------- INSTITUTIONS ----------------
+{theme:'institutions', type:'connaissance', q:"Quelle est la devise de la République française ?", o:["Paix, Travail, Patrie","Liberté, Égalité, Fraternité","Unité, Justice, Progrès","Ordre et Progrès"], a:1, e:"Inscrite dans la Constitution, cette devise remonte à la Révolution française."},
+{theme:'institutions', type:'connaissance', q:"Quel principe garantit la neutralité de l'État et la séparation du pouvoir religieux et politique ?", o:["Le fédéralisme","La laïcité","Le parlementarisme","Le protectionnisme"], a:1, e:"La laïcité, inscrite dans la loi de 1905 et l'article 1er de la Constitution, garantit la liberté de conscience et la neutralité de l'État."},
+{theme:'institutions', type:'connaissance', q:"Pour combien d'années le président de la République est-il élu ?", o:["4 ans","5 ans","6 ans","7 ans"], a:1, e:"Depuis la réforme de 2000, le président est élu pour un quinquennat (5 ans)."},
+{theme:'institutions', type:'connaissance', q:"Comment s'appelle le chef du gouvernement, nommé par le président de la République ?", o:["Le premier ministre","Le président de l'Assemblée nationale","Le garde des Sceaux","Le préfet"], a:0, e:"Le premier ministre dirige l'action du gouvernement et est responsable devant l'Assemblée nationale."},
+{theme:'institutions', type:'connaissance', q:"Combien de chambres compose le Parlement français ?", o:["Une","Deux","Trois","Quatre"], a:1, e:"Le Parlement comprend l'Assemblée nationale et le Sénat (bicamérisme)."},
+{theme:'institutions', type:'connaissance', q:"Comment appelle-t-on les membres élus de l'Assemblée nationale ?", o:["Les sénateurs","Les députés","Les conseillers","Les ministres"], a:1, e:"Les députés sont élus au suffrage universel direct pour 5 ans."},
+{theme:'institutions', type:'connaissance', q:"Quelle institution vérifie la conformité des lois à la Constitution ?", o:["Le Conseil d'État","Le Conseil constitutionnel","La Cour de cassation","La Cour des comptes"], a:1, e:"Le Conseil constitutionnel contrôle la constitutionnalité des lois."},
+{theme:'institutions', type:'connaissance', q:"Quel principe garantit que les pouvoirs exécutif, législatif et judiciaire ne soient pas concentrés entre les mêmes mains ?", o:["La séparation des pouvoirs","La centralisation","La décentralisation","Le bicamérisme"], a:0, e:"Ce principe, théorisé par Montesquieu, est un fondement des démocraties modernes."},
+{theme:'institutions', type:'connaissance', q:"Quel texte fondamental organise les institutions françaises depuis 1958 ?", o:["Le Code civil","La Constitution","Le Livret du citoyen","La Charte républicaine"], a:1, e:"La Constitution du 4 octobre 1958 fonde la Ve République."},
+{theme:'institutions', type:'connaissance', q:"Quelles sont les couleurs du drapeau français, dans l'ordre en partant de la hampe ?", o:["Bleu, blanc, rouge","Rouge, blanc, bleu","Blanc, bleu, rouge","Bleu, rouge, blanc"], a:0, e:"Le drapeau tricolore associe le bleu et le rouge de Paris au blanc de la royauté."},
+{theme:'institutions', type:'connaissance', q:"Comment s'appelle la figure allégorique féminine qui symbolise la République, présente dans toutes les mairies ?", o:["Marianne","Athéna","La République","Liberté"], a:0, e:"Marianne incarne les valeurs de la République depuis la Révolution française."},
+{theme:'institutions', type:'connaissance', q:"Quel est le nom de la résidence du premier ministre ?", o:["L'Élysée","Matignon","Le Luxembourg","Bercy"], a:1, e:"L'hôtel Matignon est le siège des services du premier ministre depuis 1935."},
+{theme:'institutions', type:'connaissance', q:"Quelle est la résidence officielle du président de la République ?", o:["Le palais de l'Élysée","Le palais Bourbon","L'hôtel Matignon","Le Grand Palais"], a:0, e:"Le président réside et travaille au palais de l'Élysée depuis 1848."},
+{theme:'institutions', type:'connaissance', q:"Où siège l'Assemblée nationale ?", o:["Au palais du Luxembourg","Au palais Bourbon","Au palais de l'Élysée","À l'hôtel de Matignon"], a:1, e:"L'Assemblée nationale siège au palais Bourbon, à Paris."},
+{theme:'institutions', type:'connaissance', q:"Où siège le Sénat ?", o:["Au palais Bourbon","Au palais du Luxembourg","À l'Élysée","À Matignon"], a:1, e:"Le Sénat siège au palais du Luxembourg."},
+{theme:'institutions', type:'connaissance', q:"Quel est le rôle principal du Parlement ?", o:["Voter les lois et contrôler l'action du gouvernement","Juger les criminels","Gérer les collectivités locales","Nommer les préfets"], a:0, e:"Le Parlement vote la loi et contrôle l'action du gouvernement (article 24 de la Constitution)."},
+{theme:'institutions', type:'connaissance', q:"Comment appelle-t-on le représentant de l'État dans chaque département ?", o:["Le maire","Le préfet","Le député","Le juge"], a:1, e:"Le préfet représente l'État et le gouvernement au niveau départemental."},
+{theme:'institutions', type:'connaissance', q:"Quel principe garantit que tous les citoyens sont égaux devant la loi, sans distinction d'origine, de sexe ou de religion ?", o:["La fraternité","L'égalité","La laïcité","La subsidiarité"], a:1, e:"L'égalité devant la loi est un principe constitutionnel fondamental depuis 1789."},
+{theme:'institutions', type:'connaissance', q:"Le président de la République est-il élu au suffrage universel direct ?", o:["Oui, depuis 1965","Non, il est désigné par le Parlement","Non, il est nommé par le premier ministre","Oui, mais seulement depuis 2002"], a:0, e:"Depuis la réforme de 1962 appliquée en 1965, le président est élu au suffrage universel direct."},
+{theme:'institutions', type:'connaissance', q:"Qui nomme le premier ministre ?", o:["Le président de la République","L'Assemblée nationale","Le Sénat","Le Conseil constitutionnel"], a:0, e:"L'article 8 de la Constitution donne ce pouvoir au président de la République."},
+{theme:'institutions', type:'connaissance', q:"Quelle est la langue officielle de la République française ?", o:["Le français uniquement","Le français et l'anglais","Le français et les langues régionales à égalité","Il n'y a pas de langue officielle"], a:0, e:"L'article 2 de la Constitution dispose que « la langue de la République est le français »."},
+
+// ---------------- CITOYENNETÉ — connaissances ----------------
+{theme:'citoyennete', type:'connaissance', q:"À partir de quel âge un citoyen français peut-il voter ?", o:["16 ans","18 ans","21 ans","25 ans"], a:1, e:"La majorité électorale est fixée à 18 ans depuis 1974."},
+{theme:'citoyennete', type:'connaissance', q:"Le vote est-il obligatoire en France ?", o:["Oui, toujours","Non, c'est un droit, pas une obligation","Oui, sauf exception médicale","Seulement pour la présidentielle"], a:1, e:"Contrairement à d'autres pays, le vote n'est pas obligatoire en France."},
+{theme:'citoyennete', type:'connaissance', q:"Jusqu'à quel âge l'instruction est-elle obligatoire en France ?", o:["16 ans","18 ans","14 ans","21 ans"], a:0, e:"Depuis la loi de 2019, l'instruction est obligatoire de 3 à 16 ans."},
+{theme:'citoyennete', type:'connaissance', q:"Quel système public garantit l'accès aux soins pour tous les résidents ?", o:["La Sécurité sociale","La CAF","Pôle emploi / France Travail","L'URSSAF"], a:0, e:"La Sécurité sociale, créée en 1945, assure la protection sociale des habitants."},
+{theme:'citoyennete', type:'connaissance', q:"En France, un citoyen a-t-il le droit de pratiquer la religion de son choix, ou de n'en pratiquer aucune ?", o:["Oui, c'est la liberté de conscience et de culte","Non, seul le catholicisme est reconnu","Uniquement dans un lieu privé","Non, c'est interdit"], a:0, e:"La liberté de conscience et de culte est garantie par la loi de 1905 et la Constitution."},
+{theme:'citoyennete', type:'connaissance', q:"Le mariage entre personnes de même sexe est-il autorisé en France ?", o:["Oui, depuis 2013","Non, ce n'est pas autorisé","Oui, mais seulement le PACS","Oui, depuis 1999"], a:0, e:"La loi du 17 mai 2013 (dite « loi Taubira ») ouvre le mariage aux couples de même sexe."},
+{theme:'citoyennete', type:'connaissance', q:"Quel principe interdit toute discrimination fondée sur l'origine, le sexe, la religion ou l'orientation sexuelle ?", o:["La fraternité","L'égalité de traitement et la non-discrimination","La subsidiarité","Le fédéralisme"], a:1, e:"La non-discrimination est protégée par la Constitution et le droit pénal français."},
+{theme:'citoyennete', type:'connaissance', q:"Qu'est-ce que la Journée défense et citoyenneté (JDC) ?", o:["Une obligation militaire de 2 ans","Une journée d'information civique obligatoire pour les jeunes Français","Un examen scolaire","Une formation professionnelle"], a:1, e:"La JDC informe les jeunes sur la citoyenneté et la défense nationale ; elle est obligatoire pour obtenir certains diplômes ou passer certains examens."},
+{theme:'citoyennete', type:'connaissance', q:"En France, les hommes et les femmes ont-ils les mêmes droits ?", o:["Oui, l'égalité femmes-hommes est un principe constitutionnel","Non, certains droits diffèrent selon le sexe","Seulement au travail","Seulement pour voter"], a:0, e:"L'égalité entre les femmes et les hommes est un principe constitutionnel depuis 1946."},
+{theme:'citoyennete', type:'connaissance', q:"Quel document officialise l'engagement du nouveau citoyen français lors de la cérémonie de naturalisation ?", o:["Le Livret du citoyen","La Charte des droits et devoirs du citoyen français","Le Code civil","La Convocation préfectorale"], a:1, e:"La Charte des droits et devoirs du citoyen français est signée lors de la cérémonie d'accueil dans la citoyenneté française."},
+
+// ---------------- CITOYENNETÉ — mises en situation ----------------
+{theme:'citoyennete', type:'situation', q:"Votre voisin vous propose de ne pas déclarer une partie de vos revenus pour payer moins d'impôts. Que faites-vous ?", o:["Vous acceptez, c'est une pratique courante","Vous refusez : la fraude fiscale est interdite et sanctionnée par la loi","Vous n'en parlez à personne","Vous dénoncez votre voisin sans réfléchir"], a:1, e:"La fraude fiscale est un délit ; tout résident doit déclarer l'ensemble de ses revenus."},
+{theme:'citoyennete', type:'situation', q:"Lors d'un entretien d'embauche, un employeur vous demande votre religion. Que pouvez-vous faire ?", o:["Répondre, car c'est obligatoire","Refuser de répondre : cette question est discriminatoire et interdite par la loi","Mentir systématiquement","Quitter l'entretien sans explication"], a:1, e:"Interroger un candidat sur sa religion lors d'un recrutement constitue une discrimination interdite par le Code du travail."},
+{theme:'citoyennete', type:'situation', q:"Vous assistez à une dispute où une personne en insulte une autre en raison de son origine. Quelle attitude est conforme aux valeurs de la République ?", o:["Ne rien faire, cela ne vous concerne pas","Rappeler que les propos racistes sont interdits par la loi et peuvent être signalés","Approuver si vous êtes d'accord","Filmer la scène pour la publier en ligne"], a:1, e:"L'injure et la discrimination raciale sont des délits punis par la loi française."},
+{theme:'citoyennete', type:'situation', q:"Vous recevez une convocation pour voter mais vous ne pouvez pas vous déplacer ce jour-là. Que pouvez-vous faire ?", o:["Ne pas voter, ce n'est pas grave","Donner procuration à une personne de confiance pour voter à votre place","Voter deux fois la semaine suivante","Voter par téléphone"], a:1, e:"Le vote par procuration permet de désigner une personne pour voter en votre nom."},
+{theme:'citoyennete', type:'situation', q:"Votre enfant est scolarisé dans une école publique. Peut-il porter un signe religieux ostensible en classe ?", o:["Oui, sans restriction","Non : la loi de 2004 interdit les signes religieux ostensibles à l'école publique","Oui, uniquement le vendredi","Cela dépend du maire de la commune"], a:1, e:"La loi du 15 mars 2004 encadre le port de signes religieux ostensibles dans les écoles, collèges et lycées publics, au nom de la laïcité."},
+{theme:'citoyennete', type:'situation', q:"Vous êtes témoin d'un accident de la route. Quelle est votre obligation ?", o:["Porter secours ou alerter les secours","Partir immédiatement pour ne pas être impliqué","Filmer la scène pour les réseaux sociaux","Attendre la police sans rien faire"], a:0, e:"La non-assistance à personne en danger est un délit prévu par le Code pénal (article 223-6)."},
+{theme:'citoyennete', type:'situation', q:"Vous souhaitez créer une association en France. Est-ce un droit reconnu ?", o:["Non, il faut une autorisation spéciale dans tous les cas","Oui, la liberté d'association est garantie depuis la loi de 1901","Non, c'est interdit aux personnes de nationalité étrangère","Oui, mais seulement pour les Français de naissance"], a:1, e:"La loi du 1er juillet 1901 garantit la liberté de créer une association, pour toute personne résidant en France."},
+{theme:'citoyennete', type:'situation', q:"Un employeur vous propose de vous payer « au noir », sans déclaration. Que devez-vous faire ?", o:["Accepter si le salaire est correct","Refuser : le travail dissimulé est illégal","Accepter en gardant cela secret","Proposer un tarif encore plus bas"], a:1, e:"Le travail dissimulé prive le salarié de ses droits sociaux (retraite, chômage, assurance maladie) et constitue une infraction."},
+{theme:'citoyennete', type:'situation', q:"Vous voulez manifester pacifiquement pour défendre une cause. Est-ce un droit en France ?", o:["Non, c'est interdit","Oui, la liberté de manifester est garantie, dans le respect de l'ordre public","Oui, mais sans aucune déclaration ni encadrement possible","Non, sauf autorisation personnelle du président"], a:1, e:"La liberté de manifestation est protégée, sous réserve de déclaration préalable en préfecture et du respect de l'ordre public."},
+{theme:'citoyennete', type:'situation', q:"À l'école, un enseignant traite différemment un élève en raison de son origine. Quel principe est ici violé ?", o:["La laïcité","Le principe d'égalité et de non-discrimination","La liberté d'expression","Aucun principe n'est concerné"], a:1, e:"Traiter différemment une personne en raison de son origine constitue une discrimination, contraire au principe d'égalité."},
+{theme:'citoyennete', type:'situation', q:"Vous découvrez qu'un proche est victime de violences conjugales. Quelle est l'attitude recommandée ?", o:["Ne pas intervenir, c'est une affaire privée","L'informer des numéros d'aide (comme le 3919) et alerter les autorités si nécessaire","Le/la lui reprocher","Ignorer la situation"], a:1, e:"Les violences conjugales sont un délit ; des dispositifs d'écoute et de protection existent (3919, gendarmerie, police, associations)."},
+{theme:'citoyennete', type:'situation', q:"Un ami vous propose de truquer le résultat d'une élection locale. Que répondez-vous ?", o:["Vous acceptez si c'est « pour la bonne cause »","Vous refusez fermement : la fraude électorale est un délit","Vous n'en parlez à personne","Vous l'aidez discrètement"], a:1, e:"La fraude électorale porte atteinte à la sincérité du scrutin et est sévèrement punie par la loi."},
+{theme:'citoyennete', type:'situation', q:"Vous êtes convoqué comme juré d'assises. Pouvez-vous refuser sans motif valable ?", o:["Oui, c'est facultatif","Non, c'est un devoir civique, sauf motif légitime reconnu","Oui, si vous êtes occupé ce jour-là","Non, mais seulement pour les personnes nées en France"], a:1, e:"Participer à un jury d'assises est un devoir civique obligatoire, sous peine d'amende en cas de refus injustifié."},
+{theme:'citoyennete', type:'situation', q:"Dans l'espace public, une femme choisit de porter le voile. Est-ce autorisé en France ?", o:["Non, c'est interdit partout","Oui, dans l'espace public elle est libre, avec des restrictions précises (école publique, fonction publique, dissimulation du visage)","Non, sauf le vendredi","Oui, sans aucune restriction, y compris pour dissimuler son visage"], a:1, e:"La liberté vestimentaire s'exerce dans l'espace public, avec des restrictions ciblées : neutralité dans la fonction publique, interdiction de la dissimulation intégrale du visage (loi de 2010), et encadrement à l'école publique."},
+{theme:'citoyennete', type:'situation', q:"Vous constatez qu'un enfant de votre entourage, âgé de 8 ans, n'est pas scolarisé. Que savez-vous de la loi ?", o:["L'instruction est obligatoire de 3 à 16 ans : il faut signaler la situation","Ce n'est obligatoire qu'à partir de 10 ans","Les parents peuvent choisir librement, sans aucune obligation","Cela ne concerne que les enfants de nationalité française"], a:0, e:"L'instruction est obligatoire pour tous les enfants résidant en France, quelle que soit leur nationalité, de 3 à 16 ans."},
+{theme:'citoyennete', type:'situation', q:"Un ami vous dit qu'en France, on peut critiquer librement le gouvernement et les responsables politiques. A-t-il raison ?", o:["Non, c'est interdit","Oui, la liberté d'expression est garantie, dans les limites fixées par la loi (diffamation, injure, incitation à la haine)","Oui, sans aucune limite, y compris l'appel à la violence","Non, seule la presse peut le faire"], a:1, e:"La liberté d'expression est un droit fondamental, encadré par la loi pour éviter les abus (diffamation, injure, incitation à la haine)."},
+{theme:'citoyennete', type:'situation', q:"Vous êtes convoqué en préfecture pour un entretien de naturalisation mais vous ne maîtrisez pas encore bien le français à l'oral. Que devriez-vous faire en amont ?", o:["Vous présenter quand même sans préparation","Suivre des cours de français et vous entraîner à l'oral avant l'entretien","Annuler définitivement votre demande","Demander à quelqu'un de répondre à votre place"], a:1, e:"Le niveau de français (B2 depuis 2026) est vérifié en conditions réelles ; il est recommandé de se former et de s'entraîner activement à l'oral."},
+{theme:'citoyennete', type:'situation', q:"Une entreprise refuse d'embaucher une personne uniquement en raison de son âge. Est-ce légal ?", o:["Oui, c'est à la libre appréciation de l'employeur","Non, la discrimination à l'embauche fondée sur l'âge est interdite par la loi","Oui, si l'entreprise est petite","Cela dépend uniquement du secteur d'activité"], a:1, e:"Le Code du travail interdit la discrimination à l'embauche fondée notamment sur l'âge, le sexe, l'origine ou la religion."},
+{theme:'citoyennete', type:'situation', q:"Un collègue refuse de serrer la main d'une femme pour des raisons religieuses dans un cadre professionnel. Quel principe cela peut-il interroger ?", o:["La liberté d'expression","L'égalité entre les femmes et les hommes, et éventuellement la neutralité du cadre professionnel","La liberté de culte sans aucune limite","Aucun principe n'est concerné"], a:1, e:"L'égalité entre les femmes et les hommes est un principe fondamental de la société française, y compris dans les relations professionnelles."},
+{theme:'citoyennete', type:'situation', q:"Vous voyez une personne jeter des déchets dans la rue plutôt que dans une poubelle. Quelle valeur civique est concernée ?", o:["Le respect du bien commun et de l'environnement","Aucune, c'est un choix personnel","La liberté individuelle absolue","La solidarité uniquement"], a:0, e:"Le respect des règles de vie collective (propreté, environnement) fait partie du civisme attendu de tout résident."},
+{theme:'citoyennete', type:'situation', q:"Vous constatez qu'un service public (mairie, préfecture) vous demande un document que la loi n'exige pas. Que pouvez-vous faire ?", o:["Vous soumettre sans rien dire","Demander la base légale de cette exigence ou vous renseigner sur vos droits (Défenseur des droits)","Refuser d'y retourner définitivement","Payer pour accélérer la démarche"], a:1, e:"Tout usager peut demander des explications à l'administration et, en cas de litige, saisir le Défenseur des droits."},
+
+// ---------------- EUROPE ET MONDE ----------------
+{theme:'europe', type:'connaissance', q:"La France est-elle membre de l'Union européenne ?", o:["Oui, elle est membre fondateur","Non","Oui, depuis 2004","Oui, mais seulement associée"], a:0, e:"La France est l'un des six pays fondateurs de la Communauté économique européenne en 1957."},
+{theme:'europe', type:'connaissance', q:"Quelle est la monnaie utilisée en France depuis 2002 ?", o:["Le franc","L'euro","La livre","Le mark"], a:1, e:"L'euro remplace le franc français en circulation à partir du 1er janvier 2002."},
+{theme:'europe', type:'connaissance', q:"Combien de pays sont membres de l'Union européenne ?", o:["25","27","28","30"], a:1, e:"L'Union européenne compte 27 États membres depuis le départ du Royaume-Uni (Brexit, 2020)."},
+{theme:'europe', type:'connaissance', q:"Où siège le Parlement européen ?", o:["À Bruxelles uniquement","À Strasbourg (avec des sessions à Bruxelles)","À Paris","À Genève"], a:1, e:"Le Parlement européen a son siège officiel à Strasbourg, avec des commissions à Bruxelles."},
+{theme:'europe', type:'connaissance', q:"Quelle organisation internationale, dont le siège est à New York, a pour mission de maintenir la paix dans le monde ?", o:["L'OTAN","L'ONU","L'OMC","L'UNESCO"], a:1, e:"L'Organisation des Nations unies (ONU) a été créée en 1945."},
+{theme:'europe', type:'connaissance', q:"La France est-elle membre permanent du Conseil de sécurité de l'ONU ?", o:["Oui","Non","Seulement temporairement","Non, elle est seulement observatrice"], a:0, e:"La France dispose d'un droit de veto en tant que membre permanent du Conseil de sécurité depuis 1945."},
+{theme:'europe', type:'connaissance', q:"Quel espace permet la libre circulation des personnes entre plusieurs pays européens sans contrôle systématique aux frontières ?", o:["L'espace Schengen","La zone euro","L'Espace économique européen","L'Union douanière"], a:0, e:"L'espace Schengen regroupe la plupart des pays de l'UE et quelques autres États européens."},
+{theme:'europe', type:'connaissance', q:"Quelle organisation militaire regroupe la France avec les États-Unis et d'autres pays européens ?", o:["L'ONU","L'OTAN","L'UE","Le G7"], a:1, e:"L'Organisation du traité de l'Atlantique Nord (OTAN) est une alliance militaire créée en 1949."},
+{theme:'europe', type:'connaissance', q:"Lesquels sont des pays frontaliers de la France ?", o:["Allemagne, Espagne, Italie, Belgique","Portugal, Pologne, Autriche","Royaume-Uni, Danemark, Norvège","Grèce, Turquie, Maroc"], a:0, e:"La France partage des frontières terrestres avec l'Allemagne, la Belgique, le Luxembourg, la Suisse, l'Italie, l'Espagne, Andorre et Monaco."},
+{theme:'europe', type:'connaissance', q:"Quel est le fleuve qui traverse Paris ?", o:["La Loire","La Seine","Le Rhône","La Garonne"], a:1, e:"La Seine traverse Paris d'est en ouest."},
+{theme:'europe', type:'connaissance', q:"Quelle est la capitale de la France ?", o:["Lyon","Marseille","Paris","Toulouse"], a:2, e:"Paris est la capitale de la France depuis plusieurs siècles."},
+{theme:'europe', type:'connaissance', q:"La Corse est-elle un territoire français ?", o:["Oui, une collectivité territoriale française à statut particulier","Non, elle est italienne","Non, elle est indépendante","Oui, mais c'est un pays étranger associé"], a:0, e:"La Corse est une collectivité territoriale française à statut particulier."},
+{theme:'europe', type:'connaissance', q:"Lequel de ces territoires est un territoire français d'outre-mer ?", o:["La Guadeloupe","La Sardaigne","Malte","Andorre"], a:0, e:"La Guadeloupe est un département et une région d'outre-mer français, avec la Martinique, la Guyane, La Réunion et Mayotte."},
+{theme:'europe', type:'connaissance', q:"Pourquoi dit-on que la France compte parmi les pays avec le plus de fuseaux horaires au monde ?", o:["À cause de ses nombreux territoires d'outre-mer répartis sur tous les océans","Parce que Paris est très grande","À cause de la taille de la métropole uniquement","Ce n'est pas le cas"], a:0, e:"Grâce à ses territoires ultramarins (Pacifique, Antilles, océan Indien...), la France s'étend sur 12 fuseaux horaires."},
+{theme:'europe', type:'connaissance', q:"Qui est l'actuel président de la République française (à vérifier avant votre examen, ces fonctions pouvant changer) ?", o:["Emmanuel Macron","Nicolas Sarkozy","François Hollande","Jacques Chirac"], a:0, e:"Emmanuel Macron est président de la République depuis 2017, réélu en 2022. Vérifiez toujours l'actualité avant votre entretien, ces fonctions pouvant évoluer."},
+];
+
+/* ============================================================
+   ÉTAT DE L'APPLICATION
+   ============================================================ */
+const THEME_LABELS = {
+  histoire: "Histoire de France",
+  institutions: "Principes & institutions",
+  citoyennete: "Exercice de la citoyenneté",
+  europe: "La France en Europe et dans le monde"
+};
+
+let state = {
+  mode: 'full',
+  nQuestions: 40,
+  duration: 2700, // seconds
+  questions: [],       // drawn set, each augmented with shuffled option order
+  answers: [],         // index chosen per question, null if unanswered
+  flagged: [],         // booleans
+  current: 0,
+  timeLeft: 2700,
+  timerId: null,
+  finished: false
+};
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+// donne un identifiant stable à chaque question de la banque
+const BANK_ID = BANK.map((q,idx)=>({...q, id:idx}));
+
+// mémorise les questions déjà tirées depuis l'ouverture de la page,
+// pour qu'un nouveau tirage n'y repioche qu'une fois le stock épuisé
+let usedIds = new Set();
+
+function drawQuestions(n){
+  let available = BANK_ID.filter(q=>!usedIds.has(q.id));
+
+  // pas assez de questions "fraîches" restantes : on relance le compteur
+  // (le stock se "recharge" seulement quand il est vraiment épuisé)
+  if(available.length < n){
+    usedIds.clear();
+    available = BANK_ID.slice();
+  }
+
+  const situations = available.filter(q=>q.type==='situation');
+  const knowledge = available.filter(q=>q.type==='connaissance');
+  const targetSituations = Math.min(situations.length, Math.round(n*0.3));
+  const targetKnowledge = n - targetSituations;
+  let picked = [
+    ...shuffle(situations).slice(0, targetSituations),
+    ...shuffle(knowledge).slice(0, targetKnowledge)
+  ];
+  if(picked.length < n){
+    const rest = shuffle(available.filter(q=>!picked.includes(q)));
+    picked = picked.concat(rest.slice(0, n-picked.length));
+  }
+  picked = shuffle(picked).slice(0,n);
+
+  // marque ces questions comme utilisées pour les prochains tirages
+  picked.forEach(q=>usedIds.add(q.id));
+
+  // attache les options mélangées + remappe l'index de la bonne réponse
+  return picked.map(orig=>{
+    const order = shuffle(orig.o.map((text,i)=>({text,i})));
+    const correctPos = order.findIndex(x=>x.i===orig.a);
+    return {
+      theme: orig.theme, type: orig.type, q: orig.q, e: orig.e,
+      options: order.map(x=>x.text),
+      correct: correctPos
+    };
+  });
+}
+
+/* ---- init bank stats ---- */
+document.getElementById('bank-stats').textContent =
+  `${BANK.length} questions au total dans la banque, réparties sur les 4 thèmes officiels : `+
+  Object.values(THEME_LABELS).join(' · ') + '.';
+
+/* ============================================================
+   NAVIGATION ENTRE ÉCRANS
+   ============================================================ */
+const screens = {
+  start: document.getElementById('screen-start'),
+  exam: document.getElementById('screen-exam'),
+  results: document.getElementById('screen-results'),
+  flashcards: document.getElementById('screen-flashcards')
+};
+function showScreen(name){
+  Object.values(screens).forEach(s=>s.classList.add('hidden'));
+  screens[name].classList.remove('hidden');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* ---- mode selection ---- */
+document.querySelectorAll('.mode-card').forEach(card=>{
+  card.addEventListener('click', ()=>{
+    document.querySelectorAll('.mode-card').forEach(c=>c.classList.remove('selected'));
+    card.classList.add('selected');
+    state.mode = card.dataset.mode;
+    state.nQuestions = parseInt(card.dataset.n,10);
+    state.duration = parseInt(card.dataset.t,10);
+  });
+});
+
+document.getElementById('btn-start').addEventListener('click', startExam);
+
+/* ============================================================
+   FLASHCARDS
+   ============================================================ */
+let fcCurrentTheme = 'histoire';
+
+document.getElementById('btn-flashcards').addEventListener('click', ()=>{
+  buildFcTabs();
+  renderFlashcards(fcCurrentTheme);
+  showScreen('flashcards');
+});
+
+function buildFcTabs(){
+  const tabs = document.getElementById('fc-tabs');
+  tabs.innerHTML = '';
+  Object.keys(THEME_LABELS).forEach(key=>{
+    const count = BANK.filter(q=>q.theme===key).length;
+    const chip = document.createElement('button');
+    chip.className = 'chip' + (key===fcCurrentTheme ? ' active' : '');
+    chip.textContent = `${THEME_LABELS[key]} (${count})`;
+    chip.addEventListener('click', ()=>{
+      fcCurrentTheme = key;
+      buildFcTabs();
+      renderFlashcards(key);
+    });
+    tabs.appendChild(chip);
+  });
+}
+
+function renderFlashcards(theme){
+  const grid = document.getElementById('fc-grid');
+  grid.innerHTML = '';
+  const cards = BANK.filter(q=>q.theme===theme);
+  cards.forEach(item=>{
+    const card = document.createElement('div');
+    card.className = 'flip-card';
+    card.innerHTML = `
+      <div class="flip-card-inner">
+        <div class="flip-face flip-front">
+          <div class="fc-q">${item.q}</div>
+          <div class="fc-hint">Toucher pour voir la réponse ↻</div>
+        </div>
+        <div class="flip-face flip-back">
+          <div class="fc-a">${item.o[item.a]}</div>
+          <div class="fc-e">${item.e}</div>
+        </div>
+      </div>`;
+    card.addEventListener('click', ()=>card.classList.toggle('flipped'));
+    grid.appendChild(card);
+  });
+}
+
+function startExam(){
+  state.questions = drawQuestions(state.nQuestions);
+  state.answers = new Array(state.questions.length).fill(null);
+  state.flagged = new Array(state.questions.length).fill(false);
+  state.current = 0;
+  state.timeLeft = state.duration;
+  state.finished = false;
+
+  document.getElementById('q-total').textContent = state.questions.length;
+  buildQMap();
+  renderQuestion();
+  showScreen('exam');
+
+  clearInterval(state.timerId);
+  if(state.duration > 0){
+    document.getElementById('timer').classList.remove('hidden');
+    updateTimerDisplay();
+    state.timerId = setInterval(tick, 1000);
+  } else {
+    document.getElementById('timer').textContent = '∞';
+  }
+}
+
+function tick(){
+  state.timeLeft--;
+  updateTimerDisplay();
+  if(state.timeLeft <= 0){
+    clearInterval(state.timerId);
+    finishExam(true);
+  }
+}
+function updateTimerDisplay(){
+  const m = Math.floor(state.timeLeft/60);
+  const s = state.timeLeft%60;
+  const el = document.getElementById('timer');
+  el.textContent = `${m}:${s.toString().padStart(2,'0')}`;
+  el.classList.toggle('warn', state.timeLeft <= 300);
+}
+
+/* ---- rendu d'une question ---- */
+function renderQuestion(){
+  const idx = state.current;
+  const item = state.questions[idx];
+  document.getElementById('q-index').textContent = idx+1;
+  document.getElementById('progress-fill').style.width = ((idx+1)/state.questions.length*100)+'%';
+
+  const tag = document.getElementById('theme-tag');
+  tag.textContent = THEME_LABELS[item.theme] + (item.type==='situation' ? ' · mise en situation' : '');
+  tag.classList.toggle('situation', item.type==='situation');
+
+  document.getElementById('question-text').textContent = item.q;
+
+  const list = document.getElementById('options-list');
+  list.innerHTML = '';
+  const letters = ['A','B','C','D'];
+  item.options.forEach((opt,i)=>{
+    const li = document.createElement('li');
+    li.className = 'option' + (state.answers[idx]===i ? ' selected':'');
+    li.innerHTML = `<span class="letter">${letters[i]}</span><span>${opt}</span>`;
+    li.addEventListener('click', ()=>selectOption(i));
+    list.appendChild(li);
+  });
+
+  const flagBtn = document.getElementById('flag-btn');
+  flagBtn.classList.toggle('on', state.flagged[idx]);
+  flagBtn.textContent = state.flagged[idx] ? '🔖 Marquée pour révision' : '🔖 Marquer pour révision';
+
+  document.getElementById('btn-prev').disabled = idx===0;
+  document.getElementById('btn-next').textContent = idx===state.questions.length-1 ? 'Suivante →' : 'Suivante →';
+  updateQMap();
+}
+
+function selectOption(i){
+  state.answers[state.current] = i;
+  renderQuestion();
+}
+
+document.getElementById('flag-btn').addEventListener('click', ()=>{
+  state.flagged[state.current] = !state.flagged[state.current];
+  renderQuestion();
+});
+
+document.getElementById('btn-prev').addEventListener('click', ()=>{
+  if(state.current>0){ state.current--; renderQuestion(); }
+});
+document.getElementById('btn-next').addEventListener('click', ()=>{
+  if(state.current < state.questions.length-1){ state.current++; renderQuestion(); }
+  else { openFinishModal(); }
+});
+document.getElementById('btn-finish').addEventListener('click', openFinishModal);
+
+/* ---- carte des questions ---- */
+function buildQMap(){
+  const map = document.getElementById('qmap');
+  map.innerHTML = '';
+  state.questions.forEach((_,i)=>{
+    const b = document.createElement('button');
+    b.textContent = i+1;
+    b.addEventListener('click', ()=>{ state.current=i; renderQuestion(); });
+    map.appendChild(b);
+  });
+}
+function updateQMap(){
+  const buttons = document.querySelectorAll('#qmap button');
+  buttons.forEach((b,i)=>{
+    b.classList.toggle('answered', state.answers[i]!==null);
+    b.classList.toggle('current', i===state.current);
+    b.classList.toggle('flagged', state.flagged[i]);
+  });
+}
+
+/* ---- modal de fin ---- */
+const modal = document.getElementById('confirm-modal');
+function openFinishModal(){
+  const unanswered = state.answers.filter(a=>a===null).length;
+  document.getElementById('modal-title').textContent = "Terminer l'examen ?";
+  document.getElementById('modal-body').textContent = unanswered>0
+    ? `Il reste ${unanswered} question(s) sans réponse. Une fois terminé, vous ne pourrez plus modifier vos réponses.`
+    : "Vous avez répondu à toutes les questions. Une fois terminé, vous ne pourrez plus modifier vos réponses.";
+  modal.classList.remove('hidden');
+}
+document.getElementById('modal-cancel').addEventListener('click', ()=>modal.classList.add('hidden'));
+document.getElementById('modal-confirm').addEventListener('click', ()=>{
+  modal.classList.add('hidden');
+  finishExam(false);
+});
+
+/* ============================================================
+   RÉSULTATS
+   ============================================================ */
+function finishExam(auto){
+  clearInterval(state.timerId);
+  state.finished = true;
+
+  const total = state.questions.length;
+  const passMark = Math.ceil(total*0.8);
+  let correct = 0;
+  const perTheme = {};
+
+  state.questions.forEach((item,i)=>{
+    const ok = state.answers[i]===item.correct;
+    if(ok) correct++;
+    if(!perTheme[item.theme]) perTheme[item.theme] = {correct:0,total:0};
+    perTheme[item.theme].total++;
+    if(ok) perTheme[item.theme].correct++;
+  });
+
+  const pct = Math.round(correct/total*100);
+  const passed = correct >= passMark;
+
+  const verdictBox = document.getElementById('verdict-box');
+  verdictBox.classList.remove('pass','fail');
+  verdictBox.classList.add(passed?'pass':'fail');
+  document.getElementById('verdict-word').textContent = passed ? 'ADMIS' : 'AJOURNÉ';
+  document.getElementById('score-fraction').textContent = `${correct}/${total}`;
+  document.getElementById('score-pct').textContent = `${pct}%`;
+
+  // theme bars
+  const bars = document.getElementById('theme-bars');
+  bars.innerHTML = '';
+  Object.keys(THEME_LABELS).forEach(key=>{
+    const d = perTheme[key];
+    if(!d) return;
+    const p = Math.round(d.correct/d.total*100);
+    const row = document.createElement('div');
+    row.className = 'theme-bar-row';
+    row.innerHTML = `
+      <div class="tb-top"><span class="tb-name">${THEME_LABELS[key]}</span><span class="tb-score">${d.correct}/${d.total}</span></div>
+      <div class="tb-track"><div class="tb-fill" style="width:${p}%"></div></div>`;
+    bars.appendChild(row);
+  });
+
+  buildReview('all');
+  document.getElementById('cnt-all').textContent = total;
+  document.getElementById('cnt-wrong').textContent = total-correct;
+  document.getElementById('cnt-flag').textContent = state.flagged.filter(Boolean).length;
+
+  showScreen('results');
+}
+
+function buildReview(filter){
+  const list = document.getElementById('review-list');
+  list.innerHTML = '';
+  const letters = ['A','B','C','D'];
+  state.questions.forEach((item,i)=>{
+    const userAns = state.answers[i];
+    const ok = userAns === item.correct;
+    if(filter==='wrong' && ok) return;
+    if(filter==='flagged' && !state.flagged[i]) return;
+
+    const div = document.createElement('div');
+    div.className = 'review-item';
+    let answerHTML = '';
+    if(userAns===null){
+      answerHTML = `<div class="ans-line wrong">Votre réponse : — (sans réponse)</div>`;
+    } else {
+      answerHTML = `<div class="ans-line ${ok?'right':'wrong'}">Votre réponse : ${letters[userAns]}. ${item.options[userAns]}</div>`;
+    }
+    if(!ok){
+      answerHTML += `<div class="ans-line right">Bonne réponse : ${letters[item.correct]}. ${item.options[item.correct]}</div>`;
+    }
+    div.innerHTML = `
+      <div class="ri-head">
+        <span class="badge ${ok?'ok':'ko'}">${ok?'Correct':'Incorrect'}</span>
+        <span class="theme-tag ${item.type==='situation'?'situation':''}" style="margin:0;">${THEME_LABELS[item.theme]}</span>
+      </div>
+      <p class="rq">${i+1}. ${item.q}</p>
+      ${answerHTML}
+      <div class="explain">${item.e}</div>
+    `;
+    list.appendChild(div);
+  });
+  if(list.children.length===0){
+    list.innerHTML = '<p class="fineprint">Aucune question dans cette catégorie — bravo !</p>';
+  }
+}
+
+document.querySelectorAll('.chip').forEach(chip=>{
+  chip.addEventListener('click', ()=>{
+    document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+    chip.classList.add('active');
+    buildReview(chip.dataset.filter);
+  });
+});
+
+/* ---- fin d'examen : actions ---- */
+document.getElementById('btn-retry-same').addEventListener('click', ()=>{
+  state.answers = new Array(state.questions.length).fill(null);
+  state.flagged = new Array(state.questions.length).fill(false);
+  state.current = 0;
+  state.timeLeft = state.duration;
+  state.finished = false;
+  buildQMap();
+  renderQuestion();
+  showScreen('exam');
+  clearInterval(state.timerId);
+  if(state.duration>0){ updateTimerDisplay(); state.timerId=setInterval(tick,1000); }
+});
+
+document.getElementById('btn-retry-new').addEventListener('click', startExam);
+
+document.getElementById('btn-retry-errors').addEventListener('click', ()=>{
+  const wrongOriginal = state.questions
+    .map((item,i)=>({item, wasWrong: state.answers[i]!==item.correct}))
+    .filter(x=>x.wasWrong)
+    .map(x=>x.item);
+  if(wrongOriginal.length===0){
+    alert("Aucune erreur à revoir — excellent travail !");
+    return;
+  }
+  state.questions = wrongOriginal.map(orig=>{
+    // orig already has shuffled options/correct index computed at draw time; reshuffle again for variety
+    const optionTexts = orig.options.map((text,i)=>({text, wasCorrect:i===orig.correct}));
+    const order = shuffle(optionTexts);
+    const correctPos = order.findIndex(x=>x.wasCorrect);
+    return {theme:orig.theme, type:orig.type, q:orig.q, e:orig.e, options:order.map(x=>x.text), correct:correctPos};
+  });
+  state.answers = new Array(state.questions.length).fill(null);
+  state.flagged = new Array(state.questions.length).fill(false);
+  state.current = 0;
+  state.duration = 0;
+  state.timeLeft = 0;
+  state.finished = false;
+  document.getElementById('q-total').textContent = state.questions.length;
+  document.getElementById('timer').textContent = '∞';
+  buildQMap();
+  renderQuestion();
+  showScreen('exam');
+  clearInterval(state.timerId);
+});
+</script>
+</body>
+</html>
