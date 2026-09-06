@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "tiny-text",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-09-06T19:21:35.104Z",
+        "reason": "Incumbent system: 11px uppercase tracked micro-labels are the established world here (.masthead-eyebrow, .theme-tag, .badge, .fc-hint all 11px since before this branch); the new rule-label utility mirrors them rather than introducing a new size. Body copy in the file stays 13-16px."
+      }
+    ]
+  }
+}

@@ -7,6 +7,113 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
+
+<!-- Tailwind v4 (build navigateur) : utilisé uniquement par le carnet de suivi.
+     On importe le thème et les utilitaires sans le preflight, pour ne pas réinitialiser
+     la feuille de style historique de l'application. -->
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style type="text/tailwindcss">
+  @layer theme, utilities;
+  @import "tailwindcss/theme.css" layer(theme);
+  @import "tailwindcss/utilities.css" layer(utilities);
+
+  /* le thème sombre du site est porté par html[data-theme="dark"], pas par .dark */
+  @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+  /* les jetons pointent vers les variables existantes : le mode sombre suit tout seul */
+  @theme {
+    --color-paper: var(--paper);
+    --color-paper-2: var(--paper-2);
+    --color-card: var(--card);
+    --color-ink: var(--ink);
+    --color-ink-soft: var(--ink-soft);
+    --color-navy: var(--navy);
+    --color-navy-deep: var(--navy-deep);
+    --color-red: var(--red);
+    --color-red-deep: var(--red-deep);
+    --color-gold: var(--gold);
+    --color-green: var(--green);
+    --color-line: var(--line);
+    --color-rule: var(--rule-h);
+    --color-selected: var(--surface-selected);
+    --color-success: var(--surface-success);
+    --color-fail: var(--surface-fail);
+
+    --font-serif: var(--serif);
+    --font-sans: var(--sans);
+
+    --radius-sheet: 10px;
+    --radius-cell: 6px;
+
+    --shadow-sheet: var(--shadow);
+    --shadow-raise: var(--shadow-lift);
+
+    --ease-stamp: cubic-bezier(.16,.84,.3,1);
+  }
+
+  /* conteneur de section, identique au .card historique */
+  @utility card-surface {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+
+  /* micro-libellé administratif (bandeaux, en-têtes de colonne, légendes) */
+  @utility rule-label {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    line-height: 1.4;
+  }
+
+  /* chiffres alignés pour les relevés et le registre */
+  @utility figures {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+  }
+
+  /* Le preflight de Tailwind n'est pas chargé (il réinitialiserait toute la feuille
+     historique) : on remet donc à zéro, et seulement sur les surfaces du carnet, les
+     marges et polices par défaut du navigateur. :where() garde une spécificité nulle,
+     donc n'importe quel utilitaire Tailwind reprend la main. */
+  :where(#screen-progress, #session-gain, #new-badges, #carnet-teaser)
+  :where(p, h2, h3, h4, ol, ul, dl, dt, dd, table, figure, blockquote){
+    margin: 0;
+  }
+  :where(#screen-progress, #new-badges) :where(ol, ul){ padding-left: 0; }
+  :where(#screen-progress) :where(input, textarea, select){ font-family: var(--sans); }
+
+  /* le preflight de Tailwind n'est pas chargé : on neutralise nous-mêmes le chrome
+     par défaut des <button> qui doivent se lire comme des liens de texte */
+  @utility link-button {
+    appearance: none;
+    border: 0;
+    background: none;
+    padding: 0;
+    font-family: var(--sans);
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  /* chaque tampon est posé de travers, comme sur un vrai dossier */
+  .seal{ transform: rotate(var(--seal-rot, 0deg)); }
+
+  /* le seul moment animé du carnet : le tampon qui se pose sur le relevé de fin de séance */
+  @keyframes stamp-land{
+    from{ opacity:0; transform: rotate(var(--seal-rot,0deg)) scale(1.4); filter: blur(3px); }
+    to  { opacity:1; transform: rotate(var(--seal-rot,0deg)) scale(1); filter: blur(0); }
+  }
+  .stamp-land{ animation: stamp-land .55s var(--ease-stamp) both; }
+  @media (prefers-reduced-motion: reduce){
+    .stamp-land{ animation-duration: 1ms; }
+  }
+</style>
+
 <style>
   :root{
     --paper:#F6F7F5;
@@ -212,6 +319,10 @@
     background:transparent; color:var(--navy); border:1.5px solid var(--navy); box-shadow:none;
   }
   button.btn:disabled{opacity:.4; cursor:not-allowed;}
+  /* en thème sombre, --navy et --red sont des teintes claires : du blanc dessus tombait à
+     2,5:1. Le texte des boutons pleins passe donc en encre sombre (les boutons .secondary,
+     eux, sont sur fond transparent et gardent leur couleur d'accent). */
+  html[data-theme="dark"] button.btn:not(.secondary){color:var(--paper);}
   button.btn.full{width:100%;}
   button.btn.danger{background:var(--red); box-shadow:0 2px 8px rgba(140,44,34,.22);}
 
@@ -442,6 +553,16 @@
         <div class="subtitle">Entraînement — Naturalisation, carte de résident, titre pluriannuel</div>
       </div>
       <div class="top-actions">
+        <button type="button" id="btn-carnet-top" title="Ouvrir le carnet de suivi"
+          class="inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full border border-line bg-card px-3 py-2 font-sans text-[13px] font-bold text-ink shadow-sheet transition-[background-color,border-color,color,box-shadow] duration-200 hover:border-navy hover:text-navy focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold">
+          <svg viewBox="0 0 24 24" class="h-4 w-4 shrink-0 text-navy" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6.5 3.75h11a1 1 0 0 1 1 1v14.5a1 1 0 0 1-1 1h-11a2 2 0 0 1-2-2V5.75a2 2 0 0 1 2-2Z"/>
+            <path d="M8.25 3.75v16.5M11 8.5h4.75M11 12h4.75"/>
+          </svg>
+          <span class="figures" id="chip-streak">0</span>
+          <span class="text-line" aria-hidden="true">|</span>
+          <span class="figures text-navy" id="chip-echelon">I</span>
+        </button>
         <button class="home-btn" id="btn-home-top">🏠 Accueil</button>
         <button class="theme-toggle" id="theme-toggle" aria-label="Changer de thème">
           <span class="icon" id="theme-icon">🌙</span><span id="theme-label">Sombre</span>
@@ -505,6 +626,31 @@
       </div>
 
       <div class="card">
+        <h2>Carnet de suivi</h2>
+        <p class="fineprint">Registre de présence, échelon, tampons obtenus et relevé comparatif avec ton binôme.</p>
+        <dl id="carnet-teaser" class="mt-5 mb-1 grid grid-cols-3 gap-x-3 gap-y-4 border-t border-line pt-4">
+          <div>
+            <dt class="rule-label">Série</dt>
+            <dd class="figures mt-1 font-serif text-[21px] leading-none font-semibold text-navy-deep" id="teaser-streak">—</dd>
+            <dd class="mt-1 text-[12.5px] text-ink-soft" id="teaser-streak-note">jours</dd>
+          </div>
+          <div>
+            <dt class="rule-label">Échelon</dt>
+            <dd class="figures mt-1 font-serif text-[21px] leading-none font-semibold text-navy-deep" id="teaser-echelon">—</dd>
+            <dd class="mt-1 text-[12.5px] text-ink-soft" id="teaser-echelon-note">—</dd>
+          </div>
+          <div>
+            <dt class="rule-label">Tampons</dt>
+            <dd class="figures mt-1 font-serif text-[21px] leading-none font-semibold text-navy-deep" id="teaser-badges">—</dd>
+            <dd class="mt-1 text-[12.5px] text-ink-soft">obtenus</dd>
+          </div>
+        </dl>
+        <div class="start-actions">
+          <button class="btn secondary full" id="btn-carnet">Ouvrir le carnet</button>
+        </div>
+      </div>
+
+      <div class="card">
         <h2>Banque de questions</h2>
         <p class="fineprint" id="bank-stats">Chargement…</p>
       </div>
@@ -523,6 +669,90 @@
       <div class="end-actions">
         <button class="btn secondary" id="btn-fc-back">← Retour à l'accueil</button>
       </div>
+    </section>
+
+    <!-- ============ CARNET DE SUIVI ============ -->
+    <section id="screen-progress" class="hidden">
+
+      <!-- Livret : registre de présence + échelon -->
+      <div class="rounded-sheet border-2 border-ink bg-card shadow-raise">
+        <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-line px-5 py-4 sm:px-7">
+          <h2 class="font-serif text-[22px] leading-tight font-semibold text-navy-deep">Livret de révision</h2>
+          <span class="rule-label" id="carnet-holder">Titulaire non renseigné</span>
+        </div>
+
+        <div class="px-5 py-5 sm:px-7 sm:py-6">
+          <h3 class="rule-label">Registre de présence · 14 derniers jours</h3>
+          <div id="reg-strip" class="mt-3 grid grid-cols-7 gap-1.5 sm:grid-cols-14 sm:gap-2"></div>
+
+          <div class="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2" aria-hidden="true">
+            <span class="flex items-center gap-2 text-[12.5px] text-ink-soft">
+              <span class="inline-block h-3.5 w-3.5 rounded-[3px] border border-navy bg-selected"></span>séance
+            </span>
+            <span class="flex items-center gap-2 text-[12.5px] text-ink-soft">
+              <span class="inline-block h-3.5 w-3.5 rounded-[3px] border border-line bg-card outline-2 outline-offset-1 outline-gold"></span>aujourd'hui
+            </span>
+            <span class="flex items-center gap-2 text-[12.5px] text-ink-soft">
+              <span class="inline-block h-3.5 w-3.5 rounded-[3px] border border-dashed border-gold bg-card"></span>tolérance
+            </span>
+          </div>
+
+          <p class="mt-4 text-[13.5px] leading-relaxed text-ink" id="reg-note">Aucune séance enregistrée pour l'instant.</p>
+
+          <!-- Échelon -->
+          <div class="mt-7 border-t border-line pt-5">
+            <h3 class="rule-label">Échelon</h3>
+            <p class="mt-2 font-serif text-[26px] leading-tight font-semibold text-navy-deep">
+              <span id="ech-roman">I</span> · <span id="ech-name">Postulant</span>
+            </p>
+            <p class="mt-1 text-[13.5px] text-ink-soft"><span class="figures font-bold text-ink" id="ech-xp">0</span> points cumulés</p>
+
+            <ol id="ech-scale" class="mt-5 flex list-none items-center justify-between gap-1 p-0"></ol>
+            <div class="mt-2 h-2 overflow-hidden rounded-full bg-rule">
+              <div id="ech-fill" class="h-full rounded-full bg-navy transition-[width] duration-700 ease-stamp" style="width:0%"></div>
+            </div>
+            <p class="mt-2 text-[13.5px] text-ink-soft" id="ech-next">250 points avant l'échelon II.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="start-actions">
+        <button class="btn full" id="btn-carnet-start">Commencer une séance</button>
+      </div>
+
+      <!-- Relevé comparatif -->
+      <div class="card-surface mt-5 p-5 sm:p-6">
+        <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+          <h2 class="font-serif text-[22px] leading-tight font-semibold text-navy-deep">Relevé comparatif</h2>
+          <span class="rule-label" id="duel-status">Non couplé</span>
+        </div>
+        <div id="duel-body" class="mt-4"></div>
+      </div>
+
+      <!-- Tampons -->
+      <div class="card-surface mt-5 p-5 sm:p-6">
+        <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+          <h2 class="font-serif text-[22px] leading-tight font-semibold text-navy-deep">Tampons</h2>
+          <span class="rule-label figures" id="badge-count">0 / 12</span>
+        </div>
+        <p class="mt-2 text-[13.5px] leading-relaxed text-ink-soft">Chaque tampon s'obtient une seule fois et reste acquis.</p>
+        <ul id="badge-grid" class="mt-6 grid list-none grid-cols-3 gap-x-3 gap-y-6 p-0 sm:grid-cols-4 sm:gap-x-4 md:grid-cols-6"></ul>
+      </div>
+
+      <!-- Maîtrise par thème -->
+      <div class="card-surface mt-5 p-5 sm:p-6">
+        <h2 class="font-serif text-[22px] leading-tight font-semibold text-navy-deep">Maîtrise par thème</h2>
+        <p class="mt-2 text-[13.5px] leading-relaxed text-ink-soft">Cumul de toutes tes séances, mise à jour à chaque examen terminé.</p>
+        <div id="mastery-rows" class="mt-5 flex flex-col gap-5"></div>
+      </div>
+
+      <div class="end-actions">
+        <button class="btn secondary" id="btn-carnet-back">← Retour à l'accueil</button>
+      </div>
+      <p class="mt-5 text-[13px] leading-relaxed text-ink-soft">
+        <button type="button" id="btn-carnet-reset" class="link-button text-[13px] text-red-deep">Réinitialiser le carnet</button>
+        — efface la série, les points et les tampons enregistrés sur cet appareil.
+      </p>
     </section>
 
     <!-- ============ EXAM SCREEN ============ -->
@@ -570,6 +800,19 @@
         <div class="score-line"><b id="score-fraction">32/40</b> bonnes réponses · <span id="score-pct">80%</span> · seuil requis 80%</div>
       </div>
 
+      <div id="session-gain" class="card-surface mb-5 hidden flex-wrap items-center justify-between gap-x-6 gap-y-2 px-5 py-4 sm:px-6">
+        <div>
+          <p class="rule-label">Bordereau de la séance</p>
+          <p class="mt-1 text-[15px] text-ink"><span class="figures font-bold text-navy-deep" id="gain-xp">+0</span> points · <span id="gain-streak">série de 1 jour</span></p>
+        </div>
+        <p class="text-[13.5px] text-ink-soft" id="gain-echelon">Échelon I · Postulant</p>
+      </div>
+
+      <div id="new-badges" class="mb-5 hidden border-y border-line py-6 text-center">
+        <p class="rule-label" id="new-badges-title">Nouveau tampon</p>
+        <ul id="new-badges-list" class="mt-5 flex list-none flex-wrap items-start justify-center gap-x-8 gap-y-6 p-0"></ul>
+      </div>
+
       <div class="card">
         <h2>Résultat par thème</h2>
         <div class="theme-bars" id="theme-bars"></div>
@@ -589,6 +832,7 @@
         <button class="btn" id="btn-retry-same">Refaire ce tirage</button>
         <button class="btn secondary" id="btn-retry-new">Nouveau tirage aléatoire</button>
         <button class="btn secondary" id="btn-retry-errors">Revoir seulement mes erreurs</button>
+        <button class="btn secondary" id="btn-carnet-results">Voir le carnet</button>
         <button class="btn secondary" id="btn-home-results">🏠 Retour à l'accueil</button>
       </div>
     </section>
@@ -921,7 +1165,8 @@ const screens = {
   start: document.getElementById('screen-start'),
   exam: document.getElementById('screen-exam'),
   results: document.getElementById('screen-results'),
-  flashcards: document.getElementById('screen-flashcards')
+  flashcards: document.getElementById('screen-flashcards'),
+  progress: document.getElementById('screen-progress')
 };
 function showScreen(name){
   Object.values(screens).forEach(s=>s.classList.add('hidden'));
@@ -1296,6 +1541,14 @@ function finishExam(auto){
     bars.appendChild(row);
   });
 
+  // carnet de suivi : enregistre la séance, met à jour série / points / tampons
+  const gain = recordSession({
+    correct, total, passed, perTheme,
+    timeLeft: state.duration > 0 ? state.timeLeft : null,
+    duration: state.duration
+  });
+  renderSessionGain(gain);
+
   buildReview('all');
   document.getElementById('cnt-all').textContent = total;
   document.getElementById('cnt-wrong').textContent = total-correct;
@@ -1394,6 +1647,644 @@ document.getElementById('btn-retry-errors').addEventListener('click', ()=>{
   showScreen('exam');
   clearInterval(state.timerId);
 });
+
+/* ============================================================
+   CARNET DE SUIVI
+   Série (registre de présence), échelons, tampons, relevé comparatif.
+   Tout est stocké en local ; seul le relevé comparatif est synchronisé.
+   ============================================================ */
+const PROGRESS_KEY = 'examen-civique-progress';
+const TOTAL_ECHELONS = 7;
+
+// une séance complète réussie rapporte ~470 points : l'échelon VII demande donc
+// une quarantaine d'examens, soit la durée d'une vraie préparation.
+const ECHELONS = [
+  {min:0,     roman:'I',   name:'Postulant'},
+  {min:600,   roman:'II',  name:'Requérant'},
+  {min:1800,  roman:'III', name:'Candidat'},
+  {min:3800,  roman:'IV',  name:'Candidat confirmé'},
+  {min:7000,  roman:'V',   name:'Impétrant'},
+  {min:11500, roman:'VI',  name:'Récipiendaire'},
+  {min:18000, roman:'VII', name:'Citoyen émérite'}
+];
+
+/* pictogrammes des tampons : même grille 100×100, même graisse de trait */
+const SEAL_ART = {
+  feuille:  '<path d="M38 30h16l10 10v30H38z"/><path d="M54 30v10h10"/><path d="M44 50h14M44 58h14"/>',
+  liasse:   '<path d="M32 38h22l8 8v22H32z"/><path d="M40 32h22l8 8v22"/>',
+  semaine:  '<rect x="30" y="38" width="40" height="28" rx="2"/><path d="M30 47h40"/><path d="M37 54v6M44 54v6M51 54v6M58 54v6M65 54v6"/>',
+  mois:     '<rect x="30" y="34" width="40" height="34" rx="2"/><path d="M30 44h40M40 30v8M60 30v8"/><path d="M38 52h4M48 52h4M58 52h4M38 61h4M48 61h4M58 61h4"/>',
+  visa:     '<path d="M34 52l11 11 21-25"/>',
+  etoile:   '<path d="M50 30l6.6 13.4 14.8 2.2-10.7 10.4 2.5 14.7L50 63.8l-13.2 6.9 2.5-14.7-10.7-10.4 14.8-2.2z"/>',
+  horloge:  '<circle cx="50" cy="50" r="19"/><path d="M50 39v11l8 5"/>',
+  batons:   '<path d="M36 40v20M43 40v20M50 40v20M57 40v20M32 62l29-24"/>',
+  monument: '<path d="M34 68h32M39 68V42M50 68V42M61 68V42M34 42h32l-16-14z"/>',
+  balance:  '<path d="M50 30v38M38 68h24M31 42h38"/><path d="M24 42l7 14 7-14M62 42l7 14 7-14"/>',
+  urne:     '<rect x="33" y="44" width="34" height="24" rx="2"/><path d="M43 44v-9h14v9"/><path d="M44 50h12"/>',
+  etoiles:  '<circle cx="50" cy="31"r="2.6"/><circle cx="63" cy="34.5" r="2.6"/><circle cx="72.5" cy="44" r="2.6"/><circle cx="76" cy="57" r="2.6"/><circle cx="72.5" cy="70" r="2.6"/><circle cx="63" cy="79.5" r="2.6"/><circle cx="50" cy="83" r="2.6"/><circle cx="37" cy="79.5" r="2.6"/><circle cx="27.5" cy="70" r="2.6"/><circle cx="24" cy="57" r="2.6"/><circle cx="27.5" cy="44" r="2.6"/><circle cx="37" cy="34.5" r="2.6"/>'
+};
+
+const BADGES = [
+  {id:'premiere',   name:'Première séance', rim:'PREMIÈRE SÉANCE', art:'feuille',  crit:'Une séance terminée',    test:p=>p.sessions>=1},
+  {id:'assidu',     name:'Dix séances',     rim:'DIX SÉANCES',     art:'liasse',   crit:'Dix séances terminées',  test:p=>p.sessions>=10},
+  {id:'semaine',    name:'Semaine complète',rim:'SEMAINE',         art:'semaine',  crit:'Sept jours de suite',    test:p=>p.streak.longest>=7},
+  {id:'mois',       name:'Mois complet',    rim:'MOIS',            art:'mois',     crit:'Trente jours de suite',  test:p=>p.streak.longest>=30},
+  {id:'admis',      name:'Premier admis',   rim:'ADMIS',           art:'visa',     crit:'80 % à un examen',       test:p=>p.passes>=1},
+  {id:'sansfaute',  name:'Sans faute',      rim:'SANS FAUTE',      art:'etoile',   crit:'Sans faute sur 15 questions', test:p=>!!p.perfect},
+  {id:'chrono',     name:'Dans les temps',  rim:'DANS LES TEMPS',  art:'horloge',  crit:'40 questions, 10 min d’avance', test:p=>!!p.fastPass},
+  {id:'cent',       name:'Cent questions',  rim:'CENT QUESTIONS',  art:'batons',   crit:'100 questions traitées', test:p=>p.answered>=100},
+  {id:'m-histoire',     name:'Maîtrise : Histoire',     rim:'HISTOIRE',     art:'monument', crit:'90 % sur 50 questions', test:p=>themeMastered(p,'histoire')},
+  {id:'m-institutions', name:'Maîtrise : Institutions', rim:'INSTITUTIONS', art:'balance',  crit:'90 % sur 50 questions', test:p=>themeMastered(p,'institutions')},
+  {id:'m-citoyennete',  name:'Maîtrise : Citoyenneté',  rim:'CITOYENNETÉ',  art:'urne',     crit:'90 % sur 50 questions', test:p=>themeMastered(p,'citoyennete')},
+  {id:'m-europe',       name:'Maîtrise : Europe',       rim:'EUROPE',       art:'etoiles',  crit:'90 % sur 50 questions', test:p=>themeMastered(p,'europe')}
+];
+
+const SEAL_TILT = [-4,3,-2,5,-3,2,4,-5,3,-3,2,-4];
+
+// seuil volontairement haut : la maîtrise d'un thème doit demander plusieurs séances,
+// pas un seul tirage favorable
+function themeMastered(p, key){
+  const t = p.themes[key];
+  return !!t && t.total>=50 && (t.correct/t.total)>=0.9;
+}
+
+/* ---- dates ---- */
+function dayKey(d){
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function parseDay(key){ const [y,m,d] = key.split('-').map(Number); return new Date(y, m-1, d); }
+function daysBetween(a, b){ return Math.round((parseDay(b) - parseDay(a)) / 86400000); }
+function shiftDay(key, n){ const d = parseDay(key); d.setDate(d.getDate()+n); return dayKey(d); }
+function frDate(key){ const [y,m,d] = key.split('-'); return `${d}.${m}.${y}`; }
+// semaine ISO, pour n'accorder qu'un seul jour de tolérance par semaine
+function weekKey(key){
+  const t = parseDay(key);
+  t.setDate(t.getDate() - ((t.getDay()+6)%7) + 3); // jeudi de la semaine ISO
+  const firstThu = new Date(t.getFullYear(), 0, 4);
+  firstThu.setDate(firstThu.getDate() - ((firstThu.getDay()+6)%7) + 3);
+  return `${t.getFullYear()}-S${String(1 + Math.round((t-firstThu)/604800000)).padStart(2,'0')}`;
+}
+
+function esc(s){
+  return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* ---- stockage ---- */
+function defaultProgress(){
+  return {
+    v:1,
+    playerId: 'j' + Math.random().toString(36).slice(2,10),
+    name:'',
+    xp:0, sessions:0, answered:0, correct:0, passes:0,
+    perfect:false, fastPass:false,
+    best:null,
+    streak:{current:0, longest:0, last:null, graceWeek:null, graceDays:[]},
+    days:{}, themes:{}, badges:{},
+    duel:{code:null}
+  };
+}
+
+function loadProgress(){
+  let saved = null;
+  try{ saved = JSON.parse(localStorage.getItem(PROGRESS_KEY) || 'null'); }catch(e){ saved = null; }
+  const p = Object.assign(defaultProgress(), saved || {});
+  p.streak = Object.assign(defaultProgress().streak, p.streak || {});
+  p.duel   = Object.assign({code:null}, p.duel || {});
+  ['days','themes','badges'].forEach(k=>{ if(!p[k] || typeof p[k]!=='object') p[k] = {}; });
+  return p;
+}
+
+let progress = loadProgress();
+
+function saveProgress(){
+  // ne conserve que les 400 derniers jours du registre
+  const keys = Object.keys(progress.days).sort();
+  if(keys.length > 400) keys.slice(0, keys.length-400).forEach(k=>{ delete progress.days[k]; });
+  try{ localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress)); }catch(e){ /* quota / navigation privée */ }
+}
+
+/* ---- échelons ---- */
+function echelonOf(xp){
+  let i = 0;
+  for(let k=0;k<ECHELONS.length;k++){ if(xp >= ECHELONS[k].min) i = k; }
+  const next = ECHELONS[i+1] || null;
+  const base = ECHELONS[i].min;
+  return {
+    index:i, roman:ECHELONS[i].roman, name:ECHELONS[i].name, next,
+    pct: next ? Math.min(100, Math.round((xp-base)/(next.min-base)*100)) : 100,
+    toNext: next ? next.min - xp : 0
+  };
+}
+
+/* ---- état de la série, au moment de l'affichage ---- */
+function streakStatus(){
+  const st = progress.streak;
+  const today = dayKey(new Date());
+  if(!st.last) return {value:0, state:'vide'};
+  const gap = daysBetween(st.last, today);
+  if(gap <= 0) return {value:st.current, state:'faite'};
+  if(gap === 1) return {value:st.current, state:'a-confirmer'};
+  if(gap === 2 && st.graceWeek !== weekKey(shiftDay(st.last,1))) return {value:st.current, state:'sursis'};
+  return {value:0, state:'rompue'};
+}
+
+/* ---- enregistrement d'une séance terminée ---- */
+function recordSession(r){
+  const p = progress;
+  const today = dayKey(new Date());
+  const firstToday = !p.days[today];
+  const st = p.streak;
+
+  let streakEvent;
+  if(!st.last){
+    st.current = 1; streakEvent = 'debut';
+  } else {
+    const gap = daysBetween(st.last, today);
+    if(gap <= 0){ streakEvent = 'meme-jour'; }
+    else if(gap === 1){ st.current += 1; streakEvent = 'poursuite'; }
+    else if(gap === 2 && st.graceWeek !== weekKey(shiftDay(st.last,1))){
+      const missed = shiftDay(st.last, 1);
+      st.graceWeek = weekKey(missed);
+      st.graceDays = (st.graceDays || []).concat(missed).slice(-30);
+      st.current += 1; streakEvent = 'tolerance';
+    }
+    else { st.current = 1; streakEvent = 'reprise'; }
+  }
+  st.last = today;
+  st.longest = Math.max(st.longest || 0, st.current);
+
+  const pct = Math.round(r.correct / r.total * 100);
+  const xp = r.correct*10 + (r.passed?60:0) + (r.total>=40?40:0) + (firstToday?20:0);
+
+  p.xp += xp;
+  p.sessions += 1;
+  p.answered += r.total;
+  p.correct += r.correct;
+  if(r.passed) p.passes += 1;
+  if(r.total>=15 && r.correct===r.total) p.perfect = true;
+  if(r.passed && r.total>=40 && r.timeLeft !== null && r.timeLeft >= 600) p.fastPass = true;
+  if(r.total>=15 && (!p.best || pct > p.best.pct)) p.best = {correct:r.correct, total:r.total, pct, date:today};
+
+  const day = p.days[today] || {sessions:0, xp:0};
+  p.days[today] = {sessions: day.sessions+1, xp: day.xp+xp};
+
+  Object.keys(r.perTheme).forEach(key=>{
+    const t = p.themes[key] || {correct:0, total:0};
+    t.correct += r.perTheme[key].correct;
+    t.total   += r.perTheme[key].total;
+    p.themes[key] = t;
+  });
+
+  const newBadges = [];
+  BADGES.forEach(b=>{
+    if(!p.badges[b.id] && b.test(p)){ p.badges[b.id] = today; newBadges.push(b); }
+  });
+
+  saveProgress();
+  renderCarnetChip();
+  duelPush();
+
+  return {xp, streakEvent, newBadges, echelon: echelonOf(p.xp), streak: st.current};
+}
+
+/* ---- tampon (SVG) ---- */
+function sealSVG(badge, unlocked, index, extraClass){
+  const uid = `seal-${badge.id}`;
+  const tilt = SEAL_TILT[index % SEAL_TILT.length];
+  const date = unlocked && progress.badges[badge.id] ? frDate(progress.badges[badge.id]) : '';
+  const ink = unlocked ? 'var(--navy)' : 'var(--ink-soft)';
+  return `
+    <svg viewBox="0 0 100 100" class="seal h-full w-full ${extraClass||''}" style="--seal-rot:${tilt}deg; color:${ink}; opacity:${unlocked?1:.42}"
+         role="img" aria-label="${esc(badge.name)}${unlocked?', obtenu le '+date:', non obtenu'}">
+      <defs>
+        <path id="${uid}-top" d="M7 50a43 43 0 0 1 86 0" fill="none"/>
+      </defs>
+      <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="50" cy="50" r="47" stroke-width="2.4" ${unlocked?'':'stroke-dasharray="5 4"'}/>
+        <circle cx="50" cy="50" r="38.5" stroke-width="1"/>
+        <g stroke-width="3.1">${SEAL_ART[badge.art]}</g>
+      </g>
+      <text fill="currentColor" font-family="Lato, sans-serif" font-weight="700" text-anchor="middle"
+            font-size="8.4" letter-spacing="1.1"><textPath href="#${uid}-top" startOffset="50%">${esc(badge.rim)}</textPath></text>
+      <g fill="currentColor">
+        <circle cx="44" cy="92.6" r="1.1"/><circle cx="50" cy="93" r="1.1"/><circle cx="56" cy="92.6" r="1.1"/>
+      </g>
+    </svg>`;
+}
+
+/* ---- rendu : pastille d'en-tête + aperçu de l'accueil ---- */
+function renderCarnetChip(){
+  const s = streakStatus();
+  const e = echelonOf(progress.xp);
+  const chip = document.getElementById('btn-carnet-top');
+  document.getElementById('chip-streak').textContent = s.value;
+  document.getElementById('chip-echelon').textContent = e.roman;
+  chip.setAttribute('aria-label', `Carnet de suivi — série de ${s.value} jour${s.value>1?'s':''}, échelon ${e.roman}`);
+
+  const badgeCount = Object.keys(progress.badges).length;
+  document.getElementById('teaser-streak').textContent = s.value;
+  document.getElementById('teaser-streak-note').textContent =
+    s.state==='vide' ? 'aucune séance' :
+    s.state==='faite' ? 'séance faite ce jour' :
+    s.state==='rompue' ? 'série rompue' :
+    s.state==='sursis' ? 'en sursis' : 'à confirmer aujourd’hui';
+  document.getElementById('teaser-echelon').textContent = e.roman;
+  document.getElementById('teaser-echelon-note').textContent = e.name;
+  document.getElementById('teaser-badges').textContent = `${badgeCount}/${BADGES.length}`;
+}
+
+/* ---- rendu : le carnet ---- */
+function renderCarnet(){
+  const p = progress;
+  const s = streakStatus();
+  const e = echelonOf(p.xp);
+
+  document.getElementById('carnet-holder').textContent = p.name ? `Titulaire · ${p.name}` : 'Titulaire non renseigné';
+
+  // registre de présence
+  const strip = document.getElementById('reg-strip');
+  const today = dayKey(new Date());
+  strip.innerHTML = '';
+  for(let i=13;i>=0;i--){
+    const key = shiftDay(today, -i);
+    const done = !!p.days[key];
+    const grace = (p.streak.graceDays || []).includes(key);
+    const isToday = key === today;
+    const cls = done ? 'border-navy bg-selected text-navy-deep'
+              : grace ? 'border-dashed border-gold bg-card text-gold'
+              : 'border-line bg-card text-ink-soft';
+    const ring = isToday ? ' outline-2 outline-offset-1 outline-gold' : '';
+    const label = `${frDate(key)}${done ? ` — ${p.days[key].sessions} séance${p.days[key].sessions>1?'s':''}` : grace ? ' — jour de tolérance' : ' — aucune séance'}`;
+    strip.insertAdjacentHTML('beforeend', `
+      <div class="flex aspect-square flex-col items-center justify-center rounded-cell border ${cls}${ring}" title="${esc(label)}">
+        <span class="figures text-[12.5px] leading-none font-bold">${key.slice(8)}</span>
+        ${done ? '<span class="mt-1 block h-1.5 w-1.5 rounded-full bg-navy"></span>'
+               : grace ? '<span class="mt-1 block text-[9px] leading-none font-bold">T</span>'
+               : '<span class="mt-1 block h-1.5 w-1.5"></span>'}
+      </div>`);
+  }
+
+  const record = p.streak.longest ? ` Record : ${p.streak.longest} jours.` : '';
+  document.getElementById('reg-note').textContent =
+    s.state==='vide'        ? 'Aucune séance enregistrée. La série démarre à ta première séance terminée.' :
+    s.state==='faite'       ? `Série de ${s.value} jour${s.value>1?'s':''}. Séance du jour enregistrée.${record}` :
+    s.state==='a-confirmer' ? `Série de ${s.value} jour${s.value>1?'s':''} à confirmer : fais une séance aujourd’hui pour ne pas la rompre.${record}` :
+    s.state==='sursis'      ? `Série de ${s.value} jour${s.value>1?'s':''} en sursis : une séance aujourd’hui la conserve grâce au jour de tolérance de la semaine.${record}` :
+                              `Série rompue.${record} Une séance aujourd’hui en relance une nouvelle.`;
+
+  // échelon
+  document.getElementById('ech-roman').textContent = e.roman;
+  document.getElementById('ech-name').textContent = e.name;
+  document.getElementById('ech-xp').textContent = p.xp.toLocaleString('fr-FR');
+  document.getElementById('ech-fill').style.width = e.pct + '%';
+  document.getElementById('ech-next').textContent = e.next
+    ? `${e.toNext.toLocaleString('fr-FR')} points avant l’échelon ${e.next.roman} · ${e.next.name}.`
+    : 'Échelon le plus élevé atteint.';
+  const scale = document.getElementById('ech-scale');
+  scale.innerHTML = ECHELONS.map((lvl,i)=>{
+    const done = i <= e.index;
+    return `<li class="font-serif text-[13px] leading-none ${i===e.index ? 'font-bold text-navy-deep' : done ? 'text-navy' : 'text-ink-soft'}"
+      title="${esc(lvl.name)} · ${lvl.min} points">${lvl.roman}</li>`;
+  }).join('');
+
+  // tampons
+  const grid = document.getElementById('badge-grid');
+  const owned = Object.keys(p.badges).length;
+  document.getElementById('badge-count').textContent = `${owned} / ${BADGES.length}`;
+  grid.innerHTML = BADGES.map((b,i)=>{
+    const unlocked = !!p.badges[b.id];
+    return `<li class="flex flex-col items-center text-center">
+      <span class="block h-16 w-16 sm:h-[72px] sm:w-[72px]">${sealSVG(b, unlocked, i)}</span>
+      <span class="mt-2 text-[12.5px] leading-tight font-bold ${unlocked?'text-ink':'text-ink-soft'}">${esc(b.name)}</span>
+      <span class="mt-0.5 text-[11.5px] leading-tight text-ink-soft">${unlocked ? frDate(p.badges[b.id]) : esc(b.crit)}</span>
+    </li>`;
+  }).join('');
+
+  // maîtrise par thème
+  const rows = document.getElementById('mastery-rows');
+  const keys = Object.keys(THEME_LABELS).filter(k=>p.themes[k] && p.themes[k].total>0);
+  if(keys.length === 0){
+    rows.innerHTML = '<p class="text-[13.5px] text-ink-soft">Aucune donnée pour l’instant — termine une séance pour ouvrir cette page.</p>';
+  } else {
+    rows.innerHTML = keys.map(key=>{
+      const t = p.themes[key];
+      const pc = Math.round(t.correct/t.total*100);
+      const mention = pc>=90?'Très bien':pc>=80?'Bien':pc>=65?'Assez bien':pc>=50?'Passable':'Insuffisant';
+      return `<div>
+        <div class="flex items-baseline justify-between gap-3">
+          <span class="text-[13.5px] leading-snug font-bold text-ink">${esc(THEME_LABELS[key])}</span>
+          <span class="figures shrink-0 text-[13px] whitespace-nowrap text-ink-soft">${t.correct}/${t.total} · ${mention}</span>
+        </div>
+        <div class="mt-1.5 h-2.5 overflow-hidden rounded-full bg-rule">
+          <div class="h-full rounded-full ${pc>=80?'bg-green':pc>=50?'bg-navy':'bg-red'}" style="width:${pc}%"></div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  renderDuel();
+}
+
+/* ---- rendu : bordereau de fin de séance + tampons obtenus ---- */
+function renderSessionGain(gain){
+  const box = document.getElementById('session-gain');
+  box.classList.remove('hidden');
+  box.classList.add('flex');
+  document.getElementById('gain-xp').textContent = `+${gain.xp}`;
+  document.getElementById('gain-streak').textContent =
+    gain.streakEvent==='debut' ? 'série ouverte'
+    : gain.streakEvent==='tolerance' ? `série de ${gain.streak} jours (jour de tolérance utilisé)`
+    : gain.streakEvent==='meme-jour' ? `série de ${gain.streak} jour${gain.streak>1?'s':''}`
+    : gain.streakEvent==='reprise' ? 'nouvelle série ouverte'
+    : `série portée à ${gain.streak} jour${gain.streak>1?'s':''}`;
+  document.getElementById('gain-echelon').textContent = `Échelon ${gain.echelon.roman} · ${gain.echelon.name}`;
+
+  const wrap = document.getElementById('new-badges');
+  const list = document.getElementById('new-badges-list');
+  if(gain.newBadges.length === 0){ wrap.classList.add('hidden'); list.innerHTML=''; return; }
+  wrap.classList.remove('hidden');
+  document.getElementById('new-badges-title').textContent =
+    gain.newBadges.length>1 ? `${gain.newBadges.length} nouveaux tampons` : 'Nouveau tampon';
+  list.innerHTML = gain.newBadges.map(b=>`
+    <li class="flex w-24 flex-col items-center text-center">
+      <span class="block h-20 w-20">${sealSVG(b, true, BADGES.findIndex(x=>x.id===b.id), 'stamp-land')}</span>
+      <span class="mt-2 text-[12.5px] leading-tight font-bold text-ink">${esc(b.name)}</span>
+    </li>`).join('');
+  // le décalage se met sur l'élément animé lui-même, pas sur son conteneur
+  list.querySelectorAll('.stamp-land').forEach((el,i)=>{ el.style.animationDelay = `${i*140}ms`; });
+}
+
+/* ============================================================
+   RELEVÉ COMPARATIF (Firebase Realtime Database, offre gratuite)
+   La configuration se colle depuis le carnet, sur chaque appareil ;
+   elle est conservée en local. Règles conseillées côté Firebase :
+     {"rules":{"duels":{"$code":{".read":"auth != null",".write":"auth != null"}}}}
+   Le code de duel est le secret partagé entre les deux appareils.
+   ============================================================ */
+const FIREBASE_SDK = 'https://www.gstatic.com/firebasejs/12.9.0/';
+const FIREBASE_KEY = 'examen-civique-firebase';
+const FIREBASE_CONFIG = {apiKey:'', authDomain:'', databaseURL:'', projectId:'', appId:''};
+try{ Object.assign(FIREBASE_CONFIG, JSON.parse(localStorage.getItem(FIREBASE_KEY) || '{}')); }catch(e){ /* config absente */ }
+
+// accepte aussi bien du JSON que l'extrait « const firebaseConfig = { … } » de la console Firebase
+function parseFirebaseConfig(raw){
+  const block = raw.slice(raw.indexOf('{'), raw.lastIndexOf('}')+1);
+  if(!block) return null;
+  const normalised = block
+    .replace(/\/\/[^\n]*/g, '')
+    .replace(/([{,]\s*)([A-Za-z0-9_$]+)\s*:/g, '$1"$2":')
+    .replace(/'/g, '"')
+    .replace(/,(\s*})/g, '$1');
+  let cfg;
+  try{ cfg = JSON.parse(normalised); }catch(e){ return null; }
+  if(!cfg.apiKey || !cfg.databaseURL) return null;
+  return cfg;
+}
+
+let fb = null, duelRoom = null, duelUnsub = null;
+let duelState = {phase:'idle', error:null, players:null};
+
+function duelConfigured(){ return !!(FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.databaseURL); }
+
+async function fbInit(){
+  if(fb) return fb;
+  const [app, db, auth] = await Promise.all([
+    import(FIREBASE_SDK + 'firebase-app.js'),
+    import(FIREBASE_SDK + 'firebase-database.js'),
+    import(FIREBASE_SDK + 'firebase-auth.js')
+  ]);
+  const instance = app.initializeApp(FIREBASE_CONFIG);
+  await auth.signInAnonymously(auth.getAuth(instance));
+  fb = {db: db.getDatabase(instance), ref: db.ref, set: db.set, onValue: db.onValue, off: db.off};
+  return fb;
+}
+
+function duelPayload(){
+  const s = streakStatus();
+  const e = echelonOf(progress.xp);
+  return {
+    name: progress.name || 'Sans nom',
+    best: progress.best ? {correct:progress.best.correct, total:progress.best.total, pct:progress.best.pct} : null,
+    streak: s.value, longest: progress.streak.longest || 0,
+    echelon: e.roman, echelonName: e.name, xp: progress.xp,
+    sessions: progress.sessions, correct: progress.correct, answered: progress.answered,
+    updatedAt: Date.now()
+  };
+}
+
+async function duelPush(){
+  if(!duelConfigured() || !progress.duel.code) return;
+  try{
+    const {db, ref, set} = await fbInit();
+    await set(ref(db, `duels/${progress.duel.code}/${progress.playerId}`), duelPayload());
+  }catch(err){
+    duelState = {phase:'erreur', error:err.message, players:duelState.players};
+    if(!screens.progress.classList.contains('hidden')) renderDuel();
+  }
+}
+
+async function duelConnect(){
+  if(!duelConfigured() || !progress.duel.code) return;
+  if(duelRoom === progress.duel.code) return;
+  duelRoom = progress.duel.code;
+  duelState = {phase:'connexion', error:null, players:null};
+  renderDuel();
+  try{
+    const {db, ref, onValue, set} = await fbInit();
+    await set(ref(db, `duels/${duelRoom}/${progress.playerId}`), duelPayload());
+    duelUnsub = onValue(ref(db, `duels/${duelRoom}`), snap=>{
+      duelState = {phase:'connecte', error:null, players: snap.val() || {}};
+      if(!screens.progress.classList.contains('hidden')) renderDuel();
+    }, err=>{
+      duelState = {phase:'erreur', error:err.message, players:null};
+      if(!screens.progress.classList.contains('hidden')) renderDuel();
+    });
+  }catch(err){
+    duelRoom = null;
+    duelState = {phase:'erreur', error:err.message, players:null};
+    renderDuel();
+  }
+}
+
+function duelLeave(){
+  if(duelUnsub) { try{ duelUnsub(); }catch(e){} duelUnsub = null; }
+  duelRoom = null;
+  progress.duel.code = null;
+  duelState = {phase:'idle', error:null, players:null};
+  saveProgress();
+  renderDuel();
+}
+
+function newDuelCode(){
+  const alphabet = 'ACDEFGHJKLMNPQRTUVWXY34679';
+  let code = '';
+  for(let i=0;i<6;i++) code += alphabet[Math.floor(Math.random()*alphabet.length)];
+  return code;
+}
+
+function statLine(label, mine, theirs, better){
+  const lead = better === 0 ? 'moi' : better === 1 ? 'eux' : null;
+  const marker = `<svg viewBox="0 0 12 12" class="ml-1.5 inline-block h-2.5 w-2.5 text-gold" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9.5V2.5M2.5 6 6 2.5 9.5 6"/></svg>`;
+  const cell = (v, isLead)=>`<td class="figures border-t border-line py-2.5 pl-4 text-right text-[14px] whitespace-nowrap ${isLead?'font-bold text-navy-deep':'text-ink'}">${v}${isLead?marker+'<span class="sr-only">en tête</span>':''}</td>`;
+  return `<tr>
+    <th scope="row" class="border-t border-line py-2.5 pr-3 text-left text-[13px] font-normal text-ink-soft">${esc(label)}</th>
+    ${cell(mine, lead==='moi')}${cell(theirs, lead==='eux')}
+  </tr>`;
+}
+
+function renderDuel(){
+  const body = document.getElementById('duel-body');
+  const status = document.getElementById('duel-status');
+
+  if(!duelConfigured()){
+    status.textContent = 'Synchronisation non configurée';
+    body.innerHTML = `
+      <p class="text-[13.5px] leading-relaxed text-ink">Le relevé comparatif a besoin d’un petit service gratuit pour faire circuler vos chiffres entre vos deux téléphones.</p>
+      <ol class="mt-3 list-decimal space-y-1.5 pl-5 text-[13.5px] leading-relaxed text-ink-soft">
+        <li>Créer un projet sur <span class="font-bold text-ink">console.firebase.google.com</span> (offre Spark, gratuite).</li>
+        <li>Y ajouter une <span class="font-bold text-ink">Realtime Database</span>, puis activer la connexion <span class="font-bold text-ink">anonyme</span>.</li>
+        <li>Copier la configuration web du projet et la coller ci-dessous, sur chacun de vos deux appareils.</li>
+      </ol>
+      <label class="rule-label mt-4 block" for="fb-config">Configuration Firebase</label>
+      <textarea id="fb-config" rows="4" spellcheck="false" placeholder='{ "apiKey": "…", "databaseURL": "https://….firebasedatabase.app", … }'
+        class="mt-2 w-full rounded-cell border border-line bg-card px-3 py-2.5 font-mono text-[12.5px] leading-relaxed text-ink placeholder:text-ink-soft focus:border-navy focus:outline-2 focus:outline-offset-1 focus:outline-gold"></textarea>
+      <p class="mt-2 hidden text-[13px] leading-relaxed text-red-deep" id="fb-error">Configuration illisible : il y manque au moins <span class="font-bold">apiKey</span> et <span class="font-bold">databaseURL</span>.</p>
+      <button class="btn mt-3" id="fb-save" type="button">Enregistrer la configuration</button>
+      <p class="mt-3 text-[13px] leading-relaxed text-ink-soft">Sans cette étape, tout le reste du carnet fonctionne normalement : seule la comparaison avec ton binôme reste indisponible.</p>`;
+    document.getElementById('fb-save').addEventListener('click', ()=>{
+      const raw = document.getElementById('fb-config').value.trim();
+      const cfg = raw ? parseFirebaseConfig(raw) : null;
+      if(!cfg){ document.getElementById('fb-error').classList.remove('hidden'); return; }
+      Object.assign(FIREBASE_CONFIG, cfg);
+      try{ localStorage.setItem(FIREBASE_KEY, JSON.stringify(cfg)); }catch(e){ /* quota dépassé */ }
+      renderDuel();
+    });
+    return;
+  }
+
+  if(!progress.duel.code){
+    status.textContent = 'Non couplé';
+    body.innerHTML = `
+      <p class="text-[13.5px] leading-relaxed text-ink">Créez un duel sur un téléphone, puis saisissez le même code sur l’autre.</p>
+      <div class="mt-4 flex flex-col gap-2">
+        <label class="rule-label" for="duel-name">Votre nom</label>
+        <input id="duel-name" type="text" maxlength="24" value="${esc(progress.name)}" placeholder="Prénom"
+          class="w-full rounded-cell border border-line bg-card px-3 py-2.5 text-[15px] text-ink placeholder:text-ink-soft focus:border-navy focus:outline-2 focus:outline-offset-1 focus:outline-gold">
+      </div>
+      <div class="mt-4 flex flex-col gap-2 sm:flex-row sm:items-end">
+        <div class="flex-1">
+          <label class="rule-label" for="duel-code">Code du duel</label>
+          <input id="duel-code" type="text" maxlength="6" autocapitalize="characters" autocomplete="off" spellcheck="false" placeholder="6 caractères"
+            class="figures mt-2 w-full rounded-cell border border-line bg-card px-3 py-2.5 text-[15px] tracking-[.2em] text-ink uppercase placeholder:tracking-normal placeholder:text-ink-soft focus:border-navy focus:outline-2 focus:outline-offset-1 focus:outline-gold">
+        </div>
+        <button class="btn" id="duel-join" type="button">Rejoindre</button>
+      </div>
+      <button class="link-button mt-3 text-[13px] text-navy" id="duel-create" type="button">Générer un code pour ce duel</button>`;
+    document.getElementById('duel-join').addEventListener('click', joinDuelFromForm);
+    document.getElementById('duel-create').addEventListener('click', ()=>{
+      document.getElementById('duel-code').value = newDuelCode();
+    });
+    document.getElementById('duel-code').addEventListener('keydown', ev=>{ if(ev.key==='Enter') joinDuelFromForm(); });
+    return;
+  }
+
+  const code = progress.duel.code;
+  const players = duelState.players || {};
+  const mine = players[progress.playerId] || duelPayload();
+  const otherId = Object.keys(players).find(id=>id !== progress.playerId);
+  const theirs = otherId ? players[otherId] : null;
+
+  status.textContent =
+    duelState.phase==='erreur' ? 'Synchronisation interrompue' :
+    duelState.phase==='connexion' ? 'Connexion…' :
+    theirs ? 'À jour' : 'En attente du binôme';
+
+  const head = `
+    <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+      <p class="text-[13.5px] text-ink-soft">Code du duel <span class="figures ml-1 rounded-cell border border-line bg-rule px-2 py-1 text-[14px] font-bold tracking-[.18em] text-ink">${esc(code)}</span></p>
+      <button class="link-button text-[13px] text-navy" id="duel-leave" type="button">Quitter le duel</button>
+    </div>`;
+
+  if(duelState.phase === 'erreur'){
+    body.innerHTML = head + `
+      <p class="mt-4 text-[13.5px] leading-relaxed text-red-deep">La synchronisation a échoué : ${esc(duelState.error || 'connexion impossible')}. Tes chiffres restent enregistrés sur cet appareil.</p>
+      <button class="btn secondary mt-4" id="duel-retry" type="button">Réessayer</button>`;
+    document.getElementById('duel-leave').addEventListener('click', duelLeave);
+    document.getElementById('duel-retry').addEventListener('click', ()=>{ duelRoom = null; duelConnect(); });
+    return;
+  }
+
+  if(!theirs){
+    body.innerHTML = head + `
+      <p class="mt-4 text-[13.5px] leading-relaxed text-ink">Transmets ce code à ton binôme : dès qu’il l’aura saisi, vos deux relevés apparaîtront ici côte à côte, mis à jour à chaque séance.</p>`;
+    document.getElementById('duel-leave').addEventListener('click', duelLeave);
+    return;
+  }
+
+  const bestTxt = b => b ? `${b.correct}/${b.total} · ${b.pct} %` : '—';
+  const cmp = (a,b)=> a===b ? -1 : (a>b ? 0 : 1);
+  const rows = [
+    statLine('Meilleur score', bestTxt(mine.best), bestTxt(theirs.best), cmp(mine.best?mine.best.pct:-1, theirs.best?theirs.best.pct:-1)),
+    statLine('Série en cours', `${mine.streak} j`, `${theirs.streak} j`, cmp(mine.streak, theirs.streak)),
+    statLine('Plus longue série', `${mine.longest} j`, `${theirs.longest} j`, cmp(mine.longest, theirs.longest)),
+    statLine('Échelon', mine.echelon, theirs.echelon, cmp(mine.xp, theirs.xp)),
+    statLine('Séances', mine.sessions, theirs.sessions, cmp(mine.sessions, theirs.sessions)),
+    statLine('Bonnes réponses', mine.correct, theirs.correct, cmp(mine.correct, theirs.correct))
+  ].join('');
+
+  body.innerHTML = head + `
+    <table class="mt-4 w-full border-collapse">
+      <caption class="sr-only">Comparaison des deux carnets</caption>
+      <thead>
+        <tr>
+          <td></td>
+          <th scope="col" class="rule-label pb-2 pl-4 text-right">${esc(mine.name || 'Vous')} · vous</th>
+          <th scope="col" class="rule-label pb-2 pl-4 text-right">${esc(theirs.name || 'Binôme')}</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <p class="mt-3 text-[12.5px] text-ink-soft">Relevé de ton binôme mis à jour le ${esc(new Date(theirs.updatedAt || Date.now()).toLocaleString('fr-FR', {dateStyle:'short', timeStyle:'short'}))}.</p>`;
+  document.getElementById('duel-leave').addEventListener('click', duelLeave);
+}
+
+function joinDuelFromForm(){
+  const nameInput = document.getElementById('duel-name');
+  const codeInput = document.getElementById('duel-code');
+  const code = (codeInput.value || '').trim().toUpperCase();
+  if(!/^[A-Z0-9]{4,8}$/.test(code)){
+    codeInput.focus();
+    codeInput.classList.add('border-red');
+    return;
+  }
+  progress.name = (nameInput.value || '').trim().slice(0,24);
+  progress.duel.code = code;
+  saveProgress();
+  renderCarnet();
+  duelConnect();
+}
+
+/* ---- navigation vers le carnet ---- */
+function openCarnet(){
+  renderCarnet();
+  showScreen('progress');
+  duelConnect();
+}
+document.getElementById('btn-carnet-top').addEventListener('click', openCarnet);
+document.getElementById('btn-carnet').addEventListener('click', openCarnet);
+document.getElementById('btn-carnet-results').addEventListener('click', openCarnet);
+document.getElementById('btn-carnet-back').addEventListener('click', goHome);
+document.getElementById('btn-carnet-start').addEventListener('click', startExam);
+document.getElementById('btn-carnet-reset').addEventListener('click', ()=>{
+  if(!confirm('Effacer le carnet ? Série, points et tampons de cet appareil seront perdus.')) return;
+  duelLeave();
+  progress = defaultProgress();
+  saveProgress();
+  renderCarnetChip();
+  renderCarnet();
+});
+
+renderCarnetChip();
 </script>
 </body>
 </html>
