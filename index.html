@@ -1149,23 +1149,19 @@ document.getElementById('btn-finish').addEventListener('click', openFinishModal)
     setTimeout(()=> setX(0, true), 130);
   }
 
-  // anime la sortie de la carte actuelle, met à jour la question, puis anime l'entrée depuis le côté opposé
+  // remet la carte à plat puis se comporte exactement comme un clic sur Précédente/Suivante
   function completeSwipe(direction){
     const delta = direction < 0 ? 1 : -1; // swipe vers la gauche (direction<0) => question suivante
     const next = state.current + delta;
     if(next < 0 || next > state.questions.length-1){ bounce(direction); return; }
 
-    setX(direction * 60, true);
-    setTimeout(()=>{
-      // même chemin que les boutons Précédente/Suivante : stepQuestion() met à jour la
-      // question et gère le recentrage (scrollExamToTop(), déjà conditionnelle) exactement
-      // comme un clic sur un bouton — un swipe n'a pas à faire les choses différemment.
-      stepQuestion(delta);
-      setX(direction * -60, false); // repositionne instantanément de l'autre côté avant l'entrée
-      requestAnimationFrame(()=>{
-        requestAnimationFrame(()=> setX(0, true));
-      });
-    }, 180);
+    // pas d'animation de sortie/entrée ici, volontairement : sur iOS, le smooth-scroll de
+    // scrollExamToTop() (appelé par stepQuestion()) se coupait en cours de route quand une
+    // transition CSS tournait en même temps sur #question-card — la carte n'avait alors le
+    // temps de recentrer que "un peu". En supprimant toute animation concurrente au moment
+    // du changement de question, le swipe recentre aussi complètement qu'un clic sur un bouton.
+    setX(0, false);
+    stepQuestion(delta);
   }
 
   card.addEventListener('touchstart', (e)=>{
