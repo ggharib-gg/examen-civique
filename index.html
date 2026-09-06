@@ -1017,23 +1017,22 @@ function selectOption(i){
 // scrollIntoView + scroll-margin-top gère correctement le décalage de la barre sticky, y compris sur iOS Safari
 // (getBoundingClientRect() sur .exam-bar renverrait toujours top:0 une fois la barre "collée", donc inutilisable ici)
 // rAF laisse le DOM se mettre à jour avant de lancer le scroll (nécessaire sur iOS Safari)
-// behavior='instant' depuis le swipe : la carte a déjà sa propre animation d'entrée,
-// un smooth-scroll simultané créerait un double mouvement qui donne une impression de saccade
-function scrollExamToTop(behavior){
+// pas utilisée par le swipe : voir la note dans completeSwipe()
+function scrollExamToTop(){
   const card = document.getElementById('question-card');
   if(!card) return;
   requestAnimationFrame(()=>{
-    card.scrollIntoView({behavior: behavior || 'smooth', block:'start'});
+    card.scrollIntoView({behavior:'smooth', block:'start'});
   });
 }
 
 // déplace state.current de `delta` (-1 ou +1) si possible ; renvoie false si on est déjà à une extrémité
-function stepQuestion(delta, scrollBehavior){
+function stepQuestion(delta){
   const next = state.current + delta;
   if(next < 0 || next > state.questions.length-1) return false;
   state.current = next;
   renderQuestion();
-  scrollExamToTop(scrollBehavior);
+  scrollExamToTop();
   return true;
 }
 
@@ -1102,9 +1101,11 @@ document.getElementById('btn-finish').addEventListener('click', openFinishModal)
 
     setX(direction * 60, true);
     setTimeout(()=>{
-      // scroll instantané ici : la carte a déjà sa propre animation de glissement,
-      // un smooth-scroll simultané donnerait une impression de double mouvement / saccade
-      stepQuestion(delta, 'instant');
+      // pas de scrollExamToTop ici : un swipe ne peut démarrer que sur une carte déjà
+      // touchée par le doigt, donc déjà visible — forcer un scroll (même instantané) en
+      // plus de l'animation de la carte est ce qui secouait toute la page sur mobile
+      state.current += delta;
+      renderQuestion();
       setX(direction * -60, false); // repositionne instantanément de l'autre côté avant l'entrée
       requestAnimationFrame(()=>{
         requestAnimationFrame(()=> setX(0, true));
