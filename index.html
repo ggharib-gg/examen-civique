@@ -1062,15 +1062,21 @@ function selectOption(i){
   renderQuestion();
 }
 
-// ramène le haut de la question (sous la barre sticky) en haut de l'écran après un changement de question
+// ramène le haut de la question (sous la barre sticky) en haut de l'écran après un changement de question,
+// mais seulement si elle n'y est pas déjà : comme pour le swipe, un scroll forcé alors que la carte est
+// déjà bien positionnée (cas courant en cliquant Précédente/Suivante sans avoir bougé la page) produit un
+// petit à-coup inutile — surtout gênant sur mobile où le moindre scroll peut faire bouger la barre d'adresse.
 // scrollIntoView + scroll-margin-top gère correctement le décalage de la barre sticky, y compris sur iOS Safari
 // (getBoundingClientRect() sur .exam-bar renverrait toujours top:0 une fois la barre "collée", donc inutilisable ici)
-// rAF laisse le DOM se mettre à jour avant de lancer le scroll (nécessaire sur iOS Safari)
+// rAF laisse le DOM se mettre à jour avant de mesurer/lancer le scroll (nécessaire sur iOS Safari)
 // pas utilisée par le swipe : voir la note dans completeSwipe()
+const CARD_SCROLL_MARGIN = 100; // doit rester synchronisé avec le scroll-margin-top de #question-card
 function scrollExamToTop(){
   const card = document.getElementById('question-card');
   if(!card) return;
   requestAnimationFrame(()=>{
+    const top = card.getBoundingClientRect().top;
+    if(Math.abs(top - CARD_SCROLL_MARGIN) < 24) return; // déjà correctement centrée, rien à faire
     card.scrollIntoView({behavior:'smooth', block:'start'});
   });
 }
