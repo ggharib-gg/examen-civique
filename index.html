@@ -237,6 +237,8 @@
   }
   /* pendant le drag / le repositionnement instantané avant l'animation d'entrée : pas de transition */
   #question-card.swipe-instant{ transition:none; }
+  /* pendant l'interaction de swipe : force sa propre couche de composition (évite les saccades sur mobile) */
+  #question-card.swipe-active{ will-change:transform, opacity; }
   .exam-bar-row{display:flex; justify-content:space-between; align-items:center; gap:12px;}
   .qcount{font-family:var(--serif); font-size:15.5px; color:var(--ink-soft);}
   .qcount b{color:var(--ink); font-weight:700;}
@@ -1015,21 +1017,23 @@ function selectOption(i){
 // scrollIntoView + scroll-margin-top gère correctement le décalage de la barre sticky, y compris sur iOS Safari
 // (getBoundingClientRect() sur .exam-bar renverrait toujours top:0 une fois la barre "collée", donc inutilisable ici)
 // rAF laisse le DOM se mettre à jour avant de lancer le scroll (nécessaire sur iOS Safari)
-function scrollExamToTop(){
+// behavior='instant' depuis le swipe : la carte a déjà sa propre animation d'entrée,
+// un smooth-scroll simultané créerait un double mouvement qui donne une impression de saccade
+function scrollExamToTop(behavior){
   const card = document.getElementById('question-card');
   if(!card) return;
   requestAnimationFrame(()=>{
-    card.scrollIntoView({behavior:'smooth', block:'start'});
+    card.scrollIntoView({behavior: behavior || 'smooth', block:'start'});
   });
 }
 
 // déplace state.current de `delta` (-1 ou +1) si possible ; renvoie false si on est déjà à une extrémité
-function stepQuestion(delta){
+function stepQuestion(delta, scrollBehavior){
   const next = state.current + delta;
   if(next < 0 || next > state.questions.length-1) return false;
   state.current = next;
   renderQuestion();
-  scrollExamToTop();
+  scrollExamToTop(scrollBehavior);
   return true;
 }
 
@@ -1061,10 +1065,27 @@ document.getElementById('btn-finish').addEventListener('click', openFinishModal)
   let dx = 0;
   let axis = null; // null = pas encore déterminé, 'x' = swipe horizontal, 'y' = scroll vertical (laissé au navigateur)
 
+  // les écritures de style pendant le drag sont regroupées dans un seul rAF par frame :
+  // un touchmove par événement tactile brut serait plus fréquent que le taux de rafraîchissement
+  // de l'écran et donnerait une impression de saccade sur mobile
+  let rafId = null;
+  let pendingPx = 0;
+
   function setX(px, animate){
     card.classList.toggle('swipe-instant', !animate);
-    card.style.transform = px===0 ? '' : `translateX(${px}px)`;
+    // translate3d plutôt que translateX : force la carte sur sa propre couche de composition
+    // (device courant utile en particulier sur iOS Safari, sinon le drag peut saccader)
+    card.style.transform = px===0 ? '' : `translate3d(${px}px,0,0)`;
     card.style.opacity = px===0 ? '' : String(Math.max(1 - Math.abs(px)/220, 0.5));
+  }
+
+  function scheduleSetX(px){
+    pendingPx = px;
+    if(rafId !== null) return;
+    rafId = requestAnimationFrame(()=>{
+      rafId = null;
+      setX(pendingPx, false);
+    });
   }
 
   // petit rebond en cas de tentative de swipe au-delà de la première/dernière question
@@ -1081,7 +1102,9 @@ document.getElementById('btn-finish').addEventListener('click', openFinishModal)
 
     setX(direction * 60, true);
     setTimeout(()=>{
-      stepQuestion(delta);
+      // scroll instantané ici : la carte a déjà sa propre animation de glissement,
+      // un smooth-scroll simultané donnerait une impression de double mouvement / saccade
+      stepQuestion(delta, 'instant');
       setX(direction * -60, false); // repositionne instantanément de l'autre côté avant l'entrée
       requestAnimationFrame(()=>{
         requestAnimationFrame(()=> setX(0, true));
@@ -1094,6 +1117,7 @@ document.getElementById('btn-finish').addEventListener('click', openFinishModal)
     const t = e.touches[0];
     touchId = t.identifier;
     startX = t.clientX; startY = t.clientY; dx = 0; axis = null;
+    card.classList.add('swipe-active');
   }, {passive:true});
 
   card.addEventListener('touchmove', (e)=>{
@@ -1111,10 +1135,12 @@ document.getElementById('btn-finish').addEventListener('click', openFinishModal)
 
     e.preventDefault(); // geste horizontal confirmé : on bloque le scroll natif pour ce doigt
     dx = curDx;
-    setX(Math.max(-140, Math.min(140, dx*0.9)), false);
+    scheduleSetX(Math.max(-140, Math.min(140, dx*0.9)));
   }, {passive:false});
 
   function onTouchEnd(){
+    card.classList.remove('swipe-active');
+    if(rafId !== null){ cancelAnimationFrame(rafId); rafId = null; }
     if(touchId===null) return;
     if(axis === 'x'){
       if(Math.abs(dx) >= SWIPE_THRESHOLD){
