@@ -68,7 +68,9 @@
     --surface-fail:#251815;
   }
 
-  *{box-sizing:border-box;}
+  /* évite le halo bleu de tap par défaut sur iOS/WebKit, qui pouvait rester "collé" sur une
+     option après un swipe/changement de question (rien à voir avec .selected/.correct) */
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
   html,body{margin:0;padding:0;}
   body{
     font-family:var(--sans);
@@ -91,15 +93,12 @@
     border-radius:50px; padding:8px 16px; cursor:pointer; font-size:13px; font-family:var(--sans); font-weight:700;
     box-shadow:var(--shadow);
   }
-  .home-btn:hover{border-color:var(--navy); color:var(--navy);}
-
   .theme-toggle{
     display:inline-flex; align-items:center; gap:8px;
     border:1px solid var(--line); background:var(--card); color:var(--ink);
     border-radius:50px; padding:8px 16px; cursor:pointer; font-size:13px; font-family:var(--sans); font-weight:700;
     flex:none; box-shadow:var(--shadow);
   }
-  .theme-toggle:hover{border-color:var(--navy); color:var(--navy);}
   .theme-toggle .icon{font-size:14px;}
 
   .sheet{
@@ -189,7 +188,6 @@
     display:flex; justify-content:space-between; align-items:center; gap:10px;
     box-shadow:var(--shadow);
   }
-  .mode-card:hover{border-color:var(--navy); box-shadow:var(--shadow-lift);}
   .mode-card.selected{border-color:var(--navy); background:var(--surface-selected);}
   .mode-card .mc-title{font-weight:700; font-size:15.5px;}
   .mode-card .mc-sub{font-size:12.5px; color:var(--ink-soft); margin-top:3px;}
@@ -209,16 +207,13 @@
     box-shadow:0 2px 8px rgba(18,35,58,.22);
   }
   .home-btn, .theme-toggle, .flag-btn, .chip, .qmap button, .mode-card, button.btn{cursor:pointer;}
-  button.btn:hover{background:var(--navy-deep); box-shadow:0 4px 14px rgba(18,35,58,.28);}
   button.btn:active{transform:translateY(1px);}
   button.btn.secondary{
     background:transparent; color:var(--navy); border:1.5px solid var(--navy); box-shadow:none;
   }
-  button.btn.secondary:hover{background:var(--surface-selected);}
   button.btn:disabled{opacity:.4; cursor:not-allowed;}
   button.btn.full{width:100%;}
   button.btn.danger{background:var(--red); box-shadow:0 2px 8px rgba(140,44,34,.22);}
-  button.btn.danger:hover{background:var(--red-deep);}
 
   .start-actions{display:flex; gap:12px; margin-top:20px; flex-wrap:wrap;}
 
@@ -274,7 +269,6 @@
     cursor:pointer; background:var(--card); transition:border-color .12s, background .12s, box-shadow .12s;
     font-size:15px;
   }
-  .option:hover{border-color:var(--navy); box-shadow:var(--shadow);}
   .option.selected{border-color:var(--navy); background:var(--surface-selected);}
   .option .letter{
     font-family:var(--serif); font-weight:700; color:var(--ink-soft);
@@ -312,7 +306,6 @@
     font-size:12px; font-family:var(--sans); font-weight:600; color:var(--ink-soft); cursor:pointer;
     transition:border-color .12s, background .12s;
   }
-  .qmap button:hover{border-color:var(--navy);}
   .qmap button.answered{border-color:var(--navy); color:var(--navy); background:var(--surface-selected); font-weight:700;}
   .qmap button.current{outline:2px solid var(--gold); outline-offset:1px;}
   .qmap button.flagged{border-color:var(--gold);}
@@ -349,7 +342,6 @@
     background:var(--card); cursor:pointer; color:var(--ink-soft); font-family:var(--sans); font-weight:600;
     transition:border-color .12s, background .12s, color .12s;
   }
-  .chip:hover{border-color:var(--navy);}
   .chip.active{border-color:var(--navy); color:var(--navy); background:var(--surface-selected); font-weight:700;}
 
   .review-item{
@@ -420,6 +412,22 @@
   footer.credits{
     margin-top:40px; padding-top:16px; border-top:1px solid var(--line);
     font-size:11.5px; color:var(--ink-soft); text-align:center; line-height:1.6;
+  }
+
+  /* :hover uniquement pour les appareils avec un vrai pointeur (souris) : sur tactile (iOS en
+     particulier), l'appareil simule :hover au toucher mais ne le "relâche" jamais proprement,
+     ce qui pouvait laisser une option (ou un autre élément) visuellement en surbrillance après
+     un swipe ou un changement de question, sans rapport avec .selected/.correct/.incorrect. */
+  @media (hover:hover) and (pointer:fine){
+    .home-btn:hover{border-color:var(--navy); color:var(--navy);}
+    .theme-toggle:hover{border-color:var(--navy); color:var(--navy);}
+    .mode-card:hover{border-color:var(--navy); box-shadow:var(--shadow-lift);}
+    button.btn:hover{background:var(--navy-deep); box-shadow:0 4px 14px rgba(18,35,58,.28);}
+    button.btn.secondary:hover{background:var(--surface-selected);}
+    button.btn.danger:hover{background:var(--red-deep);}
+    .option:hover{border-color:var(--navy); box-shadow:var(--shadow);}
+    .qmap button:hover{border-color:var(--navy);}
+    .chip:hover{border-color:var(--navy);}
   }
 </style>
 </head>
@@ -1062,15 +1070,22 @@ function selectOption(i){
   renderQuestion();
 }
 
-// ramène le haut de la question (sous la barre sticky) en haut de l'écran après un changement de question
+// ramène le haut de la question (sous la barre sticky) en haut de l'écran après un changement de question,
+// mais seulement si elle n'y est pas déjà : un scroll forcé alors que la carte est déjà bien positionnée
+// (cas courant : boutons Précédente/Suivante sans avoir bougé la page, ou un swipe démarré sur une carte
+// déjà pleinement visible) produit un petit à-coup inutile — surtout gênant sur mobile où le moindre scroll
+// peut faire bouger la barre d'adresse. Utilisée par les boutons, le plan des questions ET le swipe (dans
+// ce dernier cas seulement utile quand le doigt a touché une carte partiellement hors écran).
 // scrollIntoView + scroll-margin-top gère correctement le décalage de la barre sticky, y compris sur iOS Safari
 // (getBoundingClientRect() sur .exam-bar renverrait toujours top:0 une fois la barre "collée", donc inutilisable ici)
-// rAF laisse le DOM se mettre à jour avant de lancer le scroll (nécessaire sur iOS Safari)
-// pas utilisée par le swipe : voir la note dans completeSwipe()
+// rAF laisse le DOM se mettre à jour avant de mesurer/lancer le scroll (nécessaire sur iOS Safari)
+const CARD_SCROLL_MARGIN = 100; // doit rester synchronisé avec le scroll-margin-top de #question-card
 function scrollExamToTop(){
   const card = document.getElementById('question-card');
   if(!card) return;
   requestAnimationFrame(()=>{
+    const top = card.getBoundingClientRect().top;
+    if(Math.abs(top - CARD_SCROLL_MARGIN) < 24) return; // déjà correctement centrée, rien à faire
     card.scrollIntoView({behavior:'smooth', block:'start'});
   });
 }
@@ -1142,24 +1157,19 @@ document.getElementById('btn-finish').addEventListener('click', openFinishModal)
     setTimeout(()=> setX(0, true), 130);
   }
 
-  // anime la sortie de la carte actuelle, met à jour la question, puis anime l'entrée depuis le côté opposé
+  // remet la carte à plat puis se comporte exactement comme un clic sur Précédente/Suivante
   function completeSwipe(direction){
     const delta = direction < 0 ? 1 : -1; // swipe vers la gauche (direction<0) => question suivante
     const next = state.current + delta;
     if(next < 0 || next > state.questions.length-1){ bounce(direction); return; }
 
-    setX(direction * 60, true);
-    setTimeout(()=>{
-      // pas de scrollExamToTop ici : un swipe ne peut démarrer que sur une carte déjà
-      // touchée par le doigt, donc déjà visible — forcer un scroll (même instantané) en
-      // plus de l'animation de la carte est ce qui secouait toute la page sur mobile
-      state.current += delta;
-      renderQuestion();
-      setX(direction * -60, false); // repositionne instantanément de l'autre côté avant l'entrée
-      requestAnimationFrame(()=>{
-        requestAnimationFrame(()=> setX(0, true));
-      });
-    }, 180);
+    // pas d'animation de sortie/entrée ici, volontairement : sur iOS, le smooth-scroll de
+    // scrollExamToTop() (appelé par stepQuestion()) se coupait en cours de route quand une
+    // transition CSS tournait en même temps sur #question-card — la carte n'avait alors le
+    // temps de recentrer que "un peu". En supprimant toute animation concurrente au moment
+    // du changement de question, le swipe recentre aussi complètement qu'un clic sur un bouton.
+    setX(0, false);
+    stepQuestion(delta);
   }
 
   card.addEventListener('touchstart', (e)=>{
