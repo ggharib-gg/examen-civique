@@ -121,6 +121,10 @@
   .masthead-top{
     display:flex; justify-content:space-between; align-items:flex-start; gap:12px;
   }
+  @media (max-width:480px){
+    .masthead-top{ flex-wrap:wrap; }
+    .masthead-top .top-actions{ width:100%; justify-content:flex-end; margin-top:10px; }
+  }
   .masthead-eyebrow{
     font-size:11px; letter-spacing:.06em; color:var(--ink-soft); font-family:var(--sans); font-weight:700; text-transform:uppercase;
   }
@@ -128,12 +132,17 @@
     font-family:var(--serif);
     font-weight:600;
     font-size:clamp(30px,7vw,40px);
+    line-height:1.15;
     margin:6px 0 8px;
     color:var(--navy-deep);
     letter-spacing:-.01em;
   }
   .subtitle{
-    font-size:14.5px; color:var(--ink-soft); font-style:italic; font-family:var(--serif);
+    font-size:14.5px; line-height:1.5; color:var(--ink-soft); font-style:italic; font-family:var(--serif);
+  }
+  @media (max-width:480px){
+    h1.title{ font-size:26px; line-height:1.2; letter-spacing:-.005em; }
+    .subtitle{ font-size:13px; line-height:1.5; }
   }
   .ref-line{
     margin-top:14px; font-size:11.5px; color:var(--ink-soft); line-height:1.55;
@@ -641,6 +650,7 @@ const BANK = [
 {theme:'histoire', type:'connaissance', q:"Quelle organisation Charles de Gaulle dirige-t-il depuis Londres pendant la Seconde Guerre mondiale ?", o:["La France libre","Le Conseil national de la Résistance","La SFIO","Le Front populaire"], a:0, e:"Depuis l'appel du 18 juin 1940, de Gaulle organise la France libre depuis Londres."},
 {theme:'histoire', type:'connaissance', q:"En quelle année la Seconde Guerre mondiale se termine-t-elle en Europe ?", o:["1943","1944","1945","1946"], a:2, e:"L'Allemagne nazie capitule le 8 mai 1945."},
 {theme:'histoire', type:'connaissance', q:"Qui est l'auteur des paroles et de la musique de « La Marseillaise » ?", o:["Claude Joseph Rouget de Lisle","Hector Berlioz","Victor Hugo","Georges Bizet"], a:0, e:"Rouget de Lisle compose ce chant à Strasbourg en 1792."},
+{theme:'histoire', type:'connaissance', q:"Dans quelle ville « La Marseillaise » a-t-elle été composée en 1792 ?", o:["Strasbourg","Marseille","Paris","Lyon"], a:0, e:"Rouget de Lisle compose ce chant de guerre à Strasbourg ; il devient populaire en France après avoir été chanté par des volontaires venus de Marseille, d'où son nom."},
 {theme:'histoire', type:'connaissance', q:"En quelle année la loi sur la séparation des Églises et de l'État est-elle votée ?", o:["1882","1905","1946","1958"], a:1, e:"La loi du 9 décembre 1905 fonde le principe de laïcité en France."},
 {theme:'histoire', type:'connaissance', q:"Quel mouvement social majeur marque la France en mai 1968 ?", o:["La Commune de Paris","Mai 68","Le Front populaire","La Résistance"], a:1, e:"Mai 68 est un vaste mouvement étudiant et social qui transforme la société française."},
 {theme:'histoire', type:'connaissance', q:"En quelle année la peine de mort est-elle abolie en France ?", o:["1969","1975","1981","1990"], a:2, e:"La peine de mort est abolie le 9 octobre 1981, sous l'impulsion de Robert Badinter."},
