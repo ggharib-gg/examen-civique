@@ -229,6 +229,8 @@
     border-bottom:1px solid var(--line);
     margin-bottom:24px;
   }
+  /* laisse de la place sous la barre sticky quand #question-card est amenée en haut de vue */
+  #question-card{ scroll-margin-top:100px; }
   .exam-bar-row{display:flex; justify-content:space-between; align-items:center; gap:12px;}
   .qcount{font-family:var(--serif); font-size:15.5px; color:var(--ink-soft);}
   .qcount b{color:var(--ink); font-weight:700;}
@@ -282,6 +284,11 @@
     display:flex; justify-content:space-between; align-items:center; margin-top:28px; gap:10px; flex-wrap:wrap;
   }
   .nav-row .right-group{display:flex; gap:10px;}
+  @media (max-width:480px){
+    .nav-row{ flex-direction:column; align-items:stretch; }
+    .nav-row .right-group{ flex-direction:column; width:100%; }
+    .nav-row button.btn{ width:100%; }
+  }
 
   .flagbar{margin-top:16px;}
   .flag-btn{
@@ -998,16 +1005,28 @@ function selectOption(i){
   renderQuestion();
 }
 
+// ramène le haut de la question (sous la barre sticky) en haut de l'écran après un changement de question
+// scrollIntoView + scroll-margin-top gère correctement le décalage de la barre sticky, y compris sur iOS Safari
+// (getBoundingClientRect() sur .exam-bar renverrait toujours top:0 une fois la barre "collée", donc inutilisable ici)
+// rAF laisse le DOM se mettre à jour avant de lancer le scroll (nécessaire sur iOS Safari)
+function scrollExamToTop(){
+  const card = document.getElementById('question-card');
+  if(!card) return;
+  requestAnimationFrame(()=>{
+    card.scrollIntoView({behavior:'smooth', block:'start'});
+  });
+}
+
 document.getElementById('flag-btn').addEventListener('click', ()=>{
   state.flagged[state.current] = !state.flagged[state.current];
   renderQuestion();
 });
 
 document.getElementById('btn-prev').addEventListener('click', ()=>{
-  if(state.current>0){ state.current--; renderQuestion(); }
+  if(state.current>0){ state.current--; renderQuestion(); scrollExamToTop(); }
 });
 document.getElementById('btn-next').addEventListener('click', ()=>{
-  if(state.current < state.questions.length-1){ state.current++; renderQuestion(); }
+  if(state.current < state.questions.length-1){ state.current++; renderQuestion(); scrollExamToTop(); }
   else { openFinishModal(); }
 });
 document.getElementById('btn-finish').addEventListener('click', openFinishModal);
@@ -1019,7 +1038,7 @@ function buildQMap(){
   state.questions.forEach((_,i)=>{
     const b = document.createElement('button');
     b.textContent = i+1;
-    b.addEventListener('click', ()=>{ state.current=i; renderQuestion(); });
+    b.addEventListener('click', ()=>{ state.current=i; renderQuestion(); scrollExamToTop(); });
     map.appendChild(b);
   });
 }
