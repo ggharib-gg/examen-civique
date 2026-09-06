@@ -4,611 +4,584 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Examen Civique — Simulation officielle</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#14335E">
+<link rel="preload" href="archivo.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+  /* Archivo variable (axes wdth + wght), auto-hébergée : la police d'affiche est
+     là au premier rendu, sans passage par une police système. */
+  @font-face{
+    font-family:'Archivo';
+    font-style:normal;
+    font-weight:400 900;
+    font-stretch:75% 125%;
+    font-display:swap;
+    src:url(archivo.woff2) format('woff2');
+  }
+</style>
+
+<!-- Tailwind v4, build navigateur : toute la mise en forme passe par lui. -->
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style type="text/tailwindcss">
+  @import "tailwindcss";
+
+  /* le thème sombre est porté par html[data-theme="dark"] */
+  @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+  /* ------------------------------------------------------------------
+     L'AFFICHE — encres plates d'affiche française (Cassandre, Savignac).
+     Les encres ne changent pas d'un thème à l'autre : ce sont les encres
+     de l'affiche. Seuls le papier et le texte courant basculent.
+     ------------------------------------------------------------------ */
   :root{
-    --paper:#F6F7F5;
-    --paper-2:#ECEEEA;
-    --ink:#161A22;
-    --ink-soft:#5B6472;
-    --navy:#1E3A5F;
-    --navy-deep:#12233A;
-    --red:#B23A2E;
-    --red-deep:#8C2C22;
-    --gold:#9C7A2E;
-    --green:#2E7D4F;
-    --rule-h:#DDE1E6;
-    --rule-v:#C9A6A0;
-    --line:#E2E4E1;
-    --card:#FFFFFF;
-    --shadow: 0 1px 2px rgba(18,23,35,.05), 0 2px 8px rgba(18,23,35,.04);
-    --shadow-lift: 0 6px 20px rgba(18,23,35,.08), 0 2px 6px rgba(18,23,35,.05);
-    --radius: 10px;
-    --radius-sm: 6px;
-    --serif: 'EB Garamond', Georgia, 'Iowan Old Style', 'Times New Roman', serif;
-    --sans: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    --surface-selected:#EAF1F8;
-    --surface-success:#E8F5EC;
-    --surface-success-strong:#DEF0E5;
-    --surface-danger:#FBEAE8;
-    --surface-danger-strong:#F8E1DE;
-    --surface-tag:#E7ECF3;
-    --surface-tag-danger:#F5E4E1;
-    --surface-pass:#EDF7F0;
-    --surface-fail:#FCF0EE;
+    --ground:#F3EBDA;
+    --ground-2:#E7DCC4;
+    --panel:#FFFAEF;
+    --ink:#15181D;
+    --ink-soft:#6B6555;
+    --line:#D9CDB3;
+    --seal-ink:#14335E;
+  }
+  [data-theme="dark"]{
+    --ground:#060D16;
+    --ground-2:#0C1726;
+    --panel:#101F33;
+    --ink:#F2EADB;
+    --ink-soft:#9FB0C4;
+    --line:#223854;
+    --seal-ink:#6E9EDD;
   }
 
-  html[data-theme="dark"]{
-    --paper:#11141B;
-    --paper-2:#181C25;
-    --ink:#E7E9EE;
-    --ink-soft:#99A1B0;
-    --navy:#7FA8D9;
-    --navy-deep:#AAC7EB;
-    --red:#E28880;
-    --red-deep:#EEA79F;
-    --gold:#D8B968;
-    --green:#7FCB9C;
-    --rule-h:#272C37;
-    --rule-v:#4A3A38;
-    --line:#272C37;
-    --card:#181C25;
-    --shadow: 0 1px 2px rgba(0,0,0,.35), 0 2px 10px rgba(0,0,0,.3);
-    --shadow-lift: 0 10px 26px rgba(0,0,0,.42), 0 2px 8px rgba(0,0,0,.3);
-    --surface-selected:#1E2A3D;
-    --surface-success:#16261D;
-    --surface-success-strong:#1B3125;
-    --surface-danger:#301E1C;
-    --surface-danger-strong:#3A2320;
-    --surface-tag:#1B2434;
-    --surface-tag-danger:#33201D;
-    --surface-pass:#141F18;
-    --surface-fail:#251815;
+  @theme{
+    --color-ground: var(--ground);
+    --color-ground-2: var(--ground-2);
+    --color-panel: var(--panel);
+    --color-ink: var(--ink);
+    --color-ink-soft: var(--ink-soft);
+    --color-line: var(--line);
+
+    --color-nuit:#14335E;
+    --color-nuit-deep:#0B1F3B;
+    --color-nuit-clair:#5C8FD6;
+    --color-vermillon:#E1432D;
+    --color-vermillon-deep:#B82F1C;
+    --color-vermillon-clair:#FF7F68;
+    --color-or:#F2B417;
+    --color-or-deep:#8A6207;
+    --color-vert:#1F6B4A;
+    --color-vert-clair:#5FC393;
+    --color-creme:#F7F1E4;
+
+    --font-sans:'Archivo', system-ui, -apple-system, sans-serif;
+    --radius-bloc: 2px;
+    --ease-affiche: cubic-bezier(.2,.9,.25,1);
   }
 
-  /* évite le halo bleu de tap par défaut sur iOS/WebKit, qui pouvait rester "collé" sur une
-     option après un swipe/changement de question (rien à voir avec .selected/.correct) */
-  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-  html,body{margin:0;padding:0;}
   body{
-    font-family:var(--sans);
+    background:var(--ground);
     color:var(--ink);
-    background:var(--paper);
-    min-height:100vh;
+    font-family:'Archivo', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
-    line-height:1.6;
+    -webkit-tap-highlight-color:transparent;
+    overflow-x:clip;
     transition:background-color .2s ease, color .2s ease;
   }
-  .card, .option, .flip-face, .mode-card, .timer, .chip, .theme-tag, .verdict, .review-item, .exam-bar, .qmap button{
-    transition:background-color .2s ease, border-color .2s ease, color .2s ease, box-shadow .2s ease;
+  ::selection{ background:var(--color-or); color:#15181D; }
+  :focus-visible{ outline:3px solid var(--color-or); outline-offset:2px; }
+  html{ scrollbar-color: var(--color-nuit) var(--ground-2); }
+
+  /* lettrage d'affiche : large, lourd, capitales */
+  @utility affiche{
+    font-weight:900;
+    font-stretch:122%;
+    text-transform:uppercase;
+    letter-spacing:-.012em;
+    line-height:.94;
+  }
+  /* libellé de bandeau, toujours court */
+  @utility libelle{
+    font-weight:800;
+    font-stretch:110%;
+    text-transform:uppercase;
+    letter-spacing:.09em;
+    font-size:11.5px;
+    line-height:1.35;
+  }
+  @utility figures{ font-variant-numeric: tabular-nums; }
+
+  /* aplat d'encre débordant sur toute la largeur de la fenêtre, texte gardé
+     dans la mesure de 760px. body{overflow-x:clip} absorbe la largeur de barre de
+     défilement que 50vw ignore — surtout pas overflow-x:hidden, qui ferait du body
+     un conteneur de défilement et décrocherait la barre collante de l'examen. */
+  @utility bleed{
+    margin-inline: calc(50% - 50vw);
+    padding-inline: max(20px, calc(50vw - 380px));
+    width: 100vw;
   }
 
-  .top-actions{display:flex; align-items:center; gap:8px; flex:none; flex-wrap:wrap; justify-content:flex-end;}
-  .home-btn{
-    display:inline-flex; align-items:center; gap:6px;
-    border:1px solid var(--line); background:var(--card); color:var(--ink);
-    border-radius:50px; padding:8px 16px; cursor:pointer; font-size:13px; font-family:var(--sans); font-weight:700;
-    box-shadow:var(--shadow);
+  /* ---- boutons ---- */
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
+    font-family:inherit; font-weight:800; font-stretch:108%; font-size:15px;
+    letter-spacing:.02em; padding:15px 22px; border:0; border-radius:var(--radius-bloc);
+    background:var(--color-nuit); color:var(--color-creme); cursor:pointer;
+    transition:background-color .15s var(--ease-affiche), transform .06s linear, color .15s;
   }
-  .theme-toggle{
-    display:inline-flex; align-items:center; gap:8px;
-    border:1px solid var(--line); background:var(--card); color:var(--ink);
-    border-radius:50px; padding:8px 16px; cursor:pointer; font-size:13px; font-family:var(--sans); font-weight:700;
-    flex:none; box-shadow:var(--shadow);
-  }
-  .theme-toggle .icon{font-size:14px;}
-
-  .sheet{
-    max-width:720px;
-    margin:0 auto;
-    min-height:100vh;
-    position:relative;
-    padding:0 24px 64px 32px;
-    border-left:3px solid var(--rule-v);
-  }
-  @media (min-width:520px){
-    .sheet{padding:0 48px 80px 52px;}
-  }
-
-  header.masthead{
-    padding:32px 0 20px;
-    border-bottom:2px solid var(--ink);
-  }
-  .masthead-top{
-    display:flex; justify-content:space-between; align-items:flex-start; gap:12px;
-  }
-  @media (max-width:480px){
-    .masthead-top{ flex-wrap:wrap; }
-    .masthead-top .top-actions{ width:100%; justify-content:flex-end; margin-top:10px; }
-  }
-  .masthead-eyebrow{
-    font-size:11px; letter-spacing:.06em; color:var(--ink-soft); font-family:var(--sans); font-weight:700; text-transform:uppercase;
-  }
-  h1.title{
-    font-family:var(--serif);
-    font-weight:600;
-    font-size:clamp(30px,7vw,40px);
-    line-height:1.15;
-    margin:6px 0 8px;
-    color:var(--navy-deep);
-    letter-spacing:-.01em;
-  }
-  .subtitle{
-    font-size:14.5px; line-height:1.5; color:var(--ink-soft); font-style:italic; font-family:var(--serif);
-  }
-  @media (max-width:480px){
-    h1.title{ font-size:26px; line-height:1.2; letter-spacing:-.005em; }
-    .subtitle{ font-size:13px; line-height:1.5; }
-  }
-  .ref-line{
-    margin-top:14px; font-size:11.5px; color:var(--ink-soft); line-height:1.55;
-    border-top:1px solid var(--line); padding-top:10px;
-  }
-
-  main{padding-top:28px;}
-
-  /* ---- Cards / generic ---- */
-  .card{
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    padding:26px;
-    margin-bottom:20px;
-    box-shadow:var(--shadow);
-  }
-  .card h2{
-    font-family:var(--serif); font-weight:600; font-size:22px; margin:0 0 14px; color:var(--navy-deep);
-  }
-  .card p{margin:0 0 12px; color:var(--ink);}
-  .fineprint{font-size:13px; color:var(--ink-soft); line-height:1.6;}
-
-  /* ---- Start screen ---- */
-  .rules-grid{
-    display:grid; grid-template-columns:1fr 1fr; gap:14px 20px; margin:18px 0;
-  }
-  @media (max-width:420px){ .rules-grid{grid-template-columns:1fr;} }
-  .rule-item{
-    display:flex; gap:12px; align-items:flex-start; font-size:14px;
-  }
-  .rule-item .num{
-    font-family:var(--serif); font-weight:600; font-size:21px; color:var(--red-deep); min-width:26px;
-  }
-  .rule-item .lbl{color:var(--ink-soft); display:block; font-size:11.5px; text-transform:uppercase; letter-spacing:.05em; font-weight:700;}
-  .rule-item .val{font-weight:600;}
-
-  .mode-choice{
-    display:grid; gap:12px; margin:18px 0 8px;
-  }
-  .mode-card{
-    border:1px solid var(--line); background:var(--card); border-radius:var(--radius);
-    padding:16px 18px; cursor:pointer; transition:border-color .15s, background .15s, box-shadow .15s;
-    display:flex; justify-content:space-between; align-items:center; gap:10px;
-    box-shadow:var(--shadow);
-  }
-  .mode-card.selected{border-color:var(--navy); background:var(--surface-selected);}
-  .mode-card .mc-title{font-weight:700; font-size:15.5px;}
-  .mode-card .mc-sub{font-size:12.5px; color:var(--ink-soft); margin-top:3px;}
-  .mode-card .mc-radio{
-    width:18px; height:18px; border-radius:50%; border:2px solid var(--ink-soft); flex:none;
-    position:relative;
-  }
-  .mode-card.selected .mc-radio{border-color:var(--navy);}
-  .mode-card.selected .mc-radio::after{
-    content:''; position:absolute; inset:3px; background:var(--navy); border-radius:50%;
-  }
-
-  button.btn{
-    font-family:var(--sans); font-size:15px; font-weight:700; letter-spacing:.01em;
-    padding:14px 24px; border-radius:var(--radius); border:none; cursor:pointer;
-    background:var(--navy); color:#fff; transition:background .15s, transform .05s, box-shadow .15s;
-    box-shadow:0 2px 8px rgba(18,35,58,.22);
-  }
-  .home-btn, .theme-toggle, .flag-btn, .chip, .qmap button, .mode-card, button.btn{cursor:pointer;}
-  button.btn:active{transform:translateY(1px);}
-  button.btn.secondary{
-    background:transparent; color:var(--navy); border:1.5px solid var(--navy); box-shadow:none;
-  }
-  button.btn:disabled{opacity:.4; cursor:not-allowed;}
-  button.btn.full{width:100%;}
-  button.btn.danger{background:var(--red); box-shadow:0 2px 8px rgba(140,44,34,.22);}
-
-  .start-actions{display:flex; gap:12px; margin-top:20px; flex-wrap:wrap;}
-
-  /* ---- Exam top bar ---- */
-  .exam-bar{
-    position:sticky; top:0; z-index:5;
-    background:var(--paper); padding:16px 0 12px;
-    border-bottom:1px solid var(--line);
-    margin-bottom:24px;
-  }
-  /* laisse de la place sous la barre sticky quand #question-card est amenée en haut de vue */
-  #question-card{
-    scroll-margin-top:100px;
-    transition:background-color .2s ease, border-color .2s ease, color .2s ease, box-shadow .2s ease, transform .18s ease, opacity .18s ease;
-    touch-action:pan-y; /* laisse le scroll vertical natif ; le swipe horizontal est géré en JS */
-  }
-  /* pendant le drag / le repositionnement instantané avant l'animation d'entrée : pas de transition */
-  #question-card.swipe-instant{ transition:none; }
-  /* pendant l'interaction de swipe : force sa propre couche de composition (évite les saccades sur mobile) */
-  #question-card.swipe-active{ will-change:transform, opacity; }
-  .exam-bar-row{display:flex; justify-content:space-between; align-items:center; gap:12px;}
-  .qcount{font-family:var(--serif); font-size:15.5px; color:var(--ink-soft);}
-  .qcount b{color:var(--ink); font-weight:700;}
-  .timer{
-    font-family:var(--serif); font-size:20px; font-weight:700;
-    border:1.5px solid var(--ink); border-radius:50px; padding:5px 18px;
-    letter-spacing:.02em; color:var(--navy-deep); background:var(--card);
-    min-width:84px; text-align:center; box-shadow:var(--shadow);
-  }
-  .timer.warn{border-color:var(--red); color:var(--red-deep); animation:pulse 1s infinite;}
-  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.55;}}
-  .progress-track{
-    height:6px; background:var(--paper-2); border-radius:3px; margin-top:12px; overflow:hidden;
-  }
-  .progress-fill{
-    height:100%; background:var(--navy); border-radius:3px; transition:width .25s ease;
-  }
-
-  /* ---- Question ---- */
-  .theme-tag{
-    display:inline-block; font-size:11px; text-transform:uppercase; letter-spacing:.06em;
-    color:var(--navy); background:var(--surface-tag); padding:4px 11px; border-radius:20px; margin-bottom:16px;
-    font-family:var(--sans); font-weight:700;
-  }
-  .theme-tag.situation{color:var(--red-deep); background:var(--surface-tag-danger);}
-  .question-text{
-    font-family:var(--serif); font-weight:500; font-size:clamp(19px,4.4vw,22px); line-height:1.45; margin:0 0 22px; color:var(--ink);
-  }
-  .options{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px;}
-  .option{
-    display:flex; align-items:flex-start; gap:14px;
-    border:1.5px solid var(--line); border-radius:var(--radius); padding:14px 16px;
-    cursor:pointer; background:var(--card); transition:border-color .12s, background .12s, box-shadow .12s;
-    font-size:15px;
-  }
-  .option.selected{border-color:var(--navy); background:var(--surface-selected);}
-  .option .letter{
-    font-family:var(--serif); font-weight:700; color:var(--ink-soft);
-    border:1.5px solid var(--ink-soft); border-radius:50%; width:26px; height:26px;
-    display:flex; align-items:center; justify-content:center; font-size:13px; flex:none;
-  }
-  .option.selected .letter{border-color:var(--navy); color:#fff; background:var(--navy);}
-
-  .option.correct{border-color:var(--green); background:var(--surface-success);}
-  .option.correct .letter{border-color:var(--green); background:var(--green); color:#fff;}
-  .option.incorrect{border-color:var(--red); background:var(--surface-danger);}
-  .option.incorrect .letter{border-color:var(--red); background:var(--red); color:#fff;}
-
-  .nav-row{
-    display:flex; justify-content:space-between; align-items:center; margin-top:28px; gap:10px; flex-wrap:wrap;
-  }
-  .nav-row .right-group{display:flex; gap:10px;}
-  @media (max-width:480px){
-    .nav-row{ flex-direction:column; align-items:stretch; }
-    .nav-row .right-group{ flex-direction:column; width:100%; }
-    .nav-row button.btn{ width:100%; }
-  }
-
-  .flagbar{margin-top:16px;}
-  .flag-btn{
-    background:none; border:none; color:var(--ink-soft); font-size:12.5px; cursor:pointer;
-    text-decoration:underline; padding:0; font-family:var(--sans);
-  }
-  .flag-btn.on{color:var(--gold); font-weight:700;}
-
-  /* ---- Question map ---- */
-  .qmap{display:flex; flex-wrap:wrap; gap:7px; margin-top:8px;}
-  .qmap button{
-    width:32px; height:32px; border-radius:var(--radius-sm); border:1.5px solid var(--line); background:var(--card);
-    font-size:12px; font-family:var(--sans); font-weight:600; color:var(--ink-soft); cursor:pointer;
-    transition:border-color .12s, background .12s;
-  }
-  .qmap button.answered{border-color:var(--navy); color:var(--navy); background:var(--surface-selected); font-weight:700;}
-  .qmap button.current{outline:2px solid var(--gold); outline-offset:1px;}
-  .qmap button.flagged{border-color:var(--gold);}
-
-  /* ---- Results ---- */
-  .verdict{
-    text-align:center; padding:34px 20px 30px; border-radius:var(--radius);
-    border:2px solid var(--ink); margin-bottom:22px; background:var(--card); box-shadow:var(--shadow-lift);
-  }
-  .verdict.pass{border-color:var(--green); background:var(--surface-pass);}
-  .verdict.fail{border-color:var(--red); background:var(--surface-fail);}
-  .verdict .stamp{
-    font-family:var(--sans); font-size:12.5px; letter-spacing:.1em; text-transform:uppercase; font-weight:700;
-    color:var(--ink-soft); margin-bottom:8px;
-  }
-  .verdict .big-word{
-    font-family:var(--serif); font-size:clamp(32px,8vw,44px); font-weight:700; margin:0 0 8px;
-  }
-  .verdict.pass .big-word{color:var(--green);}
-  .verdict.fail .big-word{color:var(--red-deep);}
-  .verdict .score-line{font-size:16px; color:var(--ink-soft);}
-  .verdict .score-line b{color:var(--ink); font-size:20px; font-family:var(--serif);}
-
-  .theme-bars{display:flex; flex-direction:column; gap:16px; margin-top:8px;}
-  .theme-bar-row .tb-top{display:flex; justify-content:space-between; font-size:13.5px; margin-bottom:6px;}
-  .tb-top .tb-name{font-weight:700;}
-  .tb-top .tb-score{color:var(--ink-soft);}
-  .tb-track{height:10px; background:var(--paper-2); border-radius:5px; overflow:hidden;}
-  .tb-fill{height:100%; background:var(--navy); border-radius:5px;}
-
-  .review-filters{display:flex; gap:8px; margin:6px 0 18px; flex-wrap:wrap;}
-  .chip{
-    font-size:12.5px; padding:7px 15px; border-radius:20px; border:1.5px solid var(--line);
-    background:var(--card); cursor:pointer; color:var(--ink-soft); font-family:var(--sans); font-weight:600;
-    transition:border-color .12s, background .12s, color .12s;
-  }
-  .chip.active{border-color:var(--navy); color:var(--navy); background:var(--surface-selected); font-weight:700;}
-
-  .review-item{
-    border:1px solid var(--line); border-radius:var(--radius); padding:18px; margin-bottom:14px; background:var(--card);
-    box-shadow:var(--shadow);
-  }
-  .review-item .ri-head{display:flex; gap:8px; align-items:center; margin-bottom:10px; flex-wrap:wrap;}
-  .badge{
-    font-size:11px; font-weight:700; padding:3px 10px; border-radius:20px; text-transform:uppercase; letter-spacing:.04em;
-  }
-  .badge.ok{background:var(--surface-success-strong); color:var(--green);}
-  .badge.ko{background:var(--surface-danger-strong); color:var(--red-deep);}
-  .review-item .rq{font-family:var(--serif); font-weight:500; font-size:16.5px; margin:0 0 10px;}
-  .review-item .ans-line{font-size:13.5px; margin:4px 0;}
-  .review-item .ans-line.wrong{color:var(--red-deep);}
-  .review-item .ans-line.right{color:var(--green);}
-  .review-item .explain{
-    margin-top:10px; padding-top:10px; border-top:1px dashed var(--line);
-    font-size:13.5px; color:var(--ink-soft); line-height:1.6;
-  }
-
-  .end-actions{display:flex; gap:12px; margin-top:22px; flex-wrap:wrap;}
-
-  .modal-backdrop{
-    position:fixed; inset:0; background:rgba(15,25,40,.5); display:flex; align-items:center; justify-content:center;
-    padding:20px; z-index:20; backdrop-filter:blur(2px);
-  }
-  .modal{
-    background:var(--card); border-radius:var(--radius); padding:28px; max-width:400px; width:100%;
-    border:1px solid var(--line); box-shadow:var(--shadow-lift);
-  }
-  .modal h3{font-family:var(--serif); font-weight:600; margin:0 0 10px; font-size:20px;}
-  .modal p{font-size:14px; color:var(--ink-soft); margin:0 0 20px; line-height:1.6;}
-  .modal .modal-actions{display:flex; gap:10px; justify-content:flex-end;}
-
-  /* ---- Flashcards ---- */
-  .fc-grid{
-    display:grid; grid-template-columns:1fr; gap:16px; margin-bottom:22px;
-  }
-  @media (min-width:560px){ .fc-grid{grid-template-columns:1fr 1fr;} }
-
-  .flip-card{
-    perspective:1200px; height:190px; cursor:pointer;
-  }
-  .flip-card-inner{
-    position:relative; width:100%; height:100%;
-    transition:transform .5s; transform-style:preserve-3d;
-  }
-  .flip-card.flipped .flip-card-inner{transform:rotateY(180deg);}
-  .flip-face{
-    position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden;
-    border:1.5px solid var(--line); border-radius:var(--radius); background:var(--card);
-    padding:18px; display:flex; flex-direction:column; box-shadow:var(--shadow);
-  }
-  .flip-front{justify-content:space-between;}
-  .flip-front .fc-q{
-    font-family:var(--serif); font-weight:500; font-size:16.5px; line-height:1.45; color:var(--ink); overflow:auto;
-  }
-  .flip-front .fc-hint{font-size:11px; color:var(--ink-soft); text-align:right; text-transform:uppercase; letter-spacing:.04em; font-weight:700;}
-  .flip-back{
-    transform:rotateY(180deg); background:var(--surface-selected); border-color:var(--navy); overflow:auto;
-  }
-  .flip-back .fc-a{font-weight:700; color:var(--navy-deep); font-size:15.5px; margin-bottom:8px; font-family:var(--serif);}
-  .flip-back .fc-e{font-size:12.5px; color:var(--ink-soft); line-height:1.5;}
-
-  .hidden{display:none !important;}
-
-  footer.credits{
-    margin-top:40px; padding-top:16px; border-top:1px solid var(--line);
-    font-size:11.5px; color:var(--ink-soft); text-align:center; line-height:1.6;
-  }
-
-  /* :hover uniquement pour les appareils avec un vrai pointeur (souris) : sur tactile (iOS en
-     particulier), l'appareil simule :hover au toucher mais ne le "relâche" jamais proprement,
-     ce qui pouvait laisser une option (ou un autre élément) visuellement en surbrillance après
-     un swipe ou un changement de question, sans rapport avec .selected/.correct/.incorrect. */
+  .btn:active{ transform:translateY(1px); }
+  .btn.full{ width:100%; }
+  .btn.secondary{ background:transparent; color:var(--ink); box-shadow:inset 0 0 0 2px var(--ink); }
+  .btn.danger{ background:var(--color-vermillon-deep); color:var(--color-creme); }
+  .btn.on-ink{ background:transparent; color:var(--color-creme); box-shadow:inset 0 0 0 2px var(--color-creme); }
+  .btn:disabled{ opacity:.45; cursor:not-allowed; }
+  [data-theme="dark"] .btn:not(.secondary){ background:var(--color-nuit-clair); color:#08131F; }
+  [data-theme="dark"] .btn.danger{ background:var(--color-vermillon); color:#1A0B07; }
   @media (hover:hover) and (pointer:fine){
-    .home-btn:hover{border-color:var(--navy); color:var(--navy);}
-    .theme-toggle:hover{border-color:var(--navy); color:var(--navy);}
-    .mode-card:hover{border-color:var(--navy); box-shadow:var(--shadow-lift);}
-    button.btn:hover{background:var(--navy-deep); box-shadow:0 4px 14px rgba(18,35,58,.28);}
-    button.btn.secondary:hover{background:var(--surface-selected);}
-    button.btn.danger:hover{background:var(--red-deep);}
-    .option:hover{border-color:var(--navy); box-shadow:var(--shadow);}
-    .qmap button:hover{border-color:var(--navy);}
-    .chip:hover{border-color:var(--navy);}
+    .btn:hover{ background:var(--color-nuit-deep); }
+    .btn.secondary:hover{ background:var(--ink); color:var(--ground); }
+    .btn.on-ink:hover{ background:var(--color-creme); color:var(--color-nuit); }
+    .btn.danger:hover{ background:var(--color-vermillon); }
+    [data-theme="dark"] .btn:not(.secondary):hover{ background:#8FB4E6; }
   }
+
+  /* lien de texte */
+  .lien{
+    appearance:none; border:0; background:none; padding:0; font-family:inherit;
+    font-weight:700; cursor:pointer; text-decoration:underline; text-underline-offset:3px;
+    text-decoration-thickness:2px;
+  }
+
+  /* ---- encres par thème ---- */
+  .theme-tag{
+    display:inline-flex; align-items:center; gap:.4rem;
+    font-weight:800; font-stretch:110%; text-transform:uppercase; letter-spacing:.08em;
+    font-size:11px; padding:5px 10px; border-radius:var(--radius-bloc);
+    background:var(--t-ink,var(--color-nuit)); color:var(--t-fg,var(--color-creme));
+  }
+
+  /* une encre par thème, partout dans l'application */
+  .theme-tag[data-t="histoire"],     .ink-fill[data-t="histoire"],     .chip.active[data-t="histoire"]{     background:var(--color-vermillon-deep); color:var(--color-creme); }
+  .theme-tag[data-t="institutions"], .ink-fill[data-t="institutions"], .chip.active[data-t="institutions"]{ background:var(--color-nuit);           color:var(--color-creme); }
+  .theme-tag[data-t="citoyennete"],  .ink-fill[data-t="citoyennete"],  .chip.active[data-t="citoyennete"]{  background:var(--color-vert);           color:var(--color-creme); }
+  .theme-tag[data-t="europe"],       .ink-fill[data-t="europe"],       .chip.active[data-t="europe"]{       background:var(--color-or);             color:#15181D; }
+
+  /* ---- chronomètre ---- */
+  #timer.warn{ background:var(--color-vermillon); color:var(--color-creme); animation:battement 1s infinite; }
+  @keyframes battement{ 0%,100%{opacity:1} 50%{opacity:.55} }
+  #flag-btn.on{ color:var(--color-or-deep); }
+  [data-theme="dark"] #flag-btn.on{ color:var(--color-or); }
+
+  /* la carte de question : place sous la barre collante, et gestes horizontaux en JS */
+  #question-card{
+    scroll-margin-top:94px;
+    touch-action:pan-y;
+    transition:transform .18s var(--ease-affiche), opacity .18s ease;
+  }
+  #question-card.swipe-instant{ transition:none; }
+  #question-card.swipe-active{ will-change:transform, opacity; }
+
+  /* ---- choix de format (accueil) ---- */
+  .mode-card{
+    display:flex; align-items:center; gap:14px; width:100%; text-align:left;
+    padding:16px; cursor:pointer; border-radius:var(--radius-bloc);
+    background:var(--panel); color:var(--ink);
+    box-shadow:inset 0 0 0 2px var(--line);
+    transition:box-shadow .15s, background-color .15s, color .15s;
+  }
+  .mode-card .mc-radio{
+    flex:none; width:22px; height:22px; border-radius:50%;
+    box-shadow:inset 0 0 0 2px currentColor; position:relative;
+  }
+  .mode-card.selected{ background:var(--color-nuit); color:var(--color-creme); box-shadow:none; }
+  .mode-card.selected .mc-radio::after{
+    content:''; position:absolute; inset:5px; border-radius:50%; background:var(--color-or);
+  }
+  @media (hover:hover) and (pointer:fine){
+    .mode-card:hover{ box-shadow:inset 0 0 0 2px var(--ink); }
+    .mode-card.selected:hover{ box-shadow:none; }
+  }
+
+  /* ---- réponses : des divisions à plat sur le papier, jamais des boîtes ---- */
+  .option{
+    display:flex; align-items:flex-start; gap:14px; width:100%; text-align:left;
+    padding:16px 14px; cursor:pointer; border-radius:0;
+    background:transparent; color:var(--ink); font-size:16px; line-height:1.45;
+    border-bottom:2px solid var(--line);
+    transition:background-color .12s, color .12s;
+  }
+  .option:first-child{ border-top:2px solid var(--line); }
+  .option .letter{
+    flex:none; width:28px; height:28px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:900; font-size:13.5px; box-shadow:inset 0 0 0 2px currentColor;
+  }
+  .option .mark{ flex:none; margin-left:auto; width:22px; height:22px; opacity:0; }
+  .option.selected{ background:var(--color-nuit); color:var(--color-creme); border-color:var(--color-nuit); }
+  .option.selected .letter{ background:var(--color-or); color:#15181D; box-shadow:none; }
+  .option.correct{ background:var(--color-vert); color:var(--color-creme); border-color:var(--color-vert); }
+  .option.correct .letter{ background:var(--color-creme); color:var(--color-vert); box-shadow:none; }
+  .option.incorrect{ background:var(--color-vermillon-deep); color:var(--color-creme); border-color:var(--color-vermillon-deep); }
+  .option.incorrect .letter{ background:var(--color-creme); color:var(--color-vermillon-deep); box-shadow:none; }
+  .option.correct .mark, .option.incorrect .mark{ opacity:1; }
+  @media (hover:hover) and (pointer:fine){
+    .option:hover{ background:var(--ground-2); }
+    .option.selected:hover{ background:var(--color-nuit-deep); }
+  }
+
+  /* ---- plan des questions ---- */
+  .qmap button{
+    width:34px; height:34px; border-radius:var(--radius-bloc); cursor:pointer;
+    font-family:inherit; font-weight:800; font-size:12.5px; font-variant-numeric:tabular-nums;
+    background:var(--panel); color:var(--ink-soft); box-shadow:inset 0 0 0 2px var(--line);
+    transition:box-shadow .12s, background-color .12s, color .12s;
+  }
+  .qmap button.answered{ background:var(--color-nuit); color:var(--color-creme); box-shadow:none; }
+  .qmap button.flagged{ box-shadow:inset 0 0 0 3px var(--color-or); }
+  .qmap button.current{ outline:3px solid var(--color-or); outline-offset:2px; }
+
+  /* ---- filtres (corrigé, fiches) ---- */
+  .chip{
+    font-family:inherit; font-weight:800; font-stretch:106%; font-size:12.5px;
+    letter-spacing:.04em; padding:9px 14px; border-radius:var(--radius-bloc); cursor:pointer;
+    background:transparent; color:var(--ink-soft); box-shadow:inset 0 0 0 2px var(--line);
+    transition:box-shadow .12s, background-color .12s, color .12s;
+  }
+  .chip.active{ background:var(--ink); color:var(--ground); box-shadow:none; }
+
+  /* ---- fiches de révision ---- */
+  .flip-card{ perspective:1400px; cursor:pointer; }
+  .flip-card-inner{
+    display:grid; width:100%; height:100%;
+    transition:transform .5s var(--ease-affiche); transform-style:preserve-3d;
+  }
+  .flip-card.flipped .flip-card-inner{ transform:rotateY(180deg); }
+  /* les deux faces occupent la même cellule : la carte prend la hauteur de la plus haute */
+  .flip-face{
+    grid-area:1/1; backface-visibility:hidden; -webkit-backface-visibility:hidden;
+    border-radius:var(--radius-bloc); padding:20px; display:flex; flex-direction:column; justify-content:space-between;
+  }
+  .flip-front{ color:var(--color-creme); }
+  .flip-back{ transform:rotateY(180deg); background:var(--panel); box-shadow:inset 0 0 0 2px var(--line); color:var(--ink); }
+
+  /* ---- verdict ---- */
+  .verdict{ background:var(--color-nuit); color:var(--color-creme); }
+  .verdict.pass{ background:var(--color-vert); }
+  .verdict.fail{ background:var(--color-vermillon-deep); }
+
+  /* ---- le moment animé : l'affiche s'imprime ---- */
+  @keyframes impression{
+    from{ clip-path:inset(0 0 100% 0); }
+    to  { clip-path:inset(0 0 0 0); }
+  }
+  .impression{ animation:impression .55s var(--ease-affiche) both; }
+  @keyframes tampon{
+    from{ opacity:0; transform:rotate(var(--seal-rot,0deg)) scale(1.35); filter:blur(3px); }
+    to  { opacity:1; transform:rotate(var(--seal-rot,0deg)) scale(1); filter:blur(0); }
+  }
+  .stamp-land{ animation:tampon .5s var(--ease-affiche) both; }
+  .seal{ transform:rotate(var(--seal-rot,0deg)); }
+  @media (prefers-reduced-motion: reduce){
+    .impression, .stamp-land{ animation-duration:1ms; }
+    #timer.warn{ animation:none; }
+    .flip-card-inner{ transition-duration:1ms; }
+  }
+
+  .hidden{ display:none !important; }
 </style>
 </head>
 <body>
-<div class="sheet">
 
-  <header class="masthead">
-    <div class="masthead-top">
-      <div>
-        <div class="masthead-eyebrow">RÉPUBLIQUE FRANÇAISE · MINISTÈRE DE L'INTÉRIEUR</div>
-        <h1 class="title">Examen civique</h1>
-        <div class="subtitle">Entraînement — Naturalisation, carte de résident, titre pluriannuel</div>
-      </div>
-      <div class="top-actions">
-        <button class="home-btn" id="btn-home-top">🏠 Accueil</button>
-        <button class="theme-toggle" id="theme-toggle" aria-label="Changer de thème">
-          <span class="icon" id="theme-icon">🌙</span><span id="theme-label">Sombre</span>
-        </button>
-      </div>
-    </div>
-    <div class="ref-line">Simulation reproduisant le format officiel : décret n° 2025-648 du 15 juillet 2025 et arrêté du 10 octobre 2025 — QCM de 40 questions, 45 minutes, seuil de réussite 80&nbsp;% (32/40). Outil d'entraînement indépendant, non affilié à l'administration.</div>
-  </header>
+<header class="bg-nuit text-creme dark:bg-nuit-deep">
+  <div class="mx-auto flex max-w-[760px] flex-wrap items-center gap-x-4 gap-y-3 px-5 py-4 sm:px-8">
+    <span class="flex items-center gap-3">
+      <svg viewBox="0 0 32 32" class="h-9 w-9 shrink-0" aria-hidden="true">
+        <circle cx="16" cy="16" r="15.5" fill="#F7F1E4"/>
+        <circle cx="16" cy="16" r="12" fill="#14335E"/>
+        <circle cx="16" cy="16" r="7.5" fill="#F7F1E4"/>
+        <circle cx="16" cy="16" r="3.5" fill="#E1432D"/>
+      </svg>
+      <span class="affiche text-[19px] sm:text-[22px]">Examen civique</span>
+    </span>
 
-  <main>
+    <span class="ml-auto flex items-center gap-2">
+      <button type="button" id="btn-carnet-top" title="Ouvrir le carnet de suivi"
+        class="figures flex shrink-0 cursor-pointer items-center gap-2 rounded-bloc bg-creme/12 px-3 py-2 text-[13px] font-extrabold text-creme transition-colors hover:bg-creme/22">
+        <svg viewBox="0 0 24 24" class="h-4 w-4 shrink-0 text-or" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+          <path d="M4 20V8M9 20V4M14 20v-9M19 20v-6"/>
+        </svg>
+        <span id="chip-streak">0</span>
+        <span class="text-creme/60" aria-hidden="true">/</span>
+        <span id="chip-echelon" class="text-or">I</span>
+      </button>
+      <button type="button" id="btn-home-top" title="Retour à l'accueil"
+        class="flex shrink-0 cursor-pointer items-center gap-2 rounded-bloc bg-creme/12 px-3 py-2 text-[13px] font-extrabold text-creme transition-colors hover:bg-creme/22">
+        <svg viewBox="0 0 24 24" class="h-4 w-4" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 11.5 12 4l8 7.5M6.5 10v10h11V10"/>
+        </svg>Accueil
+      </button>
+      <button type="button" id="theme-toggle" aria-label="Changer de thème"
+        class="flex shrink-0 cursor-pointer items-center gap-2 rounded-bloc bg-creme/12 px-3 py-2 text-[13px] font-extrabold text-creme transition-colors hover:bg-creme/22">
+        <span id="theme-icon" class="flex h-4 w-4 items-center justify-center" aria-hidden="true"></span>
+        <span id="theme-label">Sombre</span>
+      </button>
+    </span>
+  </div>
+  <p id="ref-line" class="mx-auto max-w-[760px] px-5 pb-4 text-[12.5px] leading-relaxed text-creme/70 sm:px-8">
+    Simulation du format officiel : décret n° 2025-648 du 15 juillet 2025 et arrêté du 10 octobre 2025 — QCM de 40 questions, 45 minutes, seuil de réussite 80 % (32/40). Outil d'entraînement indépendant, non affilié à l'administration.
+  </p>
+</header>
 
-    <!-- ============ START SCREEN ============ -->
-    <section id="screen-start">
-      <div class="card">
-        <h2>Conditions de l'épreuve</h2>
-        <div class="rules-grid">
-          <div class="rule-item"><span class="num">40</span><span><span class="lbl">Questions</span><span class="val">tirées au sort</span></span></div>
-          <div class="rule-item"><span class="num">45</span><span><span class="lbl">Minutes</span><span class="val">chronométrées</span></span></div>
-          <div class="rule-item"><span class="num">4</span><span><span class="lbl">Choix par question</span><span class="val">une seule réponse correcte</span></span></div>
-          <div class="rule-item"><span class="num">80%</span><span><span class="lbl">Seuil de réussite</span><span class="val">32 bonnes réponses / 40</span></span></div>
+<main class="mx-auto max-w-[760px] px-5 pt-7 pb-16 sm:px-8">
+
+  <!-- ============ ACCUEIL ============ -->
+  <section id="screen-start">
+
+    <div class="bleed -mt-7 bg-vermillon-deep py-9 text-creme sm:py-12">
+      <div class="mx-auto max-w-[760px]">
+      <h2 class="affiche text-[36px] leading-[.94] sm:text-[52px] lg:text-[68px]">L'épreuve<br>en conditions réelles</h2>
+
+      <dl class="figures mt-7 grid grid-cols-2 gap-x-4 gap-y-5 border-t-2 border-creme/35 pt-5 sm:grid-cols-4">
+        <div>
+          <dt class="libelle text-creme">Questions</dt>
+          <dd class="affiche mt-1 text-[30px]">40</dd>
+          <dd class="mt-1 text-[13px] leading-snug text-creme">tirées au sort</dd>
         </div>
-        <p class="fineprint">Le tirage mélange environ 28 questions de connaissances (histoire, institutions, citoyenneté, France en Europe et dans le monde) et 12 mises en situation, comme dans l'épreuve réelle passée en centre agréé (CCI Paris, France Éducation International). Le chronomètre démarre dès que vous cliquez sur « Commencer ».</p>
-      </div>
-
-      <div class="card">
-        <h2>Choisir un format</h2>
-        <div class="mode-choice" id="mode-choice">
-          <div class="mode-card selected" data-mode="full" data-n="40" data-t="2700">
-            <div>
-              <div class="mc-title">Examen officiel</div>
-              <div class="mc-sub">40 questions · 45 minutes · conditions réelles</div>
-            </div>
-            <div class="mc-radio"></div>
-          </div>
-          <div class="mode-card" data-mode="short" data-n="15" data-t="1000">
-            <div>
-              <div class="mc-title">Entraînement rapide</div>
-              <div class="mc-sub">15 questions · ≈ 17 minutes · pour réviser un thème vite</div>
-            </div>
-            <div class="mc-radio"></div>
-          </div>
-          <div class="mode-card" data-mode="untimed" data-n="40" data-t="0">
-            <div>
-              <div class="mc-title">Sans chronomètre</div>
-              <div class="mc-sub">40 questions · temps libre · pour apprendre sans pression</div>
-            </div>
-            <div class="mc-radio"></div>
-          </div>
+        <div>
+          <dt class="libelle text-creme">Minutes</dt>
+          <dd class="affiche mt-1 text-[30px]">45</dd>
+          <dd class="mt-1 text-[13px] leading-snug text-creme">chronométrées</dd>
         </div>
-        <div class="start-actions">
-          <button class="btn full" id="btn-start">Commencer l'examen</button>
+        <div>
+          <dt class="libelle text-creme">Choix</dt>
+          <dd class="affiche mt-1 text-[30px]">4</dd>
+          <dd class="mt-1 text-[13px] leading-snug text-creme">une seule bonne réponse</dd>
         </div>
-      </div>
-
-      <div class="card">
-        <h2>Fiches de révision</h2>
-        <p class="fineprint">Question devant, réponse et explication au dos — pour réviser par thème avant de te lancer dans l'examen chronométré, comme sur Francopass.</p>
-        <div class="start-actions">
-          <button class="btn secondary full" id="btn-flashcards">Ouvrir les flashcards</button>
+        <div>
+          <dt class="libelle text-creme">Seuil</dt>
+          <dd class="affiche mt-1 text-[30px] text-or">80<span class="text-[20px]">%</span></dd>
+          <dd class="mt-1 text-[13px] leading-snug text-creme">soit 32 / 40</dd>
         </div>
-      </div>
-
-      <div class="card">
-        <h2>Banque de questions</h2>
-        <p class="fineprint" id="bank-stats">Chargement…</p>
-      </div>
-    </section>
-
-    <!-- ============ FLASHCARDS SCREEN ============ -->
-    <section id="screen-flashcards" class="hidden">
-      <div class="card">
-        <h2>Fiches de révision</h2>
-        <p class="fineprint">Touche une carte pour la retourner. Utilise les onglets pour changer de thème.</p>
-        <div class="review-filters" id="fc-tabs"></div>
-      </div>
-
-      <div class="fc-grid" id="fc-grid"></div>
-
-      <div class="end-actions">
-        <button class="btn secondary" id="btn-fc-back">← Retour à l'accueil</button>
-      </div>
-    </section>
-
-    <!-- ============ EXAM SCREEN ============ -->
-    <section id="screen-exam" class="hidden">
-      <div class="exam-bar">
-        <div class="exam-bar-row">
-          <div class="qcount">Question <b id="q-index">1</b> / <span id="q-total">40</span></div>
-          <div class="timer" id="timer">45:00</div>
-        </div>
-        <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:2.5%"></div></div>
-      </div>
-
-      <div class="card" id="question-card">
-        <span class="theme-tag" id="theme-tag">Histoire de France</span>
-        <p class="question-text" id="question-text">…</p>
-        <ul class="options" id="options-list"></ul>
-        <div class="flagbar">
-          <button class="flag-btn" id="flag-btn">🔖 Marquer pour révision</button>
-        </div>
-      </div>
-
-      <div class="nav-row">
-        <button class="btn secondary" id="btn-prev">← Précédente</button>
-        <div class="right-group">
-          <button class="btn secondary" id="btn-next">Suivante →</button>
-          <button class="btn danger" id="btn-finish">Terminer</button>
-        </div>
-      </div>
-
-      <div class="card" style="margin-top:22px;">
-        <h2 style="font-size:15px; margin-bottom:8px;">Plan des questions</h2>
-        <div class="qmap" id="qmap"></div>
-      </div>
-
-      <div class="end-actions">
-        <button class="btn secondary" id="btn-home-exam">🏠 Retour à l'accueil</button>
-      </div>
-    </section>
-
-    <!-- ============ RESULTS SCREEN ============ -->
-    <section id="screen-results" class="hidden">
-      <div class="verdict" id="verdict-box">
-        <div class="stamp">Résultat de la simulation</div>
-        <div class="big-word" id="verdict-word">ADMIS</div>
-        <div class="score-line"><b id="score-fraction">32/40</b> bonnes réponses · <span id="score-pct">80%</span> · seuil requis 80%</div>
-      </div>
-
-      <div class="card">
-        <h2>Résultat par thème</h2>
-        <div class="theme-bars" id="theme-bars"></div>
-      </div>
-
-      <div class="card">
-        <h2>Corrigé détaillé</h2>
-        <div class="review-filters">
-          <button class="chip active" data-filter="all">Toutes (<span id="cnt-all">40</span>)</button>
-          <button class="chip" data-filter="wrong">Erreurs (<span id="cnt-wrong">0</span>)</button>
-          <button class="chip" data-filter="flagged">Marquées (<span id="cnt-flag">0</span>)</button>
-        </div>
-        <div id="review-list"></div>
-      </div>
-
-      <div class="end-actions">
-        <button class="btn" id="btn-retry-same">Refaire ce tirage</button>
-        <button class="btn secondary" id="btn-retry-new">Nouveau tirage aléatoire</button>
-        <button class="btn secondary" id="btn-retry-errors">Revoir seulement mes erreurs</button>
-        <button class="btn secondary" id="btn-home-results">🏠 Retour à l'accueil</button>
-      </div>
-    </section>
-
-    <!-- ============ CONFIRM MODAL ============ -->
-    <div class="modal-backdrop hidden" id="confirm-modal">
-      <div class="modal">
-        <h3 id="modal-title">Terminer l'examen ?</h3>
-        <p id="modal-body">Vous avez répondu à toutes les questions. Une fois terminé, vous ne pourrez plus modifier vos réponses.</p>
-        <div class="modal-actions">
-          <button class="btn secondary" id="modal-cancel">Continuer l'examen</button>
-          <button class="btn danger" id="modal-confirm">Valider et voir mon score</button>
-        </div>
+      </dl>
       </div>
     </div>
 
-  </main>
+    <p class="mt-6 text-[14px] leading-relaxed text-ink-soft">
+      Le tirage mélange environ 28 questions de connaissances et 12 mises en situation, comme dans l'épreuve réelle passée en centre agréé. Le chronomètre démarre dès que tu lances la séance.
+    </p>
 
-  <footer class="credits">Outil d'entraînement personnel · les questions couvrent le programme officiel (histoire, institutions, citoyenneté, Europe et monde) mais ne proviennent pas de la base de données de l'administration, qui n'est pas rendue publique.</footer>
-</div>
+    <h3 class="libelle mt-9 text-ink-soft">Choisir un format</h3>
+    <div class="mt-3 grid gap-2.5" id="mode-choice">
+      <button type="button" class="mode-card selected" data-mode="full" data-n="40" data-t="2700">
+        <span class="mc-radio"></span>
+        <span>
+          <span class="block text-[16px] font-extrabold">Examen officiel</span>
+          <span class="mt-0.5 block text-[13px] opacity-75">40 questions · 45 minutes · conditions réelles</span>
+        </span>
+      </button>
+      <button type="button" class="mode-card" data-mode="short" data-n="15" data-t="1000">
+        <span class="mc-radio"></span>
+        <span>
+          <span class="block text-[16px] font-extrabold">Entraînement rapide</span>
+          <span class="mt-0.5 block text-[13px] opacity-75">15 questions · env. 17 minutes</span>
+        </span>
+      </button>
+      <button type="button" class="mode-card" data-mode="untimed" data-n="40" data-t="0">
+        <span class="mc-radio"></span>
+        <span>
+          <span class="block text-[16px] font-extrabold">Sans chronomètre</span>
+          <span class="mt-0.5 block text-[13px] opacity-75">40 questions · temps libre</span>
+        </span>
+      </button>
+    </div>
+
+    <button class="btn full mt-5 text-[17px]" id="btn-start">Commencer l'examen</button>
+
+    <div class="bleed mt-10 bg-nuit py-8 text-creme sm:py-10">
+      <div class="mx-auto grid max-w-[760px] gap-8 sm:grid-cols-2 sm:gap-0">
+        <section class="flex flex-col sm:pr-8">
+          <h3 class="affiche text-[21px]">Fiches de révision</h3>
+          <p class="mt-2 text-[13.5px] leading-relaxed text-creme">Question devant, réponse et explication au dos, thème par thème.</p>
+          <div class="mt-auto pt-5"><button class="btn on-ink full" id="btn-flashcards">Ouvrir les fiches</button></div>
+        </section>
+        <section class="flex flex-col border-t-2 border-creme/25 pt-8 sm:border-t-0 sm:border-l-2 sm:pt-0 sm:pl-8">
+          <h3 class="affiche text-[21px]">Carnet de suivi</h3>
+          <dl id="carnet-teaser" class="figures mt-3 grid grid-cols-3 gap-2">
+            <div>
+              <dt class="libelle text-creme">Série</dt>
+              <dd class="affiche mt-1 text-[24px] text-or" id="teaser-streak">—</dd>
+              <dd class="mt-0.5 text-[11.5px] leading-tight text-creme" id="teaser-streak-note">jours</dd>
+            </div>
+            <div>
+              <dt class="libelle text-creme">Échelon</dt>
+              <dd class="affiche mt-1 text-[24px] text-or" id="teaser-echelon">—</dd>
+              <dd class="mt-0.5 text-[11.5px] leading-tight text-creme" id="teaser-echelon-note">—</dd>
+            </div>
+            <div>
+              <dt class="libelle text-creme">Tampons</dt>
+              <dd class="affiche mt-1 text-[24px] text-or" id="teaser-badges">—</dd>
+              <dd class="mt-0.5 text-[11.5px] leading-tight text-creme">obtenus</dd>
+            </div>
+          </dl>
+          <div class="mt-auto pt-5"><button class="btn on-ink full" id="btn-carnet">Ouvrir le carnet</button></div>
+        </section>
+      </div>
+    </div>
+
+    <p class="mt-8 border-t border-line pt-4 text-[13px] leading-relaxed text-ink-soft" id="bank-stats">Chargement…</p>
+  </section>
+
+  <!-- ============ FICHES ============ -->
+  <section id="screen-flashcards" class="hidden">
+    <h2 class="affiche text-[30px] sm:text-[38px]">Fiches de révision</h2>
+    <p class="mt-3 text-[14px] leading-relaxed text-ink-soft">Touche une fiche pour la retourner. Les onglets changent de thème.</p>
+    <div class="mt-5 flex flex-wrap gap-2" id="fc-tabs"></div>
+    <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2" id="fc-grid"></div>
+    <button class="btn secondary mt-8" id="btn-fc-back"><svg viewBox="0 0 20 20" class="h-4 w-4 shrink-0" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 10H4M9 5 4 10l5 5"/></svg>Retour à l'accueil</button>
+  </section>
+
+  <!-- ============ EXAMEN ============ -->
+  <section id="screen-exam" class="hidden">
+    <div class="exam-bar sticky top-0 z-10 -mx-5 bg-ground px-5 pt-4 pb-3 sm:-mx-8 sm:px-8">
+      <div class="flex items-center justify-between gap-4">
+        <p class="figures libelle text-ink-soft">Question <b class="text-[15px] text-ink" id="q-index">1</b> / <span id="q-total">40</span></p>
+        <p class="figures affiche rounded-bloc bg-ink px-3 py-1.5 text-[19px] text-ground" id="timer">45:00</p>
+      </div>
+      <div class="mt-3 h-2 w-full bg-ground-2">
+        <div class="h-full bg-vermillon transition-[width] duration-300 ease-affiche" id="progress-fill" style="width:2.5%"></div>
+      </div>
+    </div>
+
+    <article class="mt-6" id="question-card">
+      <div class="bleed ink-fill py-8 sm:py-10" id="question-plate" data-t="institutions">
+        <h2 class="mx-auto max-w-[760px] text-[23px] leading-[1.28] font-bold sm:text-[29px]" id="question-text">…</h2>
+        <p class="libelle mx-auto mt-5 max-w-[760px]" id="theme-tag">Institutions</p>
+      </div>
+      <ul class="mt-7 flex list-none flex-col p-0" id="options-list"></ul>
+      <button class="lien mt-5 text-[13px] text-ink-soft" id="flag-btn">Marquer pour révision</button>
+    </article>
+
+    <div class="mt-6 grid grid-cols-2 gap-2.5">
+      <button class="btn secondary" id="btn-prev"><svg viewBox="0 0 20 20" class="h-4 w-4 shrink-0" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 10H4M9 5 4 10l5 5"/></svg>Précédente</button>
+      <button class="btn" id="btn-next">Suivante<svg viewBox="0 0 20 20" class="h-4 w-4 shrink-0" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h12M11 5l5 5-5 5"/></svg></button>
+    </div>
+    <button class="btn secondary mt-2.5 w-full !text-vermillon-deep shadow-[inset_0_0_0_2px_var(--color-vermillon-deep)] dark:!text-vermillon-clair dark:shadow-[inset_0_0_0_2px_var(--color-vermillon)]" id="btn-finish">Terminer et voir mon score</button>
+
+    <h3 class="libelle mt-9 text-ink-soft">Plan des questions</h3>
+    <div class="qmap mt-3 flex flex-wrap gap-2" id="qmap"></div>
+
+    <button class="btn secondary mt-8" id="btn-home-exam"><svg viewBox="0 0 20 20" class="h-4 w-4 shrink-0" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 10H4M9 5 4 10l5 5"/></svg>Quitter l'examen</button>
+  </section>
+
+  <!-- ============ RÉSULTATS ============ -->
+  <section id="screen-results" class="hidden">
+    <div class="verdict impression bleed -mt-7 py-10 text-center sm:py-14" id="verdict-box">
+      <div class="mx-auto max-w-[760px]">
+        <p class="affiche text-[56px] sm:text-[84px]" id="verdict-word">ADMIS</p>
+        <p class="figures mt-3 text-[15px] opacity-90"><b class="text-[19px]" id="score-fraction">32/40</b> bonnes réponses · <span id="score-pct">80%</span> · seuil requis 80 %</p>
+        <p class="libelle mt-6 opacity-65">Résultat de la simulation</p>
+      </div>
+    </div>
+
+    <div id="session-gain" class="mt-5 hidden flex-wrap items-center justify-between gap-x-6 gap-y-2 rounded-bloc bg-panel px-5 py-4 shadow-[inset_0_0_0_2px_var(--line)]">
+      <p class="text-[15px]"><span class="figures affiche text-[22px] text-vermillon" id="gain-xp">+0</span> points · <span id="gain-streak">série ouverte</span></p>
+      <p class="text-[13.5px] text-ink-soft" id="gain-echelon">Échelon I · Postulant</p>
+    </div>
+
+    <div id="new-badges" class="mt-5 hidden border-y-3 border-ink py-6 text-center">
+      <p class="libelle text-ink-soft" id="new-badges-title">Nouveau tampon</p>
+      <ul id="new-badges-list" class="mt-5 flex list-none flex-wrap items-start justify-center gap-x-8 gap-y-6 p-0"></ul>
+    </div>
+
+    <h3 class="libelle mt-9 text-ink-soft">Résultat par thème</h3>
+    <div class="mt-3 flex flex-col gap-4" id="theme-bars"></div>
+
+    <h3 class="libelle mt-9 text-ink-soft">Corrigé détaillé</h3>
+    <div class="mt-3 flex flex-wrap gap-2">
+      <button class="chip active" data-filter="all">Toutes (<span id="cnt-all">40</span>)</button>
+      <button class="chip" data-filter="wrong">Erreurs (<span id="cnt-wrong">0</span>)</button>
+      <button class="chip" data-filter="flagged">Marquées (<span id="cnt-flag">0</span>)</button>
+    </div>
+    <div class="mt-4 flex flex-col gap-3" id="review-list"></div>
+
+    <div class="mt-8 flex flex-col gap-2.5 sm:flex-row sm:flex-wrap">
+      <button class="btn" id="btn-retry-same">Refaire ce tirage</button>
+      <button class="btn secondary" id="btn-retry-new">Nouveau tirage</button>
+      <button class="btn secondary" id="btn-retry-errors">Revoir mes erreurs</button>
+      <button class="btn secondary" id="btn-carnet-results">Voir le carnet</button>
+      <button class="btn secondary" id="btn-home-results">Accueil</button>
+    </div>
+  </section>
+
+  <!-- ============ CARNET ============ -->
+  <section id="screen-progress" class="hidden">
+    <h2 class="affiche text-[30px] sm:text-[38px]">Carnet de suivi</h2>
+    <p class="libelle mt-2 text-ink-soft" id="carnet-holder">Titulaire non renseigné</p>
+
+    <h3 class="libelle mt-8 text-ink-soft">Registre de présence · 14 derniers jours</h3>
+    <div id="reg-strip" class="figures mt-3 grid grid-cols-7 gap-1.5 sm:grid-cols-14 sm:gap-2"></div>
+    <div class="mt-3 flex flex-wrap gap-x-5 gap-y-2" aria-hidden="true">
+      <span class="flex items-center gap-2 text-[12.5px] text-ink-soft"><span class="inline-block h-3.5 w-3.5 bg-nuit dark:bg-nuit-clair"></span>séance</span>
+      <span class="flex items-center gap-2 text-[12.5px] text-ink-soft"><span class="inline-block h-3.5 w-3.5 bg-panel shadow-[inset_0_0_0_3px_var(--color-or)]"></span>aujourd'hui</span>
+      <span class="flex items-center gap-2 text-[12.5px] text-ink-soft"><span class="inline-block h-3.5 w-3.5 border-2 border-dashed border-or bg-panel"></span>tolérance</span>
+    </div>
+    <p class="mt-3 text-[14px] leading-relaxed" id="reg-note">Aucune séance enregistrée pour l'instant.</p>
+
+    <div class="bleed mt-8 bg-nuit py-8 text-creme sm:py-10">
+      <div class="mx-auto max-w-[760px]">
+      <p class="affiche text-[32px] sm:text-[44px]"><span class="text-or" id="ech-roman">I</span> <span id="ech-name">Postulant</span></p>
+      <p class="figures mt-2 text-[14px] text-creme/75"><b class="text-creme" id="ech-xp">0</b> points cumulés</p>
+      <ol id="ech-scale" class="figures mt-5 flex list-none items-center justify-between gap-1 p-0"></ol>
+      <div class="mt-2 h-2.5 w-full bg-creme/20">
+        <div class="h-full bg-or transition-[width] duration-700 ease-affiche" id="ech-fill" style="width:0%"></div>
+      </div>
+      <p class="mt-2 text-[14px] text-creme/75" id="ech-next">600 points avant l'échelon II.</p>
+      <p class="libelle mt-6 text-creme/60">Échelon</p>
+      </div>
+    </div>
+
+    <button class="btn full mt-7 text-[17px]" id="btn-carnet-start">Commencer une séance</button>
+
+    <div class="mt-10 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+      <h3 class="affiche text-[22px]">Relevé comparatif</h3>
+      <span class="libelle text-ink-soft" id="duel-status">Non couplé</span>
+    </div>
+    <div id="duel-body" class="mt-4"></div>
+
+    <div class="mt-10 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+      <h3 class="affiche text-[22px]">Tampons</h3>
+      <span class="libelle figures text-ink-soft" id="badge-count">0 / 12</span>
+    </div>
+    <ul id="badge-grid" class="mt-5 grid list-none grid-cols-3 gap-x-3 gap-y-6 p-0 sm:grid-cols-4 sm:gap-x-4 md:grid-cols-6"></ul>
+
+    <h3 class="affiche mt-10 text-[22px]">Maîtrise par thème</h3>
+    <div id="mastery-rows" class="mt-4 flex flex-col gap-5"></div>
+
+    <div class="mt-9 flex flex-col gap-2.5 sm:flex-row">
+      <button class="btn secondary" id="btn-carnet-back"><svg viewBox="0 0 20 20" class="h-4 w-4 shrink-0" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 10H4M9 5 4 10l5 5"/></svg>Retour à l'accueil</button>
+    </div>
+    <p class="mt-5 text-[13px] leading-relaxed text-ink-soft">
+      <button type="button" id="btn-carnet-reset" class="lien text-vermillon-deep dark:text-vermillon-clair">Réinitialiser le carnet</button>
+      — efface la série, les points et les tampons enregistrés sur cet appareil.
+    </p>
+  </section>
+
+  <!-- ============ MODALE ============ -->
+  <div class="fixed inset-0 z-30 hidden items-center justify-center bg-nuit-deep/70 p-5 backdrop-blur-[2px]" id="confirm-modal">
+    <div class="w-full max-w-[420px] rounded-bloc bg-panel p-6">
+      <h3 class="affiche text-[22px]" id="modal-title">Terminer l'examen ?</h3>
+      <p class="mt-3 text-[14px] leading-relaxed text-ink-soft" id="modal-body">Vous avez répondu à toutes les questions. Une fois terminé, vous ne pourrez plus modifier vos réponses.</p>
+      <div class="mt-6 flex flex-col gap-2.5 sm:flex-row sm:justify-end">
+        <button class="btn secondary" id="modal-cancel">Continuer</button>
+        <button class="btn danger" id="modal-confirm">Valider et voir mon score</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer class="mx-auto max-w-[760px] px-5 pb-12 sm:px-8">
+  <p class="border-t border-line pt-5 text-[12px] leading-relaxed text-ink-soft">
+    Outil d'entraînement personnel · les questions couvrent le programme officiel (histoire, institutions, citoyenneté, Europe et monde) mais ne proviennent pas de la base de données de l'administration, qui n'est pas rendue publique.
+  </p>
+</footer>
 
 <script>
 /* ============================================================
@@ -625,11 +598,12 @@ function applyTheme(theme){
   document.documentElement.setAttribute('data-theme', theme);
   const icon = document.getElementById('theme-icon');
   const label = document.getElementById('theme-label');
+  const stroke = '<svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">';
   if(theme === 'dark'){
-    icon.textContent = '☀️';
+    icon.innerHTML = stroke + '<circle cx="12" cy="12" r="4.4"/><path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.4 5.4l1.6 1.6M17 17l1.6 1.6M18.6 5.4 17 7M7 17l-1.6 1.6"/></svg>';
     label.textContent = 'Clair';
   } else {
-    icon.textContent = '🌙';
+    icon.innerHTML = stroke + '<path d="M20 14.2A8.4 8.4 0 0 1 9.8 4a8.4 8.4 0 1 0 10.2 10.2Z"/></svg>';
     label.textContent = 'Sombre';
   }
   localStorage.setItem('examen-civique-theme', theme);
@@ -841,6 +815,14 @@ const THEME_LABELS = {
   europe: "La France en Europe et dans le monde"
 };
 
+// libellés courts, pour les plaques d'encre où le nom complet casserait la ligne
+const THEME_SHORT = {
+  histoire: "Histoire",
+  institutions: "Institutions",
+  citoyennete: "Citoyenneté",
+  europe: "Europe et monde"
+};
+
 let state = {
   mode: 'full',
   nQuestions: 40,
@@ -921,11 +903,15 @@ const screens = {
   start: document.getElementById('screen-start'),
   exam: document.getElementById('screen-exam'),
   results: document.getElementById('screen-results'),
-  flashcards: document.getElementById('screen-flashcards')
+  flashcards: document.getElementById('screen-flashcards'),
+  progress: document.getElementById('screen-progress')
 };
 function showScreen(name){
   Object.values(screens).forEach(s=>s.classList.add('hidden'));
   screens[name].classList.remove('hidden');
+  // le rappel du cadre légal n'a sa place que sur l'accueil : ailleurs il vole
+  // de la hauteur d'écran à la question elle-même
+  document.getElementById('ref-line').classList.toggle('hidden', name !== 'start');
   window.scrollTo({top:0, behavior:'smooth'});
 }
 
@@ -960,7 +946,8 @@ function buildFcTabs(){
     const count = BANK.filter(q=>q.theme===key).length;
     const chip = document.createElement('button');
     chip.className = 'chip' + (key===fcCurrentTheme ? ' active' : '');
-    chip.textContent = `${THEME_LABELS[key]} (${count})`;
+    chip.dataset.t = key;
+    chip.textContent = `${THEME_SHORT[key]} (${count})`;
     chip.addEventListener('click', ()=>{
       fcCurrentTheme = key;
       buildFcTabs();
@@ -979,13 +966,13 @@ function renderFlashcards(theme){
     card.className = 'flip-card';
     card.innerHTML = `
       <div class="flip-card-inner">
-        <div class="flip-face flip-front">
-          <div class="fc-q">${item.q}</div>
-          <div class="fc-hint">Toucher pour voir la réponse ↻</div>
+        <div class="flip-face flip-front ink-fill" data-t="${item.theme}">
+          <p class="text-[17px] leading-snug font-bold">${esc(item.q)}</p>
+          <p class="libelle mt-4">Toucher pour la réponse</p>
         </div>
         <div class="flip-face flip-back">
-          <div class="fc-a">${item.o[item.a]}</div>
-          <div class="fc-e">${item.e}</div>
+          <p class="affiche text-[19px] leading-tight text-nuit dark:text-nuit-clair">${esc(item.o[item.a])}</p>
+          <p class="mt-3 text-[13.5px] leading-relaxed text-ink-soft">${esc(item.e)}</p>
         </div>
       </div>`;
     card.addEventListener('click', ()=>card.classList.toggle('flipped'));
@@ -1012,7 +999,7 @@ function startExam(){
     updateTimerDisplay();
     state.timerId = setInterval(tick, 1000);
   } else {
-    document.getElementById('timer').textContent = '∞';
+    document.getElementById('timer').textContent = 'LIBRE';
   }
 }
 
@@ -1039,9 +1026,10 @@ function renderQuestion(){
   document.getElementById('q-index').textContent = idx+1;
   document.getElementById('progress-fill').style.width = ((idx+1)/state.questions.length*100)+'%';
 
-  const tag = document.getElementById('theme-tag');
-  tag.textContent = THEME_LABELS[item.theme] + (item.type==='situation' ? ' · mise en situation' : '');
-  tag.classList.toggle('situation', item.type==='situation');
+  // l'encre de l'aplat est celle du thème ; le nom du thème se lit au pied de l'aplat
+  document.getElementById('question-plate').dataset.t = item.theme;
+  document.getElementById('theme-tag').textContent =
+    THEME_SHORT[item.theme] + (item.type==='situation' ? ' · mise en situation' : '');
 
   document.getElementById('question-text').textContent = item.q;
 
@@ -1051,17 +1039,18 @@ function renderQuestion(){
   item.options.forEach((opt,i)=>{
     const li = document.createElement('li');
     li.className = 'option' + (state.answers[idx]===i ? ' selected':'');
-    li.innerHTML = `<span class="letter">${letters[i]}</span><span>${opt}</span>`;
+    li.setAttribute('role','button');
+    li.setAttribute('aria-pressed', String(state.answers[idx]===i));
+    li.innerHTML = `<span class="letter">${letters[i]}</span><span>${esc(opt)}</span>`;
     li.addEventListener('click', ()=>selectOption(i));
     list.appendChild(li);
   });
 
   const flagBtn = document.getElementById('flag-btn');
   flagBtn.classList.toggle('on', state.flagged[idx]);
-  flagBtn.textContent = state.flagged[idx] ? '🔖 Marquée pour révision' : '🔖 Marquer pour révision';
+  flagBtn.textContent = state.flagged[idx] ? 'Marquée pour révision' : 'Marquer pour révision';
 
   document.getElementById('btn-prev').disabled = idx===0;
-  document.getElementById('btn-next').textContent = idx===state.questions.length-1 ? 'Suivante →' : 'Suivante →';
   updateQMap();
 }
 
@@ -1079,7 +1068,7 @@ function selectOption(i){
 // scrollIntoView + scroll-margin-top gère correctement le décalage de la barre sticky, y compris sur iOS Safari
 // (getBoundingClientRect() sur .exam-bar renverrait toujours top:0 une fois la barre "collée", donc inutilisable ici)
 // rAF laisse le DOM se mettre à jour avant de mesurer/lancer le scroll (nécessaire sur iOS Safari)
-const CARD_SCROLL_MARGIN = 100; // doit rester synchronisé avec le scroll-margin-top de #question-card
+const CARD_SCROLL_MARGIN = 94; // doit rester synchronisé avec le scroll-margin-top de #question-card
 function scrollExamToTop(){
   const card = document.getElementById('question-card');
   if(!card) return;
@@ -1289,12 +1278,24 @@ function finishExam(auto){
     if(!d) return;
     const p = Math.round(d.correct/d.total*100);
     const row = document.createElement('div');
-    row.className = 'theme-bar-row';
     row.innerHTML = `
-      <div class="tb-top"><span class="tb-name">${THEME_LABELS[key]}</span><span class="tb-score">${d.correct}/${d.total}</span></div>
-      <div class="tb-track"><div class="tb-fill" style="width:${p}%"></div></div>`;
+      <div class="flex items-baseline justify-between gap-3">
+        <span class="text-[14px] leading-snug font-bold">${esc(THEME_LABELS[key])}</span>
+        <span class="figures shrink-0 text-[13.5px] whitespace-nowrap text-ink-soft">${d.correct}/${d.total} · ${p} %</span>
+      </div>
+      <div class="mt-1.5 h-2.5 w-full bg-ground-2">
+        <div class="ink-fill h-full" data-t="${key}" style="width:${p}%"></div>
+      </div>`;
     bars.appendChild(row);
   });
+
+  // carnet de suivi : enregistre la séance, met à jour série / points / tampons
+  const gain = recordSession({
+    correct, total, passed, perTheme,
+    timeLeft: state.duration > 0 ? state.timeLeft : null,
+    duration: state.duration
+  });
+  renderSessionGain(gain);
 
   buildReview('all');
   document.getElementById('cnt-all').textContent = total;
@@ -1303,6 +1304,10 @@ function finishExam(auto){
 
   showScreen('results');
 }
+
+// pictogrammes du corrigé : la couleur n'est jamais le seul signal
+const ICON_OK = '<svg viewBox="0 0 20 20" class="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m4 10.5 4 4 8-9"/></svg>';
+const ICON_KO = '<svg viewBox="0 0 20 20" class="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5l10 10M15 5 5 15"/></svg>';
 
 function buildReview(filter){
   const list = document.getElementById('review-list');
@@ -1315,29 +1320,28 @@ function buildReview(filter){
     if(filter==='flagged' && !state.flagged[i]) return;
 
     const div = document.createElement('div');
-    div.className = 'review-item';
-    let answerHTML = '';
-    if(userAns===null){
-      answerHTML = `<div class="ans-line wrong">Votre réponse : — (sans réponse)</div>`;
-    } else {
-      answerHTML = `<div class="ans-line ${ok?'right':'wrong'}">Votre réponse : ${letters[userAns]}. ${item.options[userAns]}</div>`;
-    }
-    if(!ok){
-      answerHTML += `<div class="ans-line right">Bonne réponse : ${letters[item.correct]}. ${item.options[item.correct]}</div>`;
-    }
+    div.className = 'rounded-bloc bg-panel p-4 shadow-[inset_0_0_0_2px_var(--line)] sm:p-5';
+    const ligne = (label, txt, bon)=>`
+      <p class="mt-1.5 flex items-start gap-2 text-[13.5px] leading-snug ${bon?'text-vert dark:text-vert-clair':'text-vermillon-deep dark:text-vermillon-clair'}">
+        ${bon ? ICON_OK : ICON_KO}<span><span class="font-bold">${label} :</span> ${txt}</span>
+      </p>`;
+    let answerHTML = userAns===null
+      ? ligne('Votre réponse', 'sans réponse', false)
+      : ligne('Votre réponse', `${letters[userAns]}. ${esc(item.options[userAns])}`, ok);
+    if(!ok) answerHTML += ligne('Bonne réponse', `${letters[item.correct]}. ${esc(item.options[item.correct])}`, true);
+
     div.innerHTML = `
-      <div class="ri-head">
-        <span class="badge ${ok?'ok':'ko'}">${ok?'Correct':'Incorrect'}</span>
-        <span class="theme-tag ${item.type==='situation'?'situation':''}" style="margin:0;">${THEME_LABELS[item.theme]}</span>
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="theme-tag" data-t="${item.theme}">${esc(THEME_SHORT[item.theme])}</span>
+        ${item.type==='situation' ? '<span class="libelle text-ink-soft">mise en situation</span>' : ''}
       </div>
-      <p class="rq">${i+1}. ${item.q}</p>
+      <p class="mt-3 text-[16px] leading-snug font-bold"><span class="figures text-ink-soft">${i+1}.</span> ${esc(item.q)}</p>
       ${answerHTML}
-      <div class="explain">${item.e}</div>
-    `;
+      <p class="mt-3 border-t border-line pt-3 text-[13.5px] leading-relaxed text-ink-soft">${esc(item.e)}</p>`;
     list.appendChild(div);
   });
   if(list.children.length===0){
-    list.innerHTML = '<p class="fineprint">Aucune question dans cette catégorie — bravo !</p>';
+    list.innerHTML = '<p class="text-[14px] text-ink-soft">Aucune question dans cette catégorie — bravo !</p>';
   }
 }
 
@@ -1388,12 +1392,649 @@ document.getElementById('btn-retry-errors').addEventListener('click', ()=>{
   state.timeLeft = 0;
   state.finished = false;
   document.getElementById('q-total').textContent = state.questions.length;
-  document.getElementById('timer').textContent = '∞';
+  document.getElementById('timer').textContent = 'LIBRE';
   buildQMap();
   renderQuestion();
   showScreen('exam');
   clearInterval(state.timerId);
 });
+
+/* ============================================================
+   CARNET DE SUIVI
+   Série (registre de présence), échelons, tampons, relevé comparatif.
+   Tout est stocké en local ; seul le relevé comparatif est synchronisé.
+   ============================================================ */
+const PROGRESS_KEY = 'examen-civique-progress';
+const TOTAL_ECHELONS = 7;
+
+// une séance complète réussie rapporte ~470 points : l'échelon VII demande donc
+// une quarantaine d'examens, soit la durée d'une vraie préparation.
+const ECHELONS = [
+  {min:0,     roman:'I',   name:'Postulant'},
+  {min:600,   roman:'II',  name:'Requérant'},
+  {min:1800,  roman:'III', name:'Candidat'},
+  {min:3800,  roman:'IV',  name:'Candidat confirmé'},
+  {min:7000,  roman:'V',   name:'Impétrant'},
+  {min:11500, roman:'VI',  name:'Récipiendaire'},
+  {min:18000, roman:'VII', name:'Citoyen émérite'}
+];
+
+/* pictogrammes des tampons : même grille 100×100, même graisse de trait */
+const SEAL_ART = {
+  feuille:  '<path d="M38 30h16l10 10v30H38z"/><path d="M54 30v10h10"/><path d="M44 50h14M44 58h14"/>',
+  liasse:   '<path d="M32 38h22l8 8v22H32z"/><path d="M40 32h22l8 8v22"/>',
+  semaine:  '<rect x="30" y="38" width="40" height="28" rx="2"/><path d="M30 47h40"/><path d="M37 54v6M44 54v6M51 54v6M58 54v6M65 54v6"/>',
+  mois:     '<rect x="30" y="34" width="40" height="34" rx="2"/><path d="M30 44h40M40 30v8M60 30v8"/><path d="M38 52h4M48 52h4M58 52h4M38 61h4M48 61h4M58 61h4"/>',
+  visa:     '<path d="M34 52l11 11 21-25"/>',
+  etoile:   '<path d="M50 30l6.6 13.4 14.8 2.2-10.7 10.4 2.5 14.7L50 63.8l-13.2 6.9 2.5-14.7-10.7-10.4 14.8-2.2z"/>',
+  horloge:  '<circle cx="50" cy="50" r="19"/><path d="M50 39v11l8 5"/>',
+  batons:   '<path d="M36 40v20M43 40v20M50 40v20M57 40v20M32 62l29-24"/>',
+  monument: '<path d="M34 68h32M39 68V42M50 68V42M61 68V42M34 42h32l-16-14z"/>',
+  balance:  '<path d="M50 30v38M38 68h24M31 42h38"/><path d="M24 42l7 14 7-14M62 42l7 14 7-14"/>',
+  urne:     '<rect x="33" y="44" width="34" height="24" rx="2"/><path d="M43 44v-9h14v9"/><path d="M44 50h12"/>',
+  etoiles:  '<circle cx="50" cy="31"r="2.6"/><circle cx="63" cy="34.5" r="2.6"/><circle cx="72.5" cy="44" r="2.6"/><circle cx="76" cy="57" r="2.6"/><circle cx="72.5" cy="70" r="2.6"/><circle cx="63" cy="79.5" r="2.6"/><circle cx="50" cy="83" r="2.6"/><circle cx="37" cy="79.5" r="2.6"/><circle cx="27.5" cy="70" r="2.6"/><circle cx="24" cy="57" r="2.6"/><circle cx="27.5" cy="44" r="2.6"/><circle cx="37" cy="34.5" r="2.6"/>'
+};
+
+const BADGES = [
+  {id:'premiere',   name:'Première séance', rim:'PREMIÈRE SÉANCE', art:'feuille',  crit:'Une séance terminée',    test:p=>p.sessions>=1},
+  {id:'assidu',     name:'Dix séances',     rim:'DIX SÉANCES',     art:'liasse',   crit:'Dix séances terminées',  test:p=>p.sessions>=10},
+  {id:'semaine',    name:'Semaine complète',rim:'SEMAINE',         art:'semaine',  crit:'Sept jours de suite',    test:p=>p.streak.longest>=7},
+  {id:'mois',       name:'Mois complet',    rim:'MOIS',            art:'mois',     crit:'Trente jours de suite',  test:p=>p.streak.longest>=30},
+  {id:'admis',      name:'Premier admis',   rim:'ADMIS',           art:'visa',     crit:'80 % à un examen',       test:p=>p.passes>=1},
+  {id:'sansfaute',  name:'Sans faute',      rim:'SANS FAUTE',      art:'etoile',   crit:'Sans faute sur 15 questions', test:p=>!!p.perfect},
+  {id:'chrono',     name:'Dans les temps',  rim:'DANS LES TEMPS',  art:'horloge',  crit:'40 questions, 10 min d’avance', test:p=>!!p.fastPass},
+  {id:'cent',       name:'Cent questions',  rim:'CENT QUESTIONS',  art:'batons',   crit:'100 questions traitées', test:p=>p.answered>=100},
+  {id:'m-histoire',     name:'Maîtrise : Histoire',     rim:'HISTOIRE',     art:'monument', crit:'90 % sur 50 questions', test:p=>themeMastered(p,'histoire')},
+  {id:'m-institutions', name:'Maîtrise : Institutions', rim:'INSTITUTIONS', art:'balance',  crit:'90 % sur 50 questions', test:p=>themeMastered(p,'institutions')},
+  {id:'m-citoyennete',  name:'Maîtrise : Citoyenneté',  rim:'CITOYENNETÉ',  art:'urne',     crit:'90 % sur 50 questions', test:p=>themeMastered(p,'citoyennete')},
+  {id:'m-europe',       name:'Maîtrise : Europe',       rim:'EUROPE',       art:'etoiles',  crit:'90 % sur 50 questions', test:p=>themeMastered(p,'europe')}
+];
+
+const SEAL_TILT = [-4,3,-2,5,-3,2,4,-5,3,-3,2,-4];
+
+// seuil volontairement haut : la maîtrise d'un thème doit demander plusieurs séances,
+// pas un seul tirage favorable
+function themeMastered(p, key){
+  const t = p.themes[key];
+  return !!t && t.total>=50 && (t.correct/t.total)>=0.9;
+}
+
+/* ---- dates ---- */
+function dayKey(d){
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function parseDay(key){ const [y,m,d] = key.split('-').map(Number); return new Date(y, m-1, d); }
+function daysBetween(a, b){ return Math.round((parseDay(b) - parseDay(a)) / 86400000); }
+function shiftDay(key, n){ const d = parseDay(key); d.setDate(d.getDate()+n); return dayKey(d); }
+function frDate(key){ const [y,m,d] = key.split('-'); return `${d}.${m}.${y}`; }
+// semaine ISO, pour n'accorder qu'un seul jour de tolérance par semaine
+function weekKey(key){
+  const t = parseDay(key);
+  t.setDate(t.getDate() - ((t.getDay()+6)%7) + 3); // jeudi de la semaine ISO
+  const firstThu = new Date(t.getFullYear(), 0, 4);
+  firstThu.setDate(firstThu.getDate() - ((firstThu.getDay()+6)%7) + 3);
+  return `${t.getFullYear()}-S${String(1 + Math.round((t-firstThu)/604800000)).padStart(2,'0')}`;
+}
+
+function esc(s){
+  return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* ---- stockage ---- */
+function defaultProgress(){
+  return {
+    v:1,
+    playerId: 'j' + Math.random().toString(36).slice(2,10),
+    name:'',
+    xp:0, sessions:0, answered:0, correct:0, passes:0,
+    perfect:false, fastPass:false,
+    best:null,
+    streak:{current:0, longest:0, last:null, graceWeek:null, graceDays:[]},
+    days:{}, themes:{}, badges:{},
+    duel:{code:null}
+  };
+}
+
+function loadProgress(){
+  let saved = null;
+  try{ saved = JSON.parse(localStorage.getItem(PROGRESS_KEY) || 'null'); }catch(e){ saved = null; }
+  const p = Object.assign(defaultProgress(), saved || {});
+  p.streak = Object.assign(defaultProgress().streak, p.streak || {});
+  p.duel   = Object.assign({code:null}, p.duel || {});
+  ['days','themes','badges'].forEach(k=>{ if(!p[k] || typeof p[k]!=='object') p[k] = {}; });
+  return p;
+}
+
+let progress = loadProgress();
+
+function saveProgress(){
+  // ne conserve que les 400 derniers jours du registre
+  const keys = Object.keys(progress.days).sort();
+  if(keys.length > 400) keys.slice(0, keys.length-400).forEach(k=>{ delete progress.days[k]; });
+  try{ localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress)); }catch(e){ /* quota / navigation privée */ }
+}
+
+/* ---- échelons ---- */
+function echelonOf(xp){
+  let i = 0;
+  for(let k=0;k<ECHELONS.length;k++){ if(xp >= ECHELONS[k].min) i = k; }
+  const next = ECHELONS[i+1] || null;
+  const base = ECHELONS[i].min;
+  return {
+    index:i, roman:ECHELONS[i].roman, name:ECHELONS[i].name, next,
+    pct: next ? Math.min(100, Math.round((xp-base)/(next.min-base)*100)) : 100,
+    toNext: next ? next.min - xp : 0
+  };
+}
+
+/* ---- état de la série, au moment de l'affichage ---- */
+function streakStatus(){
+  const st = progress.streak;
+  const today = dayKey(new Date());
+  if(!st.last) return {value:0, state:'vide'};
+  const gap = daysBetween(st.last, today);
+  if(gap <= 0) return {value:st.current, state:'faite'};
+  if(gap === 1) return {value:st.current, state:'a-confirmer'};
+  if(gap === 2 && st.graceWeek !== weekKey(shiftDay(st.last,1))) return {value:st.current, state:'sursis'};
+  return {value:0, state:'rompue'};
+}
+
+/* ---- enregistrement d'une séance terminée ---- */
+function recordSession(r){
+  const p = progress;
+  const today = dayKey(new Date());
+  const firstToday = !p.days[today];
+  const st = p.streak;
+
+  let streakEvent;
+  if(!st.last){
+    st.current = 1; streakEvent = 'debut';
+  } else {
+    const gap = daysBetween(st.last, today);
+    if(gap <= 0){ streakEvent = 'meme-jour'; }
+    else if(gap === 1){ st.current += 1; streakEvent = 'poursuite'; }
+    else if(gap === 2 && st.graceWeek !== weekKey(shiftDay(st.last,1))){
+      const missed = shiftDay(st.last, 1);
+      st.graceWeek = weekKey(missed);
+      st.graceDays = (st.graceDays || []).concat(missed).slice(-30);
+      st.current += 1; streakEvent = 'tolerance';
+    }
+    else { st.current = 1; streakEvent = 'reprise'; }
+  }
+  st.last = today;
+  st.longest = Math.max(st.longest || 0, st.current);
+
+  const pct = Math.round(r.correct / r.total * 100);
+  const xp = r.correct*10 + (r.passed?60:0) + (r.total>=40?40:0) + (firstToday?20:0);
+
+  p.xp += xp;
+  p.sessions += 1;
+  p.answered += r.total;
+  p.correct += r.correct;
+  if(r.passed) p.passes += 1;
+  if(r.total>=15 && r.correct===r.total) p.perfect = true;
+  if(r.passed && r.total>=40 && r.timeLeft !== null && r.timeLeft >= 600) p.fastPass = true;
+  if(r.total>=15 && (!p.best || pct > p.best.pct)) p.best = {correct:r.correct, total:r.total, pct, date:today};
+
+  const day = p.days[today] || {sessions:0, xp:0};
+  p.days[today] = {sessions: day.sessions+1, xp: day.xp+xp};
+
+  Object.keys(r.perTheme).forEach(key=>{
+    const t = p.themes[key] || {correct:0, total:0};
+    t.correct += r.perTheme[key].correct;
+    t.total   += r.perTheme[key].total;
+    p.themes[key] = t;
+  });
+
+  const newBadges = [];
+  BADGES.forEach(b=>{
+    if(!p.badges[b.id] && b.test(p)){ p.badges[b.id] = today; newBadges.push(b); }
+  });
+
+  saveProgress();
+  renderCarnetChip();
+  duelPush();
+
+  return {xp, streakEvent, newBadges, echelon: echelonOf(p.xp), streak: st.current};
+}
+
+/* ---- tampon (SVG) ---- */
+function sealSVG(badge, unlocked, index, extraClass){
+  const uid = `seal-${badge.id}`;
+  const tilt = SEAL_TILT[index % SEAL_TILT.length];
+  const date = unlocked && progress.badges[badge.id] ? frDate(progress.badges[badge.id]) : '';
+  const ink = unlocked ? 'var(--seal-ink)' : 'var(--ink-soft)';
+  return `
+    <svg viewBox="0 0 100 100" class="seal h-full w-full ${extraClass||''}" style="--seal-rot:${tilt}deg; color:${ink}; opacity:${unlocked?1:.42}"
+         role="img" aria-label="${esc(badge.name)}${unlocked?', obtenu le '+date:', non obtenu'}">
+      <defs>
+        <path id="${uid}-top" d="M7 50a43 43 0 0 1 86 0" fill="none"/>
+      </defs>
+      <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="50" cy="50" r="47" stroke-width="2.4" ${unlocked?'':'stroke-dasharray="5 4"'}/>
+        <circle cx="50" cy="50" r="38.5" stroke-width="1"/>
+        <g stroke-width="3.1">${SEAL_ART[badge.art]}</g>
+      </g>
+      <text fill="currentColor" font-family="Archivo, sans-serif" font-weight="700" text-anchor="middle"
+            font-size="8.4" letter-spacing="1.1"><textPath href="#${uid}-top" startOffset="50%">${esc(badge.rim)}</textPath></text>
+      <g fill="currentColor">
+        <circle cx="44" cy="92.6" r="1.1"/><circle cx="50" cy="93" r="1.1"/><circle cx="56" cy="92.6" r="1.1"/>
+      </g>
+    </svg>`;
+}
+
+/* ---- rendu : pastille d'en-tête + aperçu de l'accueil ---- */
+function renderCarnetChip(){
+  const s = streakStatus();
+  const e = echelonOf(progress.xp);
+  const chip = document.getElementById('btn-carnet-top');
+  document.getElementById('chip-streak').textContent = s.value;
+  document.getElementById('chip-echelon').textContent = e.roman;
+  chip.setAttribute('aria-label', `Carnet de suivi — série de ${s.value} jour${s.value>1?'s':''}, échelon ${e.roman}`);
+
+  const badgeCount = Object.keys(progress.badges).length;
+  document.getElementById('teaser-streak').textContent = s.value;
+  document.getElementById('teaser-streak-note').textContent =
+    s.state==='vide' ? 'aucune séance' :
+    s.state==='faite' ? 'séance faite ce jour' :
+    s.state==='rompue' ? 'série rompue' :
+    s.state==='sursis' ? 'en sursis' : 'à confirmer aujourd’hui';
+  document.getElementById('teaser-echelon').textContent = e.roman;
+  document.getElementById('teaser-echelon-note').textContent = e.name;
+  document.getElementById('teaser-badges').textContent = `${badgeCount}/${BADGES.length}`;
+}
+
+/* ---- rendu : le carnet ---- */
+function renderCarnet(){
+  const p = progress;
+  const s = streakStatus();
+  const e = echelonOf(p.xp);
+
+  document.getElementById('carnet-holder').textContent = p.name ? `Titulaire · ${p.name}` : 'Titulaire non renseigné';
+
+  // registre de présence
+  const strip = document.getElementById('reg-strip');
+  const today = dayKey(new Date());
+  strip.innerHTML = '';
+  for(let i=13;i>=0;i--){
+    const key = shiftDay(today, -i);
+    const done = !!p.days[key];
+    const grace = (p.streak.graceDays || []).includes(key);
+    const isToday = key === today;
+    // le jour travaillé est une encre pleine, comme la légende l'annonce
+    const cls = done ? 'bg-nuit text-creme dark:bg-nuit-clair dark:text-[#08131F]'
+              : grace ? 'border-2 border-dashed border-or bg-panel text-or-deep dark:text-or'
+              : 'bg-panel text-ink-soft shadow-[inset_0_0_0_2px_var(--line)]';
+    const ring = isToday ? ' outline-3 outline-offset-2 outline-or' : '';
+    const label = `${frDate(key)}${done ? ` — ${p.days[key].sessions} séance${p.days[key].sessions>1?'s':''}` : grace ? ' — jour de tolérance' : ' — aucune séance'}`;
+    strip.insertAdjacentHTML('beforeend', `
+      <div class="flex aspect-square flex-col items-center justify-center rounded-bloc ${cls}${ring}" title="${esc(label)}">
+        <span class="figures text-[12.5px] leading-none font-bold">${key.slice(8)}</span>
+        ${grace ? '<span class="mt-1 block text-[10px] leading-none font-bold">T</span>' : ''}
+      </div>`);
+  }
+
+  const record = p.streak.longest ? ` Record : ${p.streak.longest} jours.` : '';
+  document.getElementById('reg-note').textContent =
+    s.state==='vide'        ? 'Aucune séance enregistrée. La série démarre à ta première séance terminée.' :
+    s.state==='faite'       ? `Série de ${s.value} jour${s.value>1?'s':''}. Séance du jour enregistrée.${record}` :
+    s.state==='a-confirmer' ? `Série de ${s.value} jour${s.value>1?'s':''} à confirmer : fais une séance aujourd’hui pour ne pas la rompre.${record}` :
+    s.state==='sursis'      ? `Série de ${s.value} jour${s.value>1?'s':''} en sursis : une séance aujourd’hui la conserve grâce au jour de tolérance de la semaine.${record}` :
+                              `Série rompue.${record} Une séance aujourd’hui en relance une nouvelle.`;
+
+  // échelon
+  document.getElementById('ech-roman').textContent = e.roman;
+  document.getElementById('ech-name').textContent = e.name;
+  document.getElementById('ech-xp').textContent = p.xp.toLocaleString('fr-FR');
+  document.getElementById('ech-fill').style.width = e.pct + '%';
+  document.getElementById('ech-next').textContent = e.next
+    ? `${e.toNext.toLocaleString('fr-FR')} points avant l’échelon ${e.next.roman} · ${e.next.name}.`
+    : 'Échelon le plus élevé atteint.';
+  const scale = document.getElementById('ech-scale');
+  scale.innerHTML = ECHELONS.map((lvl,i)=>{
+    const done = i <= e.index;
+    return `<li class="affiche text-[13px] leading-none ${i===e.index ? 'text-or' : done ? 'text-creme' : 'text-creme/70'}"
+      title="${esc(lvl.name)} · ${lvl.min} points">${lvl.roman}</li>`;
+  }).join('');
+
+  // tampons
+  const grid = document.getElementById('badge-grid');
+  const owned = Object.keys(p.badges).length;
+  document.getElementById('badge-count').textContent = `${owned} / ${BADGES.length}`;
+  grid.innerHTML = BADGES.map((b,i)=>{
+    const unlocked = !!p.badges[b.id];
+    return `<li class="flex flex-col items-center text-center">
+      <span class="block h-16 w-16 sm:h-[72px] sm:w-[72px]">${sealSVG(b, unlocked, i)}</span>
+      <span class="mt-2 text-[12.5px] leading-tight font-bold ${unlocked?'text-ink':'text-ink-soft'}">${esc(b.name)}</span>
+      <span class="mt-0.5 text-[11.5px] leading-tight text-ink-soft">${unlocked ? frDate(p.badges[b.id]) : esc(b.crit)}</span>
+    </li>`;
+  }).join('');
+
+  // maîtrise par thème
+  const rows = document.getElementById('mastery-rows');
+  const keys = Object.keys(THEME_LABELS).filter(k=>p.themes[k] && p.themes[k].total>0);
+  if(keys.length === 0){
+    rows.innerHTML = '<p class="text-[13.5px] text-ink-soft">Aucune donnée pour l’instant — termine une séance pour ouvrir cette page.</p>';
+  } else {
+    rows.innerHTML = keys.map(key=>{
+      const t = p.themes[key];
+      const pc = Math.round(t.correct/t.total*100);
+      const mention = pc>=90?'Très bien':pc>=80?'Bien':pc>=65?'Assez bien':pc>=50?'Passable':'Insuffisant';
+      return `<div>
+        <div class="flex items-baseline justify-between gap-3">
+          <span class="text-[13.5px] leading-snug font-bold text-ink">${esc(THEME_LABELS[key])}</span>
+          <span class="figures shrink-0 text-[13px] whitespace-nowrap text-ink-soft">${t.correct}/${t.total} · ${mention}</span>
+        </div>
+        <div class="mt-1.5 h-2.5 w-full bg-ground-2">
+          <div class="ink-fill h-full" data-t="${key}" style="width:${pc}%"></div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  renderDuel();
+}
+
+/* ---- rendu : bordereau de fin de séance + tampons obtenus ---- */
+function renderSessionGain(gain){
+  const box = document.getElementById('session-gain');
+  box.classList.remove('hidden');
+  box.classList.add('flex');
+  document.getElementById('gain-xp').textContent = `+${gain.xp}`;
+  document.getElementById('gain-streak').textContent =
+    gain.streakEvent==='debut' ? 'série ouverte'
+    : gain.streakEvent==='tolerance' ? `série de ${gain.streak} jours (jour de tolérance utilisé)`
+    : gain.streakEvent==='meme-jour' ? `série de ${gain.streak} jour${gain.streak>1?'s':''}`
+    : gain.streakEvent==='reprise' ? 'nouvelle série ouverte'
+    : `série portée à ${gain.streak} jour${gain.streak>1?'s':''}`;
+  document.getElementById('gain-echelon').textContent = `Échelon ${gain.echelon.roman} · ${gain.echelon.name}`;
+
+  const wrap = document.getElementById('new-badges');
+  const list = document.getElementById('new-badges-list');
+  if(gain.newBadges.length === 0){ wrap.classList.add('hidden'); list.innerHTML=''; return; }
+  wrap.classList.remove('hidden');
+  document.getElementById('new-badges-title').textContent =
+    gain.newBadges.length>1 ? `${gain.newBadges.length} nouveaux tampons` : 'Nouveau tampon';
+  list.innerHTML = gain.newBadges.map(b=>`
+    <li class="flex w-24 flex-col items-center text-center">
+      <span class="block h-20 w-20">${sealSVG(b, true, BADGES.findIndex(x=>x.id===b.id), 'stamp-land')}</span>
+      <span class="mt-2 text-[12.5px] leading-tight font-bold text-ink">${esc(b.name)}</span>
+    </li>`).join('');
+  // le décalage se met sur l'élément animé lui-même, pas sur son conteneur
+  list.querySelectorAll('.stamp-land').forEach((el,i)=>{ el.style.animationDelay = `${i*140}ms`; });
+}
+
+/* ============================================================
+   RELEVÉ COMPARATIF (Firebase Realtime Database, offre gratuite)
+   La configuration se colle depuis le carnet, sur chaque appareil ;
+   elle est conservée en local. Règles conseillées côté Firebase :
+     {"rules":{"duels":{"$code":{".read":"auth != null",".write":"auth != null"}}}}
+   Le code de duel est le secret partagé entre les deux appareils.
+   ============================================================ */
+const FIREBASE_SDK = 'https://www.gstatic.com/firebasejs/12.9.0/';
+const FIREBASE_KEY = 'examen-civique-firebase';
+const FIREBASE_CONFIG = {apiKey:'', authDomain:'', databaseURL:'', projectId:'', appId:''};
+try{ Object.assign(FIREBASE_CONFIG, JSON.parse(localStorage.getItem(FIREBASE_KEY) || '{}')); }catch(e){ /* config absente */ }
+
+// accepte aussi bien du JSON que l'extrait « const firebaseConfig = { … } » de la console Firebase
+function parseFirebaseConfig(raw){
+  const block = raw.slice(raw.indexOf('{'), raw.lastIndexOf('}')+1);
+  if(!block) return null;
+  const normalised = block
+    .replace(/\/\/[^\n]*/g, '')
+    .replace(/([{,]\s*)([A-Za-z0-9_$]+)\s*:/g, '$1"$2":')
+    .replace(/'/g, '"')
+    .replace(/,(\s*})/g, '$1');
+  let cfg;
+  try{ cfg = JSON.parse(normalised); }catch(e){ return null; }
+  if(!cfg.apiKey || !cfg.databaseURL) return null;
+  return cfg;
+}
+
+let fb = null, duelRoom = null, duelUnsub = null;
+let duelState = {phase:'idle', error:null, players:null};
+
+function duelConfigured(){ return !!(FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.databaseURL); }
+
+async function fbInit(){
+  if(fb) return fb;
+  const [app, db, auth] = await Promise.all([
+    import(FIREBASE_SDK + 'firebase-app.js'),
+    import(FIREBASE_SDK + 'firebase-database.js'),
+    import(FIREBASE_SDK + 'firebase-auth.js')
+  ]);
+  const instance = app.initializeApp(FIREBASE_CONFIG);
+  await auth.signInAnonymously(auth.getAuth(instance));
+  fb = {db: db.getDatabase(instance), ref: db.ref, set: db.set, onValue: db.onValue, off: db.off};
+  return fb;
+}
+
+function duelPayload(){
+  const s = streakStatus();
+  const e = echelonOf(progress.xp);
+  return {
+    name: progress.name || 'Sans nom',
+    best: progress.best ? {correct:progress.best.correct, total:progress.best.total, pct:progress.best.pct} : null,
+    streak: s.value, longest: progress.streak.longest || 0,
+    echelon: e.roman, echelonName: e.name, xp: progress.xp,
+    sessions: progress.sessions, correct: progress.correct, answered: progress.answered,
+    updatedAt: Date.now()
+  };
+}
+
+async function duelPush(){
+  if(!duelConfigured() || !progress.duel.code) return;
+  try{
+    const {db, ref, set} = await fbInit();
+    await set(ref(db, `duels/${progress.duel.code}/${progress.playerId}`), duelPayload());
+  }catch(err){
+    duelState = {phase:'erreur', error:err.message, players:duelState.players};
+    if(!screens.progress.classList.contains('hidden')) renderDuel();
+  }
+}
+
+async function duelConnect(){
+  if(!duelConfigured() || !progress.duel.code) return;
+  if(duelRoom === progress.duel.code) return;
+  duelRoom = progress.duel.code;
+  duelState = {phase:'connexion', error:null, players:null};
+  renderDuel();
+  try{
+    const {db, ref, onValue, set} = await fbInit();
+    await set(ref(db, `duels/${duelRoom}/${progress.playerId}`), duelPayload());
+    duelUnsub = onValue(ref(db, `duels/${duelRoom}`), snap=>{
+      duelState = {phase:'connecte', error:null, players: snap.val() || {}};
+      if(!screens.progress.classList.contains('hidden')) renderDuel();
+    }, err=>{
+      duelState = {phase:'erreur', error:err.message, players:null};
+      if(!screens.progress.classList.contains('hidden')) renderDuel();
+    });
+  }catch(err){
+    duelRoom = null;
+    duelState = {phase:'erreur', error:err.message, players:null};
+    renderDuel();
+  }
+}
+
+function duelLeave(){
+  if(duelUnsub) { try{ duelUnsub(); }catch(e){} duelUnsub = null; }
+  duelRoom = null;
+  progress.duel.code = null;
+  duelState = {phase:'idle', error:null, players:null};
+  saveProgress();
+  renderDuel();
+}
+
+function newDuelCode(){
+  const alphabet = 'ACDEFGHJKLMNPQRTUVWXY34679';
+  let code = '';
+  for(let i=0;i<6;i++) code += alphabet[Math.floor(Math.random()*alphabet.length)];
+  return code;
+}
+
+function statLine(label, mine, theirs, better){
+  const lead = better === 0 ? 'moi' : better === 1 ? 'eux' : null;
+  const marker = `<svg viewBox="0 0 12 12" class="ml-1.5 inline-block h-2.5 w-2.5 text-or-deep dark:text-or" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9.5V2.5M2.5 6 6 2.5 9.5 6"/></svg>`;
+  const cell = (v, isLead)=>`<td class="figures border-t border-line py-2.5 pl-4 text-right text-[14px] whitespace-nowrap ${isLead?'font-bold text-ink':'text-ink'}">${v}${isLead?marker+'<span class="sr-only">en tête</span>':''}</td>`;
+  return `<tr>
+    <th scope="row" class="border-t border-line py-2.5 pr-3 text-left text-[13px] font-normal text-ink-soft">${esc(label)}</th>
+    ${cell(mine, lead==='moi')}${cell(theirs, lead==='eux')}
+  </tr>`;
+}
+
+function renderDuel(){
+  const body = document.getElementById('duel-body');
+  const status = document.getElementById('duel-status');
+
+  if(!duelConfigured()){
+    status.textContent = 'Synchronisation non configurée';
+    body.innerHTML = `
+      <p class="text-[13.5px] leading-relaxed text-ink">Le relevé comparatif a besoin d’un petit service gratuit pour faire circuler vos chiffres entre vos deux téléphones.</p>
+      <ol class="mt-3 list-decimal space-y-1.5 pl-5 text-[13.5px] leading-relaxed text-ink-soft">
+        <li>Créer un projet sur <span class="font-bold text-ink">console.firebase.google.com</span> (offre Spark, gratuite).</li>
+        <li>Y ajouter une <span class="font-bold text-ink">Realtime Database</span>, puis activer la connexion <span class="font-bold text-ink">anonyme</span>.</li>
+        <li>Copier la configuration web du projet et la coller ci-dessous, sur chacun de vos deux appareils.</li>
+      </ol>
+      <label class="libelle mt-4 block" for="fb-config">Configuration Firebase</label>
+      <textarea id="fb-config" rows="4" spellcheck="false" placeholder='{ "apiKey": "…", "databaseURL": "https://….firebasedatabase.app", … }'
+        class="mt-2 w-full rounded-bloc border border-line bg-panel px-3 py-2.5 font-mono text-[12.5px] leading-relaxed text-ink placeholder:text-ink-soft focus:border-nuit focus:outline-2 focus:outline-offset-1 focus:outline-or"></textarea>
+      <p class="mt-2 hidden text-[13px] leading-relaxed text-vermillon-deep dark:text-vermillon-clair" id="fb-error">Configuration illisible : il y manque au moins <span class="font-bold">apiKey</span> et <span class="font-bold">databaseURL</span>.</p>
+      <button class="btn mt-3" id="fb-save" type="button">Enregistrer la configuration</button>
+      <p class="mt-3 text-[13px] leading-relaxed text-ink-soft">Sans cette étape, tout le reste du carnet fonctionne normalement : seule la comparaison avec ton binôme reste indisponible.</p>`;
+    document.getElementById('fb-save').addEventListener('click', ()=>{
+      const raw = document.getElementById('fb-config').value.trim();
+      const cfg = raw ? parseFirebaseConfig(raw) : null;
+      if(!cfg){ document.getElementById('fb-error').classList.remove('hidden'); return; }
+      Object.assign(FIREBASE_CONFIG, cfg);
+      try{ localStorage.setItem(FIREBASE_KEY, JSON.stringify(cfg)); }catch(e){ /* quota dépassé */ }
+      renderDuel();
+    });
+    return;
+  }
+
+  if(!progress.duel.code){
+    status.textContent = 'Non couplé';
+    body.innerHTML = `
+      <p class="text-[13.5px] leading-relaxed text-ink">Créez un duel sur un téléphone, puis saisissez le même code sur l’autre.</p>
+      <div class="mt-4 flex flex-col gap-2">
+        <label class="libelle" for="duel-name">Votre nom</label>
+        <input id="duel-name" type="text" maxlength="24" value="${esc(progress.name)}" placeholder="Prénom"
+          class="w-full rounded-bloc border border-line bg-panel px-3 py-2.5 text-[15px] text-ink placeholder:text-ink-soft focus:border-nuit focus:outline-2 focus:outline-offset-1 focus:outline-or">
+      </div>
+      <div class="mt-4 flex flex-col gap-2 sm:flex-row sm:items-end">
+        <div class="flex-1">
+          <label class="libelle" for="duel-code">Code du duel</label>
+          <input id="duel-code" type="text" maxlength="6" autocapitalize="characters" autocomplete="off" spellcheck="false" placeholder="6 caractères"
+            class="figures mt-2 w-full rounded-bloc border border-line bg-panel px-3 py-2.5 text-[15px] tracking-[.2em] text-ink uppercase placeholder:tracking-normal placeholder:text-ink-soft focus:border-nuit focus:outline-2 focus:outline-offset-1 focus:outline-or">
+        </div>
+        <button class="btn" id="duel-join" type="button">Rejoindre</button>
+      </div>
+      <button class="lien mt-3 text-[13px] text-nuit dark:text-nuit-clair" id="duel-create" type="button">Générer un code pour ce duel</button>`;
+    document.getElementById('duel-join').addEventListener('click', joinDuelFromForm);
+    document.getElementById('duel-create').addEventListener('click', ()=>{
+      document.getElementById('duel-code').value = newDuelCode();
+    });
+    document.getElementById('duel-code').addEventListener('keydown', ev=>{ if(ev.key==='Enter') joinDuelFromForm(); });
+    return;
+  }
+
+  const code = progress.duel.code;
+  const players = duelState.players || {};
+  const mine = players[progress.playerId] || duelPayload();
+  const otherId = Object.keys(players).find(id=>id !== progress.playerId);
+  const theirs = otherId ? players[otherId] : null;
+
+  status.textContent =
+    duelState.phase==='erreur' ? 'Synchronisation interrompue' :
+    duelState.phase==='connexion' ? 'Connexion…' :
+    theirs ? 'À jour' : 'En attente du binôme';
+
+  const head = `
+    <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+      <p class="text-[13.5px] text-ink-soft">Code du duel <span class="figures ml-1 rounded-bloc border border-line bg-ground-2 px-2 py-1 text-[14px] font-bold tracking-[.18em] text-ink">${esc(code)}</span></p>
+      <button class="lien text-[13px] text-nuit dark:text-nuit-clair" id="duel-leave" type="button">Quitter le duel</button>
+    </div>`;
+
+  if(duelState.phase === 'erreur'){
+    body.innerHTML = head + `
+      <p class="mt-4 text-[13.5px] leading-relaxed text-vermillon-deep dark:text-vermillon-clair">La synchronisation a échoué : ${esc(duelState.error || 'connexion impossible')}. Tes chiffres restent enregistrés sur cet appareil.</p>
+      <button class="btn secondary mt-4" id="duel-retry" type="button">Réessayer</button>`;
+    document.getElementById('duel-leave').addEventListener('click', duelLeave);
+    document.getElementById('duel-retry').addEventListener('click', ()=>{ duelRoom = null; duelConnect(); });
+    return;
+  }
+
+  if(!theirs){
+    body.innerHTML = head + `
+      <p class="mt-4 text-[13.5px] leading-relaxed text-ink">Transmets ce code à ton binôme : dès qu’il l’aura saisi, vos deux relevés apparaîtront ici côte à côte, mis à jour à chaque séance.</p>`;
+    document.getElementById('duel-leave').addEventListener('click', duelLeave);
+    return;
+  }
+
+  const bestTxt = b => b ? `${b.correct}/${b.total} · ${b.pct} %` : '—';
+  const cmp = (a,b)=> a===b ? -1 : (a>b ? 0 : 1);
+  const rows = [
+    statLine('Meilleur score', bestTxt(mine.best), bestTxt(theirs.best), cmp(mine.best?mine.best.pct:-1, theirs.best?theirs.best.pct:-1)),
+    statLine('Série en cours', `${mine.streak} j`, `${theirs.streak} j`, cmp(mine.streak, theirs.streak)),
+    statLine('Plus longue série', `${mine.longest} j`, `${theirs.longest} j`, cmp(mine.longest, theirs.longest)),
+    statLine('Échelon', mine.echelon, theirs.echelon, cmp(mine.xp, theirs.xp)),
+    statLine('Séances', mine.sessions, theirs.sessions, cmp(mine.sessions, theirs.sessions)),
+    statLine('Bonnes réponses', mine.correct, theirs.correct, cmp(mine.correct, theirs.correct))
+  ].join('');
+
+  body.innerHTML = head + `
+    <table class="mt-4 w-full border-collapse">
+      <caption class="sr-only">Comparaison des deux carnets</caption>
+      <thead>
+        <tr>
+          <td></td>
+          <th scope="col" class="libelle pb-2 pl-4 text-right">${esc(mine.name || 'Vous')} · vous</th>
+          <th scope="col" class="libelle pb-2 pl-4 text-right">${esc(theirs.name || 'Binôme')}</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <p class="mt-3 text-[12.5px] text-ink-soft">Relevé de ton binôme mis à jour le ${esc(new Date(theirs.updatedAt || Date.now()).toLocaleString('fr-FR', {dateStyle:'short', timeStyle:'short'}))}.</p>`;
+  document.getElementById('duel-leave').addEventListener('click', duelLeave);
+}
+
+function joinDuelFromForm(){
+  const nameInput = document.getElementById('duel-name');
+  const codeInput = document.getElementById('duel-code');
+  const code = (codeInput.value || '').trim().toUpperCase();
+  if(!/^[A-Z0-9]{4,8}$/.test(code)){
+    codeInput.focus();
+    codeInput.classList.add('border-vermillon');
+    return;
+  }
+  progress.name = (nameInput.value || '').trim().slice(0,24);
+  progress.duel.code = code;
+  saveProgress();
+  renderCarnet();
+  duelConnect();
+}
+
+/* ---- navigation vers le carnet ---- */
+function openCarnet(){
+  renderCarnet();
+  showScreen('progress');
+  duelConnect();
+}
+document.getElementById('btn-carnet-top').addEventListener('click', openCarnet);
+document.getElementById('btn-carnet').addEventListener('click', openCarnet);
+document.getElementById('btn-carnet-results').addEventListener('click', openCarnet);
+document.getElementById('btn-carnet-back').addEventListener('click', goHome);
+document.getElementById('btn-carnet-start').addEventListener('click', startExam);
+document.getElementById('btn-carnet-reset').addEventListener('click', ()=>{
+  if(!confirm('Effacer le carnet ? Série, points et tampons de cet appareil seront perdus.')) return;
+  duelLeave();
+  progress = defaultProgress();
+  saveProgress();
+  renderCarnetChip();
+  renderCarnet();
+});
+
+renderCarnetChip();
 </script>
 </body>
 </html>

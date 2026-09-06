@@ -1,0 +1,183 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-06T00:00:00Z",
+  "title": "Design System: Examen Civique",
+  "extensions": {
+    "colorMeta": {
+      "nuit": { "role": "primary", "displayName": "Bleu Nuit", "canonical": "#14335E", "tonalRamp": ["#050B15", "#0B1F3B", "#14335E", "#1E4A85", "#2F63A9", "#5C8FD6", "#93B7E6", "#CBDCF4"] },
+      "nuit-deep": { "role": "primary", "displayName": "Nuit Profond", "canonical": "#0B1F3B", "tonalRamp": ["#040A14", "#071427", "#0B1F3B", "#123059", "#1B4680", "#3D74B8", "#7FA6DC", "#C2D6F0"] },
+      "nuit-clair": { "role": "primary", "displayName": "Nuit Clair (texte sur fond sombre)", "canonical": "#5C8FD6", "tonalRamp": ["#0C1B30", "#153055", "#1F477C", "#2C61A6", "#3F7ECA", "#5C8FD6", "#94B6E6", "#CDDDF5"] },
+      "vermillon": { "role": "secondary", "displayName": "Vermillon", "canonical": "#E1432D", "tonalRamp": ["#2C0B06", "#4E140B", "#761F12", "#9C2917", "#B82F1C", "#E1432D", "#FF7F68", "#FFC7BB"] },
+      "vermillon-deep": { "role": "secondary", "displayName": "Vermillon Profond", "canonical": "#B82F1C", "tonalRamp": ["#240804", "#411008", "#63190D", "#8B2314", "#B82F1C", "#DC4530", "#F58671", "#FCC9BF"] },
+      "vermillon-clair": { "role": "secondary", "displayName": "Vermillon Clair (texte sur fond sombre)", "canonical": "#FF7F68", "tonalRamp": ["#3A1109", "#5E1D12", "#87291A", "#B23724", "#D9553F", "#FF7F68", "#FFAB9B", "#FFD9D1"] },
+      "or": { "role": "secondary", "displayName": "Or", "canonical": "#F2B417", "tonalRamp": ["#2B1F02", "#4A3504", "#6B4C06", "#8A6207", "#B9840B", "#F2B417", "#F8D06B", "#FCE9B8"] },
+      "or-deep": { "role": "secondary", "displayName": "Or Profond (texte sur papier)", "canonical": "#8A6207", "tonalRamp": ["#1E1502", "#372703", "#523A05", "#6D4E06", "#8A6207", "#C08A0B", "#E9B633", "#F7DE9C"] },
+      "vert": { "role": "tertiary", "displayName": "Vert Républicain", "canonical": "#1F6B4A", "tonalRamp": ["#04150E", "#0A2A1D", "#11412C", "#18563B", "#1F6B4A", "#2E9569", "#5FC393", "#B3E5CE"] },
+      "vert-clair": { "role": "tertiary", "displayName": "Vert Clair (texte sur fond sombre)", "canonical": "#5FC393", "tonalRamp": ["#0A2418", "#123B28", "#1A5339", "#246E4C", "#2F9264", "#45B37F", "#5FC393", "#B7E7D1"] },
+      "creme": { "role": "neutral", "displayName": "Crème (type sur encre)", "canonical": "#F7F1E4", "tonalRamp": ["#2A2519", "#463F2C", "#645B42", "#877D60", "#ABA184", "#CFC7AF", "#E9E2D0", "#F7F1E4"] },
+      "ground": { "role": "neutral", "displayName": "Papier", "canonical": "#F3EBDA", "tonalRamp": ["#26210F", "#40391F", "#5C5333", "#7C7149", "#A29765", "#C8BE94", "#E3D9BF", "#F3EBDA"] },
+      "ground-2": { "role": "neutral", "displayName": "Papier Creusé", "canonical": "#E7DCC4", "tonalRamp": ["#231D0F", "#3D341D", "#584D2D", "#77693F", "#9A8B5B", "#BFB287", "#D9CDB3", "#E7DCC4"] },
+      "panel": { "role": "neutral", "displayName": "Panneau", "canonical": "#FFFAEF", "tonalRamp": ["#2B2618", "#463F29", "#63593B", "#847850", "#A99C6E", "#CFC49B", "#EDE4CA", "#FFFAEF"] },
+      "ink": { "role": "neutral", "displayName": "Encre de Texte", "canonical": "#15181D", "tonalRamp": ["#0A0C0F", "#15181D", "#262B33", "#3B424C", "#555D69", "#7B8492", "#AEB5BF", "#DDE1E6"] },
+      "ink-soft": { "role": "neutral", "displayName": "Encre Douce", "canonical": "#6B6555", "tonalRamp": ["#171510", "#2B281F", "#413D30", "#565143", "#6B6555", "#918A76", "#B8B29E", "#DEDACB"] },
+      "line": { "role": "neutral", "displayName": "Filet", "canonical": "#D9CDB3", "tonalRamp": ["#221D12", "#3B3320", "#554A2F", "#736540", "#948457", "#B7A87C", "#D9CDB3", "#EFE8D6"] },
+      "ground-dark": { "role": "neutral", "displayName": "Papier Nuit", "canonical": "#060D16", "tonalRamp": ["#020509", "#060D16", "#0C1726", "#132339", "#1D3554", "#2C4C76", "#5178A5", "#93AECB"] },
+      "ground-2-dark": { "role": "neutral", "displayName": "Papier Nuit Creusé", "canonical": "#0C1726", "tonalRamp": ["#030711", "#08101C", "#0C1726", "#142338", "#1F3654", "#2F4E77", "#547BA6", "#96B0CC"] },
+      "panel-dark": { "role": "neutral", "displayName": "Panneau Nuit", "canonical": "#101F33", "tonalRamp": ["#040A12", "#0A1524", "#101F33", "#193049", "#264767", "#3A6591", "#6390BC", "#A2BEDA"] },
+      "ink-dark": { "role": "neutral", "displayName": "Encre de Texte (nuit)", "canonical": "#F2EADB", "tonalRamp": ["#292418", "#453D2A", "#61573D", "#827656", "#A79B78", "#CBC2A5", "#E4DBC8", "#F2EADB"] },
+      "ink-soft-dark": { "role": "neutral", "displayName": "Encre Douce (nuit)", "canonical": "#9FB0C4", "tonalRamp": ["#121A24", "#1E2B3B", "#2C3F55", "#3E5670", "#56718D", "#7691AC", "#9FB0C4", "#CFD8E2"] },
+      "line-dark": { "role": "neutral", "displayName": "Filet (nuit)", "canonical": "#223854", "tonalRamp": ["#080E16", "#0F1B29", "#17273B", "#223854", "#2F4C71", "#456C9C", "#7093C0", "#A9C0DC"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Affiche", "purpose": "Poster lettering: hero headline (36-68px), verdict word (56-84px), section titles, big figures. Archivo 900 at 122% width, uppercase, always tight." },
+      "headline": { "displayName": "Question", "purpose": "The question text on its ink plate, 23-29px at 700, sentence case." },
+      "title": { "displayName": "Titre", "purpose": "Mode-card names, corrigé question lines, button labels." },
+      "body": { "displayName": "Texte", "purpose": "Explanatory prose in the 760px measure." },
+      "body-small": { "displayName": "Note", "purpose": "Footnotes, legends, disclaimers (12-13.5px)." },
+      "label": { "displayName": "Libellé", "purpose": "The caption under a printed plate: section headings, definition terms, statuses. Uppercase, 0.09em, never more than a few words." },
+      "figures": { "displayName": "Chiffres", "purpose": "Tabular numerals for anything that updates in place: timer, score, streak, points, dates." }
+    },
+    "shadows": [
+      { "name": "rule-inset-2", "value": "inset 0 0 0 2px var(--line)", "purpose": "The default drawn ring on panels, chips, map cells and mode cards. Not a cast shadow." },
+      { "name": "rule-inset-ink", "value": "inset 0 0 0 2px var(--ink)", "purpose": "Secondary button outline and mode-card hover." },
+      { "name": "rule-inset-creme", "value": "inset 0 0 0 2px var(--color-creme)", "purpose": "Button outline when sitting on an ink field." },
+      { "name": "rule-inset-or-3", "value": "inset 0 0 0 3px var(--color-or)", "purpose": "Flagged question-map cell and the 'today' cell in the attendance register." },
+      { "name": "focus-ring", "value": "outline: 3px solid var(--color-or); outline-offset: 2px", "purpose": "Global focus-visible ring. Gold, never removed." }
+    ],
+    "motion": [
+      { "name": "ease-affiche", "value": "cubic-bezier(.2,.9,.25,1)", "purpose": "The only authored easing: state transitions (120-180ms), flashcard flip (0.5s), both keyframe animations." },
+      { "name": "impression", "value": "@keyframes impression { from { clip-path: inset(0 0 100% 0) } to { clip-path: inset(0 0 0 0) } } — 0.55s", "purpose": "The results verdict prints in from the top edge. One of only two authored moments." },
+      { "name": "stamp-land", "value": "@keyframes tampon { from { opacity:0; transform: rotate(var(--seal-rot,0deg)) scale(1.35); filter: blur(3px) } to { opacity:1; transform: rotate(var(--seal-rot,0deg)) scale(1); filter: blur(0) } } — 0.5s", "purpose": "A newly earned badge seal lands on the page keeping its tilt." },
+      { "name": "battement", "value": "@keyframes battement { 0%,100% { opacity:1 } 50% { opacity:.55 } } — 1s infinite", "purpose": "Guarded warning pulse on the exam timer; the only looping animation, and it is switched off under prefers-reduced-motion." },
+      { "name": "reduced-motion", "value": "@media (prefers-reduced-motion: reduce) { .impression, .stamp-land { animation-duration: 1ms } #timer.warn { animation: none } .flip-card-inner { transition-duration: 1ms } }", "purpose": "Every authored moment is neutralised; nothing new may ship without an entry here." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "measure", "value": "760px (content column max-width)" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The navy action button: start an exam, confirm, advance.",
+      "html": "<button class=\"ds-btn\">Commencer l'examen</button>",
+      "css": ".ds-btn { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; font-family:'Archivo', system-ui, sans-serif; font-weight:800; font-stretch:108%; font-size:15px; letter-spacing:.02em; padding:15px 22px; border:0; border-radius:2px; background:#14335E; color:#F7F1E4; cursor:pointer; transition:background-color .15s cubic-bezier(.2,.9,.25,1), transform .06s linear; } .ds-btn:hover { background:#0B1F3B; } .ds-btn:focus-visible { outline:3px solid #F2B417; outline-offset:2px; } .ds-btn:active { transform:translateY(1px); } .ds-btn:disabled { opacity:.45; cursor:not-allowed; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Outlined action that inverts to a solid ink field on hover; carries a drawn arrow for navigation.",
+      "html": "<button class=\"ds-btn-secondary\"><svg viewBox=\"0 0 20 20\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M16 10H4M9 5 4 10l5 5\"/></svg>Retour à l'accueil</button>",
+      "css": ".ds-btn-secondary { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; font-family:'Archivo', system-ui, sans-serif; font-weight:800; font-stretch:108%; font-size:15px; letter-spacing:.02em; padding:15px 22px; border:0; border-radius:2px; background:transparent; color:#15181D; box-shadow:inset 0 0 0 2px #15181D; cursor:pointer; transition:background-color .15s cubic-bezier(.2,.9,.25,1), color .15s; } .ds-btn-secondary:hover { background:#15181D; color:#F3EBDA; } .ds-btn-secondary:focus-visible { outline:3px solid #F2B417; outline-offset:2px; }"
+    },
+    {
+      "name": "Answer Option",
+      "kind": "custom",
+      "refersTo": "option",
+      "description": "A ruled answer line with a circled letter; selection paints the whole row navy, grading paints it green or vermilion and reveals a drawn mark.",
+      "html": "<ul style=\"list-style:none;margin:0;padding:0\"><li class=\"ds-option\"><span class=\"ds-option-letter\">A</span><span>Le Président de la République</span><span class=\"ds-option-mark\"></span></li><li class=\"ds-option ds-option-selected\"><span class=\"ds-option-letter\">B</span><span>Le Premier ministre</span><span class=\"ds-option-mark\"></span></li><li class=\"ds-option ds-option-correct\"><span class=\"ds-option-letter\">C</span><span>Le Parlement</span><span class=\"ds-option-mark\"><svg viewBox=\"0 0 20 20\" width=\"20\" height=\"20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m4 10.5 4 4 8-9\"/></svg></span></li></ul>",
+      "css": ".ds-option { display:flex; align-items:flex-start; gap:14px; width:100%; text-align:left; padding:16px 14px; cursor:pointer; border-radius:0; background:transparent; color:#15181D; font-family:'Archivo', system-ui, sans-serif; font-size:16px; line-height:1.45; border-bottom:2px solid #D9CDB3; transition:background-color .12s, color .12s; } .ds-option:first-child { border-top:2px solid #D9CDB3; } .ds-option:hover { background:#E7DCC4; } .ds-option-letter { flex:none; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:13.5px; box-shadow:inset 0 0 0 2px currentColor; } .ds-option-mark { flex:none; margin-left:auto; width:22px; height:22px; } .ds-option-selected { background:#14335E; color:#F7F1E4; border-color:#14335E; } .ds-option-selected:hover { background:#0B1F3B; } .ds-option-selected .ds-option-letter { background:#F2B417; color:#15181D; box-shadow:none; } .ds-option-correct { background:#1F6B4A; color:#F7F1E4; border-color:#1F6B4A; } .ds-option-correct .ds-option-letter { background:#F7F1E4; color:#1F6B4A; box-shadow:none; }"
+    },
+    {
+      "name": "Ink Field (bleed plate)",
+      "kind": "card",
+      "refersTo": "theme-tag",
+      "description": "The system's real container: a flat theme ink running the full viewport width with its text re-centered on the 760px measure. Theme chosen by data-t.",
+      "html": "<div class=\"ds-plate\" data-t=\"institutions\"><div class=\"ds-plate-inner\"><h2 class=\"ds-plate-q\">Qui vote la loi en France ?</h2><p class=\"ds-plate-tag\">Institutions</p></div></div>",
+      "css": ".ds-plate { margin-inline: calc(50% - 50vw); padding-inline: max(20px, calc(50vw - 380px)); width:100vw; padding-block:32px; font-family:'Archivo', system-ui, sans-serif; } .ds-plate[data-t=\"histoire\"] { background:#B82F1C; color:#F7F1E4; } .ds-plate[data-t=\"institutions\"] { background:#14335E; color:#F7F1E4; } .ds-plate[data-t=\"citoyennete\"] { background:#1F6B4A; color:#F7F1E4; } .ds-plate[data-t=\"europe\"] { background:#F2B417; color:#15181D; } .ds-plate-inner { margin-inline:auto; max-width:760px; } .ds-plate-q { margin:0; font-size:23px; line-height:1.28; font-weight:700; } .ds-plate-tag { margin:20px 0 0; font-weight:800; font-stretch:110%; text-transform:uppercase; letter-spacing:.09em; font-size:11.5px; line-height:1.35; }"
+    },
+    {
+      "name": "Filter Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Corrigé and flashcard filters; the active state fills with ink, or with the theme's ink when the chip carries data-t.",
+      "html": "<div style=\"display:flex;gap:8px;flex-wrap:wrap\"><button class=\"ds-chip ds-chip-active\">Toutes (40)</button><button class=\"ds-chip\">Erreurs (6)</button><button class=\"ds-chip\">Marquées (3)</button></div>",
+      "css": ".ds-chip { font-family:'Archivo', system-ui, sans-serif; font-weight:800; font-stretch:106%; font-size:12.5px; letter-spacing:.04em; padding:9px 14px; border:0; border-radius:2px; cursor:pointer; background:transparent; color:#6B6555; box-shadow:inset 0 0 0 2px #D9CDB3; transition:box-shadow .12s, background-color .12s, color .12s; } .ds-chip:hover { box-shadow:inset 0 0 0 2px #6B6555; } .ds-chip:focus-visible { outline:3px solid #F2B417; outline-offset:2px; } .ds-chip-active { background:#15181D; color:#F3EBDA; box-shadow:none; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Panel-coloured field with a hairline rule; focus shifts the border to navy and adds the gold outline.",
+      "html": "<label class=\"ds-label\" for=\"ds-code\">Code du duel</label><input id=\"ds-code\" class=\"ds-input\" type=\"text\" maxlength=\"6\" placeholder=\"6 caractères\">",
+      "css": ".ds-label { display:block; font-family:'Archivo', system-ui, sans-serif; font-weight:800; font-stretch:110%; text-transform:uppercase; letter-spacing:.09em; font-size:11.5px; line-height:1.35; color:#6B6555; } .ds-input { margin-top:8px; width:100%; border-radius:2px; border:1px solid #D9CDB3; background:#FFFAEF; padding:10px 12px; font-family:'Archivo', system-ui, sans-serif; font-size:15px; font-variant-numeric:tabular-nums; letter-spacing:.2em; text-transform:uppercase; color:#15181D; } .ds-input::placeholder { color:#6B6555; letter-spacing:normal; text-transform:none; } .ds-input:focus { border-color:#14335E; outline:2px solid #F2B417; outline-offset:1px; }"
+    },
+    {
+      "name": "Question Map",
+      "kind": "nav",
+      "refersTo": "qmap-cell",
+      "description": "Jump navigation across the drawn questions: 34px square cells, answered filled navy, flagged ringed gold, current outlined gold.",
+      "html": "<div class=\"ds-qmap\"><button class=\"ds-qmap-cell ds-qmap-answered\">1</button><button class=\"ds-qmap-cell ds-qmap-answered ds-qmap-flagged\">2</button><button class=\"ds-qmap-cell ds-qmap-current\">3</button><button class=\"ds-qmap-cell\">4</button></div>",
+      "css": ".ds-qmap { display:flex; flex-wrap:wrap; gap:8px; } .ds-qmap-cell { width:34px; height:34px; border:0; border-radius:2px; cursor:pointer; font-family:'Archivo', system-ui, sans-serif; font-weight:800; font-size:12.5px; font-variant-numeric:tabular-nums; background:#FFFAEF; color:#6B6555; box-shadow:inset 0 0 0 2px #D9CDB3; transition:box-shadow .12s, background-color .12s, color .12s; } .ds-qmap-cell:hover { box-shadow:inset 0 0 0 2px #6B6555; } .ds-qmap-cell:focus-visible { outline:3px solid #F2B417; outline-offset:2px; } .ds-qmap-answered { background:#14335E; color:#F7F1E4; box-shadow:none; } .ds-qmap-flagged { box-shadow:inset 0 0 0 3px #F2B417; } .ds-qmap-current { outline:3px solid #F2B417; outline-offset:2px; }"
+    },
+    {
+      "name": "Verdict Plate",
+      "kind": "custom",
+      "refersTo": "verdict-pass",
+      "description": "The results banner: a full-bleed field carrying the outcome word at poster scale, printing in from the top edge.",
+      "html": "<div class=\"ds-verdict ds-verdict-pass\"><div class=\"ds-verdict-inner\"><p class=\"ds-verdict-word\">ADMIS</p><p class=\"ds-verdict-score\"><b>32/40</b> bonnes réponses · 80% · seuil requis 80 %</p><p class=\"ds-verdict-label\">Résultat de la simulation</p></div></div>",
+      "css": ".ds-verdict { margin-inline: calc(50% - 50vw); padding-inline: max(20px, calc(50vw - 380px)); width:100vw; padding-block:40px; text-align:center; font-family:'Archivo', system-ui, sans-serif; background:#14335E; color:#F7F1E4; animation:ds-impression .55s cubic-bezier(.2,.9,.25,1) both; } .ds-verdict-pass { background:#1F6B4A; } .ds-verdict-fail { background:#B82F1C; } .ds-verdict-inner { margin-inline:auto; max-width:760px; } .ds-verdict-word { margin:0; font-weight:900; font-stretch:122%; text-transform:uppercase; letter-spacing:-.012em; line-height:.94; font-size:56px; } .ds-verdict-score { margin:12px 0 0; font-size:15px; font-variant-numeric:tabular-nums; opacity:.9; } .ds-verdict-score b { font-size:19px; } .ds-verdict-label { margin:24px 0 0; font-weight:800; font-stretch:110%; text-transform:uppercase; letter-spacing:.09em; font-size:11.5px; opacity:.65; } @keyframes ds-impression { from { clip-path:inset(0 0 100% 0) } to { clip-path:inset(0 0 0 0) } } @media (prefers-reduced-motion: reduce) { .ds-verdict { animation-duration:1ms } }"
+    },
+    {
+      "name": "Badge Seal",
+      "kind": "custom",
+      "refersTo": "theme-tag",
+      "description": "The gamification stamp: a drawn ink seal, dashed and faded when unearned, tilted a few degrees, landing with the stamp animation when newly earned.",
+      "html": "<span class=\"ds-seal-wrap\"><svg viewBox=\"0 0 100 100\" class=\"ds-seal ds-seal-land\" role=\"img\" aria-label=\"Première séance, obtenu\"><defs><path id=\"ds-seal-top\" d=\"M7 50a43 43 0 0 1 86 0\" fill=\"none\"/></defs><g fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"50\" cy=\"50\" r=\"47\" stroke-width=\"2.4\"/><circle cx=\"50\" cy=\"50\" r=\"38.5\" stroke-width=\"1\"/><g stroke-width=\"3.1\"><path d=\"M35 52l10 10 20-24\"/></g></g><text fill=\"currentColor\" font-weight=\"700\" text-anchor=\"middle\" font-size=\"8.4\" letter-spacing=\"1.1\"><textPath href=\"#ds-seal-top\" startOffset=\"50%\">PREMIÈRE SÉANCE</textPath></text><g fill=\"currentColor\"><circle cx=\"44\" cy=\"92.6\" r=\"1.1\"/><circle cx=\"50\" cy=\"93\" r=\"1.1\"/><circle cx=\"56\" cy=\"92.6\" r=\"1.1\"/></g></svg></span>",
+      "css": ".ds-seal-wrap { display:block; width:72px; height:72px; } .ds-seal { width:100%; height:100%; color:#14335E; --ds-seal-rot:-6deg; transform:rotate(var(--ds-seal-rot)); font-family:'Archivo', system-ui, sans-serif; } .ds-seal-land { animation:ds-tampon .5s cubic-bezier(.2,.9,.25,1) both; } @keyframes ds-tampon { from { opacity:0; transform:rotate(var(--ds-seal-rot)) scale(1.35); filter:blur(3px) } to { opacity:1; transform:rotate(var(--ds-seal-rot)) scale(1); filter:blur(0) } } @media (prefers-reduced-motion: reduce) { .ds-seal-land { animation-duration:1ms } }"
+    },
+    {
+      "name": "Flip Card (fiche)",
+      "kind": "card",
+      "refersTo": "card-panel",
+      "description": "Revision card: theme-ink front with the question, panel back with the answer in display type and the explanation.",
+      "html": "<div class=\"ds-flip\"><div class=\"ds-flip-inner\"><div class=\"ds-flip-face ds-flip-front\" data-t=\"citoyennete\"><p class=\"ds-flip-q\">Que garantit la laïcité ?</p><p class=\"ds-flip-hint\">Toucher pour la réponse</p></div><div class=\"ds-flip-face ds-flip-back\"><p class=\"ds-flip-a\">La liberté de conscience</p><p class=\"ds-flip-e\">Loi du 9 décembre 1905 sur la séparation des Églises et de l'État.</p></div></div></div>",
+      "css": ".ds-flip { perspective:1400px; cursor:pointer; min-height:180px; font-family:'Archivo', system-ui, sans-serif; } .ds-flip-inner { display:grid; width:100%; height:100%; min-height:180px; transition:transform .5s cubic-bezier(.2,.9,.25,1); transform-style:preserve-3d; } .ds-flip:hover .ds-flip-inner { transform:rotateY(180deg); } .ds-flip-face { grid-area:1/1; backface-visibility:hidden; -webkit-backface-visibility:hidden; border-radius:2px; padding:20px; display:flex; flex-direction:column; justify-content:space-between; } .ds-flip-front { color:#F7F1E4; } .ds-flip-front[data-t=\"citoyennete\"] { background:#1F6B4A; } .ds-flip-front[data-t=\"histoire\"] { background:#B82F1C; } .ds-flip-front[data-t=\"institutions\"] { background:#14335E; } .ds-flip-front[data-t=\"europe\"] { background:#F2B417; color:#15181D; } .ds-flip-q { margin:0; font-size:17px; line-height:1.35; font-weight:700; } .ds-flip-hint { margin:16px 0 0; font-weight:800; font-stretch:110%; text-transform:uppercase; letter-spacing:.09em; font-size:11.5px; } .ds-flip-back { transform:rotateY(180deg); background:#FFFAEF; box-shadow:inset 0 0 0 2px #D9CDB3; color:#15181D; } .ds-flip-a { margin:0; font-weight:900; font-stretch:122%; text-transform:uppercase; letter-spacing:-.012em; line-height:1.1; font-size:19px; color:#14335E; } .ds-flip-e { margin:12px 0 0; font-size:13.5px; line-height:1.6; color:#6B6555; } @media (prefers-reduced-motion: reduce) { .ds-flip-inner { transition-duration:1ms } }"
+    }
+  ],
+  "narrative": {
+    "northStar": "L'Affiche",
+    "overview": "The app is a mid-century French poster (Cassandre, Savignac) that happens to run an exam. Nothing is decorated: colour arrives as a flat saturated field that runs edge to edge of the viewport, type arrives at poster scale in one very wide, very heavy face, and structure is made by geometry — a full-bleed ink band, a 2px rule, a 760px column of text sitting on cream paper. There is no illustration, no gradient, no photographic texture, no drop shadow anywhere in the build.\n\nThe register is civic rather than playful: navy masthead with a cockade, tabular figures, uppercase labels that read like the caption under a printed plate. Density is generous on the ink fields and tight in the working screens — the exam is a sticky bar, a headline plate, and four answer lines separated by rules, nothing else. Progress rewards are printed, not popped: a badge is a hand-drawn ink seal that lands on the page, a result is a verdict that prints in from the top edge.\n\nTwo structural facts define the world more than any single token. First, the inks never change: the six poster colours are constants across light and dark, and only the paper layer (ground, panel, body ink, rules) flips. Second, colour carries meaning — each of the four exam themes owns one ink and wears it on every surface it appears on, so a vermilion plate always means histoire and never means \"accent\". The discarded government-form look (ruled margins, serif text, stamped-paper chrome) is a live anti-reference: it is not a base to extend.",
+    "keyCharacteristics": [
+      "Flat saturated ink fields that bleed the full viewport width while text stays in a 760px measure",
+      "One superfamily, Archivo variable, driven by width (122%) and weight (900) rather than by a second face",
+      "Square-cornered everything at 2px; circles reserved for letter roundels, badge seals and the cockade",
+      "Constant inks, flipping paper: dark mode changes the sheet, not the palette",
+      "Zero shadows; depth is field-versus-paper and 2px inset rules",
+      "Exactly two authored motion moments, both disabled under reduced motion"
+    ],
+    "rules": [
+      { "name": "The Constant Ink Rule", "body": "The six poster inks are the same hex in both themes. Only --ground, --ground-2, --panel, --ink, --ink-soft, --line and --seal-ink flip under [data-theme=\"dark\"]. A new colour is either an ink (constant) or paper (flipping); nothing is allowed to be both.", "section": "colors" },
+      { "name": "The One Ink Per Theme Rule", "body": "Each exam theme owns exactly one ink — histoire/vermillon-deep, institutions/nuit, citoyenneté/vert, europe/or-on-dark-type — and wears it identically on question plates, flashcard fronts, result bars, mastery bars, filter chips and corrigé tags. Theme-coloured elements set data-t=\"<theme>\" and let CSS pick the ink; they never hardcode a hex.", "section": "colors" },
+      { "name": "The Two-Signal Rule", "body": "Colour is never the sole carrier of meaning. The corrigé pairs red/green with a drawn check/cross; the attendance register pairs a filled ink cell with a gold ring for today, a dashed border plus a \"T\" for a tolerance day, and a spelled-out legend. Any new state that means pass/fail/now must ship a second, non-chromatic signal.", "section": "colors" },
+      { "name": "The Contrast Floor Rule", "body": "Every text-on-background pair in the build clears 4.5:1 (3:1 at large display sizes) in both themes. That is why gold fields carry near-black type, why nuit-clair / vermillon-clair / vert-clair exist at all, and why they are text-only counterparts rather than new fields.", "section": "colors" },
+      { "name": "The One Superfamily Rule", "body": "Archivo is the only face in the system. Hierarchy is made with width and weight axes, never by introducing a second family — no serif for \"official\", no mono except the Firebase config textarea where the value is literally code.", "section": "typography" },
+      { "name": "The Latin-Only Rule", "body": "One font file ships and it declares no unicode-range, so any glyph it lacks falls back silently to system-ui and breaks the voice mid-word. Copy stays French/Latin; no symbol glyphs, no emoji, no icon font.", "section": "typography" },
+      { "name": "The Shout Once Rule", "body": "Display type appears once per viewport-height of scroll — a plate, a verdict, a section title. Two display blocks stacked read as a broken poster, not a loud one.", "section": "typography" },
+      { "name": "The Printed-Not-Lifted Rule", "body": "Nothing floats. If an element needs to separate from its background, give it an ink field, a paper step, or a 2px inset rule — never a drop shadow, never a glow, never a border-radius large enough to imply a physical card.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do put every new full-width colour plane through the bleed utility and re-center its content at 760px, and keep body { overflow-x: clip } exactly as it is.",
+      "Do give theme-coloured elements data-t=\"histoire|institutions|citoyennete|europe\" and let the shared .theme-tag / .ink-fill / .chip.active rule pick the ink.",
+      "Do write rules that must win in dark mode as real CSS ([data-theme=\"dark\"] .x { … }). The dark: variant is built on :where() and carries zero specificity, so a dark: utility does not outrank a plain one — source order decides, and two bugs already came from assuming otherwise.",
+      "Do ship a second, non-chromatic signal (drawn icon, ring, letter, legend) with every colour-coded state.",
+      "Do use tabular figures (figures) for any number that updates in place.",
+      "Do state pressure with the Archivo width and weight axes — 122%/900 uppercase for display, 110%/800 for labels.",
+      "Do draw icons inline as SVG at stroke-width 2.2–2.6 with round caps, matching the 2px rule weight."
+    ],
+    "donts": [
+      "Don't add a box-shadow that casts. The only legal shadow is inset 0 0 0 Npx used as a drawn rule.",
+      "Don't introduce a second font family, an icon font, or emoji; Archivo carries display, body and label.",
+      "Don't recolour an ink for dark mode. Flip paper tokens only; if something is illegible on the dark sheet, reach for the existing -clair text counterpart.",
+      "Don't round a corner past 2px, and don't add circles outside the three sanctioned roles (option roundel, badge seal, cockade).",
+      "Don't measure the sticky exam bar with getBoundingClientRect() to compute scroll offset — it reports top: 0 once stuck; scroll-margin-top owns that job.",
+      "Don't add a third animated moment, a page-transition, or a looping animation beyond the timer warning; and never ship motion that ignores prefers-reduced-motion.",
+      "Don't reintroduce the discarded administrative-document world — ruled paper margins, serif body text, stamped-form chrome. It is an anti-reference, not a fallback."
+    ]
+  }
+}
