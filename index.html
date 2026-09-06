@@ -1157,15 +1157,10 @@ document.getElementById('btn-finish').addEventListener('click', openFinishModal)
 
     setX(direction * 60, true);
     setTimeout(()=>{
-      // scrollExamToTop() est maintenant conditionnelle (voir sa définition) : elle ne
-      // scrolle que si la carte n'est pas déjà correctement positionnée. On peut donc
-      // se permettre de l'appeler ici aussi — un swipe peut démarrer alors que la carte
-      // n'est que partiellement visible (doigt posé sur le bord), auquel cas il faut bien
-      // recentrer ; dans le cas courant (carte déjà bien placée) elle ne fait rien, donc
-      // pas de conflit avec l'animation de la carte ci-dessous.
-      state.current += delta;
-      renderQuestion();
-      scrollExamToTop();
+      // même chemin que les boutons Précédente/Suivante : stepQuestion() met à jour la
+      // question et gère le recentrage (scrollExamToTop(), déjà conditionnelle) exactement
+      // comme un clic sur un bouton — un swipe n'a pas à faire les choses différemment.
+      stepQuestion(delta);
       setX(direction * -60, false); // repositionne instantanément de l'autre côté avant l'entrée
       requestAnimationFrame(()=>{
         requestAnimationFrame(()=> setX(0, true));
