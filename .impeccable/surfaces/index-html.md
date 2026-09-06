@@ -5,24 +5,26 @@ primary_target: "index.html"
 related_targets: []
 ---
 
-# Carnet de suivi (gamification)
+# index.html — l'application entière
 
-Scope: new `screen-progress` inside `index.html`, plus a masthead entry chip, a start-screen card, and a stamp moment on the results screen. Visitor mode: Operate.
+Scope: all five screens (accueil, examen, résultats, fiches, carnet) in one static file. Visitor mode: Operate.
 
-Audience: Georges and his wife, separate devices, drilling for the naturalisation civics exam. Job: see whether they practised today, how they rank against each other, and start another session. Content is real local practice data plus the partner's synced figures (Firebase Realtime Database, free tier; room code is the shared secret). Constraints: French only, mobile-first, Tailwind v4 browser build for the new UI only, incumbent CSS untouched, no accounts.
+Audience: Georges and his wife, on their own phones, most evenings, in the months before the naturalisation civics exam. Job: run a session that matches the real exam, see where they stand, and keep each other going. Content is the real question bank plus each person's local practice record; the partner's figures arrive over Firebase Realtime Database (free tier, config pasted in-app, room code is the shared secret). Constraints: French only, mobile-first, Tailwind v4 browser build, no build step, no accounts.
 
-Unresolved: badge thresholds are mine to set; user must create the Firebase project and paste its web config.
+History: the first build extended the incumbent "official French administrative document" world. The user rejected that world outright ("looks like shit"), scoped the redesign to the whole app, and asked for a safer register on the re-roll. Everything below replaces it; the old paper/serif/ruled-margin system is an anti-reference, not a base.
+
+Unresolved: the user must create the Firebase project and paste its web config; badge thresholds are mine.
 
 ## Direction contract
 
-THESIS: progress as an official French record book — registre de présence, échelons, tampons, relevé comparatif. It refuses the XP-bar-and-trophy game screen the category ships.
+THESIS: L'Affiche — mid-century French poster (Cassandre, Savignac). Flat saturated ink fields, huge confident lettering, geometry as structure. It refuses both the discarded government-form look and the white-card, rounded-sans, green-streak quiz-app default.
 
-OWN-WORLD: incumbent palette and type (paper/ink/navy/red/gold, EB Garamond display, Lato labels, ruled-margin sheet). New components: day-cell attendance strip, échelon ladder with grade names, authored circular ink seals with rim lettering, two-column comparative relevé.
+OWN-WORLD: inks constant across themes — bleu nuit #14335E, vermillon #E1432D / #B82F1C, or #F2B417, vert #1F6B4A, crème #F7F1E4; only paper and body text flip for dark. Archivo at variable width: 122% width / 900 weight for display, normal for text. Square corners at 2px; circles only for letter roundels and the cockade mark. Each of the four themes owns one ink, used identically on question plates, result bars, mastery bars and the corrigé.
 
-STORY: they see the streak they must not break tonight, their administrative grade, the seals earned, their partner's figures beside their own — and start another séance.
+STORY: they see the epreuve stated at poster scale, pick a format, sit the exam, get a verdict that prints like a bill, and find their streak, échelon, tampons and their partner's figures in the carnet.
 
-FIRST VIEWPORT: register strip of 14 day cells (today ringed) above the échelon line with grade name and rule-bar; the "Commencer une séance" action sits directly beneath, before badges and comparison.
+FIRST VIEWPORT: navy masthead band with the cockade; a full-bleed vermilion field carrying the display headline and the four exam facts; then the format choice and the primary action on paper below.
 
-FORM: extension of an established surface, no concept tournament (narrow, precisely specified request); seed key: n/a — extension.
+FORM: replacement visual world, chosen by the user after a re-roll in the safer register; grounded candidate "affiche française" from the audience's own graphic culture; seed key 4c31bae3, re-roll round 1.
 
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance.
