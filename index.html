@@ -1766,30 +1766,30 @@ function renderSessionGain(gain){
 
 /* ============================================================
    RELEVÉ COMPARATIF (Firebase Realtime Database, offre gratuite)
-   La configuration se colle depuis le carnet, sur chaque appareil ;
-   elle est conservée en local. Règles conseillées côté Firebase :
-     {"rules":{"duels":{"$code":{".read":"auth != null",".write":"auth != null"}}}}
-   Le code de duel est le secret partagé entre les deux appareils.
+   La configuration du projet est inscrite ici : les deux appareils
+   partagent le même projet, seul le code de duel les apparie.
+   Ces clés web ne sont pas des secrets, mais la base doit rester
+   verrouillée par ses règles. Celles en place :
+     {"rules":{"duels":{"$code":{
+       ".read":"auth != null",
+       "$playerId":{
+         ".write":"auth != null",
+         ".validate":"newData.hasChildren(['name','updatedAt'])",
+         "name":{".validate":"newData.isString() && newData.val().length <= 24"},
+         "updatedAt":{".validate":"newData.isNumber()"}
+       }}}}}
+   L'écriture porte sur $playerId et non sur $code : un appareil écrit
+   sa propre ligne sans pouvoir effacer celle du binôme. La lecture est
+   limitée à un code connu, la racine duels/ n'est pas énumérable.
    ============================================================ */
 const FIREBASE_SDK = 'https://www.gstatic.com/firebasejs/12.9.0/';
-const FIREBASE_KEY = 'examen-civique-firebase';
-const FIREBASE_CONFIG = {apiKey:'', authDomain:'', databaseURL:'', projectId:'', appId:''};
-try{ Object.assign(FIREBASE_CONFIG, JSON.parse(localStorage.getItem(FIREBASE_KEY) || '{}')); }catch(e){ /* config absente */ }
-
-// accepte aussi bien du JSON que l'extrait « const firebaseConfig = { … } » de la console Firebase
-function parseFirebaseConfig(raw){
-  const block = raw.slice(raw.indexOf('{'), raw.lastIndexOf('}')+1);
-  if(!block) return null;
-  const normalised = block
-    .replace(/\/\/[^\n]*/g, '')
-    .replace(/([{,]\s*)([A-Za-z0-9_$]+)\s*:/g, '$1"$2":')
-    .replace(/'/g, '"')
-    .replace(/,(\s*})/g, '$1');
-  let cfg;
-  try{ cfg = JSON.parse(normalised); }catch(e){ return null; }
-  if(!cfg.apiKey || !cfg.databaseURL) return null;
-  return cfg;
-}
+const FIREBASE_CONFIG = {
+  apiKey: 'AIzaSyAGmzpNKkdyyM9nxnr0lnQ35ivIZmc245U',
+  authDomain: 'examen-civique-34d24.firebaseapp.com',
+  databaseURL: 'https://examen-civique-34d24-default-rtdb.europe-west1.firebasedatabase.app',
+  projectId: 'examen-civique-34d24',
+  appId: '1:365719089807:web:ab1bf0b077a9312248b6fa'
+};
 
 let fb = null, duelRoom = null, duelUnsub = null;
 let duelState = {phase:'idle', error:null, players:null};
@@ -1887,28 +1887,9 @@ function renderDuel(){
   const status = document.getElementById('duel-status');
 
   if(!duelConfigured()){
-    status.textContent = 'Synchronisation non configurée';
+    status.textContent = 'Indisponible';
     body.innerHTML = `
-      <p class="text-[13.5px] leading-relaxed text-ink">Le relevé comparatif a besoin d’un petit service gratuit pour faire circuler vos chiffres entre vos deux téléphones.</p>
-      <ol class="mt-3 list-decimal space-y-1.5 pl-5 text-[13.5px] leading-relaxed text-ink-soft">
-        <li>Créer un projet sur <span class="font-bold text-ink">console.firebase.google.com</span> (offre Spark, gratuite).</li>
-        <li>Y ajouter une <span class="font-bold text-ink">Realtime Database</span>, puis activer la connexion <span class="font-bold text-ink">anonyme</span>.</li>
-        <li>Copier la configuration web du projet et la coller ci-dessous, sur chacun de vos deux appareils.</li>
-      </ol>
-      <label class="libelle mt-4 block" for="fb-config">Configuration Firebase</label>
-      <textarea id="fb-config" rows="4" spellcheck="false" placeholder='{ "apiKey": "…", "databaseURL": "https://….firebasedatabase.app", … }'
-        class="mt-2 w-full rounded-bloc border border-line bg-panel px-3 py-2.5 font-mono text-[12.5px] leading-relaxed text-ink placeholder:text-ink-soft focus:border-nuit focus:outline-2 focus:outline-offset-1 focus:outline-or"></textarea>
-      <p class="mt-2 hidden text-[13px] leading-relaxed text-vermillon-deep dark:text-vermillon-clair" id="fb-error">Configuration illisible : il y manque au moins <span class="font-bold">apiKey</span> et <span class="font-bold">databaseURL</span>.</p>
-      <button class="btn mt-3" id="fb-save" type="button">Enregistrer la configuration</button>
-      <p class="mt-3 text-[13px] leading-relaxed text-ink-soft">Sans cette étape, tout le reste du carnet fonctionne normalement : seule la comparaison avec ton binôme reste indisponible.</p>`;
-    document.getElementById('fb-save').addEventListener('click', ()=>{
-      const raw = document.getElementById('fb-config').value.trim();
-      const cfg = raw ? parseFirebaseConfig(raw) : null;
-      if(!cfg){ document.getElementById('fb-error').classList.remove('hidden'); return; }
-      Object.assign(FIREBASE_CONFIG, cfg);
-      try{ localStorage.setItem(FIREBASE_KEY, JSON.stringify(cfg)); }catch(e){ /* quota dépassé */ }
-      renderDuel();
-    });
+      <p class="text-[13.5px] leading-relaxed text-ink-soft">Le relevé comparatif n’est pas disponible sur cette version. Tout le reste du carnet fonctionne normalement.</p>`;
     return;
   }
 
