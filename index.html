@@ -165,11 +165,11 @@
 
   /* la liste officielle a ses cinq catégories à elle (data-c, pas data-t) :
      quatre reprennent l'encre du thème le plus proche, la cinquième prend l'or sombre */
-  .ink-fill[data-c="principes"],    .chip.active[data-c="principes"]{    background:var(--color-nuit);           color:var(--color-creme); }
-  .ink-fill[data-c="institutions"], .chip.active[data-c="institutions"]{ background:var(--color-or);             color:#15181D; }
-  .ink-fill[data-c="droits"],       .chip.active[data-c="droits"]{       background:var(--color-vert);           color:var(--color-creme); }
-  .ink-fill[data-c="histoire"],     .chip.active[data-c="histoire"]{     background:var(--color-vermillon-deep); color:var(--color-creme); }
-  .ink-fill[data-c="societe"],      .chip.active[data-c="societe"]{      background:var(--color-or-deep);        color:var(--color-creme); }
+  .theme-tag[data-c="principes"],    .ink-fill[data-c="principes"],    .chip.active[data-c="principes"]{    background:var(--color-nuit);           color:var(--color-creme); }
+  .theme-tag[data-c="institutions"], .ink-fill[data-c="institutions"], .chip.active[data-c="institutions"]{ background:var(--color-or);             color:#15181D; }
+  .theme-tag[data-c="droits"],       .ink-fill[data-c="droits"],       .chip.active[data-c="droits"]{       background:var(--color-vert);           color:var(--color-creme); }
+  .theme-tag[data-c="histoire"],     .ink-fill[data-c="histoire"],     .chip.active[data-c="histoire"]{     background:var(--color-vermillon-deep); color:var(--color-creme); }
+  .theme-tag[data-c="societe"],      .ink-fill[data-c="societe"],      .chip.active[data-c="societe"]{      background:var(--color-or-deep);        color:var(--color-creme); }
 
   /* ---- provenance : questions ajoutées depuis le Livret du citoyen ----
      Cerné plutôt que rempli : c'est une annotation sur la carte, pas une
@@ -271,6 +271,7 @@
     transition:box-shadow .12s, background-color .12s, color .12s;
   }
   .chip.active{ background:var(--ink); color:var(--ground); box-shadow:none; }
+  .chip:disabled{ opacity:.5; cursor:not-allowed; }
 
   /* ---- fiches de révision ---- */
   .flip-card{ perspective:1400px; cursor:pointer; }
@@ -449,13 +450,40 @@
           <div class="mt-auto pt-5"><button class="btn on-ink full" id="btn-carnet">Ouvrir le carnet</button></div>
         </section>
       </div>
-      <section class="mx-auto mt-8 flex max-w-[760px] flex-col gap-5 border-t-2 border-creme/25 pt-8 sm:flex-row sm:items-end sm:justify-between sm:gap-8">
-        <div>
-          <h3 class="affiche text-[21px]">Questions officielles</h3>
-          <p class="mt-2 text-[13.5px] leading-relaxed text-creme">Les <span id="officiel-count">259</span> questions de connaissance de la liste du 12 décembre 2025, dans l'ordre et par catégorie, réponse au dos.</p>
+    </div>
+
+    <!-- la liste officielle : un aplat à part, pour ne pas la confondre avec la banque d'entraînement -->
+    <div class="bleed mt-10 bg-vert py-9 text-creme sm:py-12">
+      <div class="mx-auto max-w-[760px]">
+        <p class="libelle text-creme">Nouveau · liste du 12 décembre 2025</p>
+        <h3 class="affiche mt-2 text-[30px] sm:text-[40px]">Liste officielle</h3>
+        <p class="mt-3 text-[14px] leading-relaxed text-creme">Les <span id="officiel-count">259</span> questions de connaissance publiées pour la naturalisation, tenues à part de la banque d'entraînement ci-dessus.</p>
+
+        <div class="mt-7 flex flex-col">
+          <section class="flex flex-col gap-4 border-t-2 border-creme/30 py-6 sm:flex-row sm:items-center sm:justify-between sm:gap-8">
+            <div>
+              <h4 class="affiche text-[20px]">Fiches officielles</h4>
+              <p class="mt-1.5 text-[13.5px] leading-relaxed text-creme">Dans l'ordre et par catégorie du document, réponse au dos.</p>
+            </div>
+            <button class="btn on-ink full sm:w-auto sm:shrink-0" id="btn-officiel">Ouvrir les fiches</button>
+          </section>
+          <section class="flex flex-col gap-4 border-t-2 border-creme/30 py-6 sm:flex-row sm:items-center sm:justify-between sm:gap-8">
+            <div>
+              <h4 class="affiche text-[20px]">Examen blanc officiel</h4>
+              <p class="mt-1.5 text-[13.5px] leading-relaxed text-creme">40 questions tirées de la liste seule · 45 minutes · seuil 80 %.
+                <button type="button" class="lien text-creme" id="btn-of-exam-short">Ou 15 questions en 17 minutes.</button></p>
+            </div>
+            <button class="btn on-ink full sm:w-auto sm:shrink-0" id="btn-of-exam">Commencer</button>
+          </section>
+          <section class="flex flex-col gap-4 border-y-2 border-creme/30 py-6 sm:flex-row sm:items-center sm:justify-between sm:gap-8">
+            <div>
+              <h4 class="affiche text-[20px]">Duel en direct</h4>
+              <p class="mt-1.5 text-[13.5px] leading-relaxed text-creme">Une salle, deux téléphones, les mêmes questions au même moment. Le meilleur score gagne.</p>
+            </div>
+            <button class="btn on-ink full sm:w-auto sm:shrink-0" id="btn-match">Ouvrir une salle</button>
+          </section>
         </div>
-        <button class="btn on-ink full sm:w-auto sm:shrink-0" id="btn-officiel">Ouvrir la liste</button>
-      </section>
+      </div>
     </div>
 
     <p class="mt-8 border-t border-line pt-4 text-[13px] leading-relaxed text-ink-soft" id="bank-stats">Chargement…</p>
@@ -491,6 +519,19 @@
     <button class="btn secondary mt-8" id="btn-of-back"><svg viewBox="0 0 20 20" class="h-4 w-4 shrink-0" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 10H4M9 5 4 10l5 5"/></svg>Retour à l'accueil</button>
   </section>
 
+  <!-- ============ DUEL EN DIRECT ============ -->
+  <section id="screen-match" class="hidden">
+    <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+      <h2 class="affiche text-[30px] sm:text-[38px]">Duel en direct</h2>
+      <span class="libelle text-ink-soft" id="match-status">Hors salle</span>
+    </div>
+    <p class="mt-3 text-[14px] leading-relaxed text-ink-soft">
+      Deux joueurs, une salle, les mêmes questions de la liste officielle au même moment, chacun sur son téléphone. Le meilleur score gagne ; à égalité, le plus rapide.
+    </p>
+    <div class="mt-6" id="match-body"></div>
+    <button class="btn secondary mt-9" id="btn-match-back"><svg viewBox="0 0 20 20" class="h-4 w-4 shrink-0" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 10H4M9 5 4 10l5 5"/></svg>Retour à l'accueil</button>
+  </section>
+
   <!-- ============ EXAMEN ============ -->
   <section id="screen-exam" class="hidden">
     <div class="exam-bar sticky top-0 z-10 -mx-5 bg-ground px-5 pt-4 pb-3 sm:-mx-8 sm:px-8">
@@ -501,6 +542,7 @@
       <div class="mt-3 h-2 w-full bg-ground-2">
         <div class="h-full bg-vermillon transition-[width] duration-300 ease-affiche" id="progress-fill" style="width:2.5%"></div>
       </div>
+      <p class="figures mt-2 hidden text-[12.5px] leading-snug text-ink-soft" id="match-line"></p>
     </div>
 
     <article class="mt-6" id="question-card">
@@ -534,7 +576,9 @@
       </div>
     </div>
 
-    <div id="session-gain" class="mt-5 hidden flex-wrap items-center justify-between gap-x-6 gap-y-2 rounded-bloc bg-panel px-5 py-4 shadow-[inset_0_0_0_2px_var(--line)]">
+    <div id="match-result" class="mt-5 hidden rounded-bloc bg-panel px-5 py-5 shadow-[inset_0_0_0_2px_var(--line)] sm:px-6"></div>
+
+    <div id="session-gain"class="mt-5 hidden flex-wrap items-center justify-between gap-x-6 gap-y-2 rounded-bloc bg-panel px-5 py-4 shadow-[inset_0_0_0_2px_var(--line)]">
       <p class="text-[15px]"><span class="figures affiche text-[22px] text-vermillon" id="gain-xp">+0</span> points · <span id="gain-streak">série ouverte</span></p>
       <p class="text-[13.5px] text-ink-soft" id="gain-echelon">Échelon I · Postulant</p>
     </div>
@@ -544,7 +588,7 @@
       <ul id="new-badges-list" class="mt-5 flex list-none flex-wrap items-start justify-center gap-x-8 gap-y-6 p-0"></ul>
     </div>
 
-    <h3 class="libelle mt-9 text-ink-soft">Résultat par thème</h3>
+    <h3 class="libelle mt-9 text-ink-soft" id="bars-title">Résultat par thème</h3>
     <div class="mt-3 flex flex-col gap-4" id="theme-bars"></div>
 
     <h3 class="libelle mt-9 text-ink-soft">Corrigé détaillé</h3>
@@ -672,8 +716,12 @@ document.getElementById('theme-toggle').addEventListener('click', ()=>{
 function goHome(){
   const examVisible = !screens.exam.classList.contains('hidden');
   if(examVisible && !state.finished){
-    const ok = confirm("Quitter l'examen en cours ? Ta progression sera perdue.");
+    const enDuel = state.source === 'match';
+    const ok = confirm(enDuel
+      ? "Abandonner le duel ? Tu quittes la salle et ton adversaire gagne par forfait."
+      : "Quitter l'examen en cours ? Ta progression sera perdue.");
     if(!ok) return;
+    if(enDuel){ state.finished = true; matchLeave(); }
   }
   clearInterval(state.timerId);
   showScreen('start');
@@ -683,6 +731,7 @@ document.getElementById('btn-home-exam').addEventListener('click', goHome);
 document.getElementById('btn-home-results').addEventListener('click', goHome);
 document.getElementById('btn-fc-back').addEventListener('click', goHome);
 document.getElementById('btn-of-back').addEventListener('click', goHome);
+document.getElementById('btn-match-back').addEventListener('click', goHome);
 
 /* ============================================================
    BANQUE DE QUESTIONS
@@ -1154,8 +1203,10 @@ const BANK = [
    (naturalisation), document du 12 décembre 2025.
    Le document ne donne que les intitulés : l'ordre et les cinq
    catégories sont les siens, les réponses (r) et explications (e)
-   sont rédigées pour l'application. Liste à part de BANK : elle ne
-   sert qu'à l'écran « Questions officielles », jamais au tirage.
+   sont rédigées pour l'application. Pour l'examen blanc et le duel,
+   f porte trois mauvaises réponses ; la bonne est r, ou b quand r est
+   une liste ou une phrase trop longue pour un choix de QCM. Liste à
+   part de BANK : drawQuestions n'y pioche jamais.
    ============================================================ */
 const OFFICIEL_CATS = {
   principes:    {label:"Principes et valeurs de la République", court:"Principes et valeurs"},
@@ -1167,273 +1218,273 @@ const OFFICIEL_CATS = {
 
 const OFFICIEL = [
 // ---- PRINCIPES ET VALEURS DE LA RÉPUBLIQUE ----
-{c:'principes', q:"Complétez les paroles de la Marseillaise « Allons enfants de la patrie... »", r:"« … le jour de gloire est arrivé ! »", e:"Premier vers de La Marseillaise, hymne national selon l'article 2 de la Constitution."},
-{c:'principes', q:"Dans le cadre d'un entretien d'embauche, que peut-on demander au candidat ?", r:"Sa formation, son expérience et ses compétences", e:"Le Code du travail n'autorise que les questions liées au poste : interroger sur la religion, l'origine, la grossesse ou la vie familiale est discriminatoire."},
-{c:'principes', q:"Déclarer ses revenus aux services fiscaux est :", r:"Une obligation", e:"Toute personne domiciliée en France doit déclarer ses revenus chaque année, même si elle n'est pas imposable."},
-{c:'principes', q:"En France, les impôts permettent de financer les dépenses publiques. Quelle proposition est correcte ?", r:"Chacun contribue selon ses moyens", e:"L'article 13 de la Déclaration de 1789 répartit la contribution commune entre les citoyens « en raison de leurs facultés » ; elle finance écoles, hôpitaux, routes et sécurité."},
-{c:'principes', q:"La liberté d'association est :", r:"Une liberté fondamentale", e:"Garantie par la loi du 1er juillet 1901, elle a été reconnue comme principe constitutionnel par le Conseil constitutionnel en 1971."},
-{c:'principes', q:"La liberté d'expression sur les réseaux sociaux en France est :", r:"Garantie, mais encadrée par la loi", e:"Injure, diffamation, harcèlement, appel à la haine ou apologie du terrorisme sont punis en ligne comme ailleurs."},
-{c:'principes', q:"Lequel de ces prénoms évoque un symbole de la République ?", r:"Marianne", e:"Figure de femme coiffée du bonnet phrygien, Marianne incarne la République depuis la Révolution."},
-{c:'principes', q:"Lequel de ces symboles représente la République française ?", r:"Le drapeau bleu, blanc, rouge", e:"Emblème national selon l'article 2 de la Constitution, avec l'hymne et la devise ; Marianne et le 14 Juillet sont aussi des symboles de la République."},
-{c:'principes', q:"Où peut-on voir la devise de la République ?", r:"Sur le fronton des mairies, des écoles et des bâtiments publics", e:"« Liberté, Égalité, Fraternité » figure aussi sur les pièces de monnaie, les timbres et les documents officiels."},
-{c:'principes', q:"Lesquels sont des symboles officiels de la République française ?", r:"Le drapeau tricolore, La Marseillaise et la devise", e:"Tous trois sont inscrits à l'article 2 de la Constitution de 1958 ; Marianne, le 14 Juillet et le sceau complètent les symboles de la République."},
-{c:'principes', q:"Peut-on brûler publiquement un drapeau français ?", r:"Non, c'est puni par la loi", e:"Dégrader le drapeau tricolore dans un lieu public est une contravention ; l'outrager lors d'une manifestation publique est un délit puni de 7 500 euros d'amende."},
-{c:'principes', q:"Quand la sécurité sociale a-t-elle été établie en France ?", r:"En 1945", e:"Créée par les ordonnances d'octobre 1945, à la Libération, sur le programme du Conseil national de la Résistance."},
-{c:'principes', q:"Que commémore la fête nationale ?", r:"La prise de la Bastille, le 14 juillet 1789", e:"Fête nationale depuis 1880, le 14 Juillet rappelle aussi la fête de la Fédération du 14 juillet 1790."},
-{c:'principes', q:"Que porte Marianne sur la tête ?", r:"Un bonnet phrygien", e:"Porté par les révolutionnaires, le bonnet phrygien est un symbole de liberté."},
-{c:'principes', q:"Que signifie le mot « fraternité » dans la devise française ?", r:"La solidarité et l'entraide entre les citoyens", e:"Chacun se reconnaît membre d'une même communauté ; le Conseil constitutionnel en a fait un principe à valeur constitutionnelle en 2018."},
-{c:'principes', q:"Quel symbole de la République peut-on voir sur les maillots de l'équipe de France de football ?", r:"Le coq", e:"Le coq gaulois est l'emblème des équipes de France, symbole traditionnel de la nation sans être officiel."},
-{c:'principes', q:"Quelle est la devise de la République française ?", r:"Liberté, Égalité, Fraternité", e:"Héritée de la Révolution, elle est inscrite à l'article 2 de la Constitution de 1958."},
-{c:'principes', q:"Qu'est-ce que la liberté d'association ?", r:"Le droit de créer une association, d'y adhérer ou d'en sortir", e:"Garantie par la loi du 1er juillet 1901, elle s'exerce sans autorisation préalable."},
-{c:'principes', q:"Qu'est-ce qu'une liberté ?", r:"Le droit de faire tout ce qui ne nuit pas à autrui", e:"Article 4 de la Déclaration de 1789 : seules les limites fixées par la loi peuvent la restreindre."},
-{c:'principes', q:"Selon la Constitution, la France est une République…", r:"Indivisible, laïque, démocratique et sociale", e:"Article 1er de la Constitution de 1958."},
-{c:'principes', q:"Sur quel document peut-on voir Marianne ?", r:"Sur les timbres-poste", e:"Elle figure aussi sur les petites pièces de centimes et sur le logo de la République des documents administratifs."},
-{c:'principes', q:"Une des valeurs de la devise républicaine est l'Égalité. Qu'est-ce que cela signifie ?", r:"Tous les citoyens sont égaux devant la loi", e:"Article 1er de la Constitution : sans distinction d'origine, de race ou de religion."},
-{c:'principes', q:"Une personne peut-elle changer librement de religion en France ?", r:"Oui", e:"La liberté de conscience permet de croire, de ne pas croire, de changer de religion ou d'en abandonner une."},
-{c:'principes', q:"Selon le principe de laïcité, que signifie la neutralité de l'État ?", r:"L'État ne favorise ni ne défavorise aucune religion", e:"L'administration et ses agents traitent tous les usagers de la même façon, quelles que soient leurs convictions."},
-{c:'principes', q:"Que peut faire un usager du service public dans une mairie ?", r:"Porter un signe religieux s'il le souhaite", e:"La neutralité s'impose aux agents, pas aux usagers ; ceux-ci ne peuvent toutefois pas choisir leur agent ni perturber le service."},
-{c:'principes', q:"En France, il est possible pour l'État de financer :", r:"L'entretien des lieux de culte bâtis avant 1905", e:"Ils sont propriété publique ; pour le reste, la loi de 1905 interdit de subventionner un culte, sauf les aumôneries (écoles, prisons, hôpitaux)."},
-{c:'principes', q:"En quelle année la loi de séparation des Églises et de l'État a-t-elle été votée ?", r:"En 1905", e:"Loi du 9 décembre 1905."},
-{c:'principes', q:"Que dit la loi de 1905 ?", r:"La République garantit la liberté de conscience et ne subventionne aucun culte", e:"Articles 1er et 2 : elle assure le libre exercice des cultes et ne reconnaît, ne salarie ni ne subventionne aucun culte."},
-{c:'principes', q:"Que garantit le principe de laïcité ?", r:"La liberté de conscience et l'égalité de tous, quelle que soit leur religion", e:"L'État est neutre, et chacun pratique ou non une religion dans le respect de l'ordre public."},
-{c:'principes', q:"Quel jour célèbre-t-on officiellement la laïcité en France ?", r:"Le 9 décembre", e:"Journée nationale de la laïcité, date anniversaire de la loi de 1905."},
-{c:'principes', q:"Quel symbole religieux peut être porté dans une école publique dans le respect de la laïcité ?", r:"Un signe discret, comme une petite croix ou une médaille", e:"La loi du 15 mars 2004 interdit aux élèves les signes religieux ostensibles (voile, kippa, grande croix)."},
-{c:'principes', q:"Quel terme désigne précisément la haine ou les préjugés contre les Juifs ?", r:"L'antisémitisme", e:"Comme le racisme, il est puni par la loi lorsqu'il s'exprime par des injures, des provocations à la haine ou des discriminations."},
-{c:'principes', q:"Quel texte est considéré comme le texte fondateur de la laïcité ?", r:"La loi du 9 décembre 1905", e:"Loi de séparation des Églises et de l'État."},
-{c:'principes', q:"Quelle institution française doit rester neutre en matière de religion ?", r:"L'État et ses services publics", e:"La mairie, l'école publique, l'hôpital public : la neutralité découle de l'article 1er de la Constitution."},
-{c:'principes', q:"Qu'est-ce que la laïcité ?", r:"La séparation des religions et de l'État", e:"L'État est neutre et garantit à chacun la liberté de croire ou de ne pas croire, dans le respect de l'ordre public."},
-{c:'principes', q:"À l'école, la charte de la laïcité permet de :", r:"Expliquer aux élèves les règles de la laïcité et ce qu'elles garantissent", e:"Affichée depuis 2013 dans les écoles publiques, elle rappelle la neutralité de l'école, la liberté de conscience et le refus des discriminations."},
-{c:'principes', q:"Qui doit respecter et veiller à la neutralité religieuse dans les services publics ?", r:"Les agents du service public", e:"Ils ne peuvent manifester leurs convictions religieuses dans leurs fonctions ; la loi du 24 août 2021 étend ce devoir aux organismes privés chargés d'un service public."},
-{c:'principes', q:"Une personne déclare ne croire en aucun dieu. On peut dire :", r:"Qu'elle est athée", e:"La liberté de conscience protège aussi le droit de ne pas croire."},
+{c:'principes', q:"Complétez les paroles de la Marseillaise « Allons enfants de la patrie... »", r:"« … le jour de gloire est arrivé ! »", e:"Premier vers de La Marseillaise, hymne national selon l'article 2 de la Constitution.", f:["« … la liberté guide nos pas ! »", "« … marchons vers la victoire ! »", "« … le peuple s'est levé ! »"]},
+{c:'principes', q:"Dans le cadre d'un entretien d'embauche, que peut-on demander au candidat ?", r:"Sa formation, son expérience et ses compétences", e:"Le Code du travail n'autorise que les questions liées au poste : interroger sur la religion, l'origine, la grossesse ou la vie familiale est discriminatoire.", f:["Sa religion et ses pratiques religieuses", "Son projet d'avoir des enfants", "Ses origines et celles de sa famille"]},
+{c:'principes', q:"Déclarer ses revenus aux services fiscaux est :", r:"Une obligation", e:"Toute personne domiciliée en France doit déclarer ses revenus chaque année, même si elle n'est pas imposable.", f:["Une démarche facultative", "Réservé aux personnes imposables", "Obligatoire seulement pour les propriétaires"]},
+{c:'principes', q:"En France, les impôts permettent de financer les dépenses publiques. Quelle proposition est correcte ?", r:"Chacun contribue selon ses moyens", e:"L'article 13 de la Déclaration de 1789 répartit la contribution commune entre les citoyens « en raison de leurs facultés » ; elle finance écoles, hôpitaux, routes et sécurité.", f:["Seuls les salariés paient des impôts", "Les étrangers sont exonérés d'impôts", "Chacun paie exactement la même somme"]},
+{c:'principes', q:"La liberté d'association est :", r:"Une liberté fondamentale", e:"Garantie par la loi du 1er juillet 1901, elle a été reconnue comme principe constitutionnel par le Conseil constitutionnel en 1971.", f:["Réservée aux citoyens français", "Soumise à l'autorisation du préfet", "Interdite aux étrangers"]},
+{c:'principes', q:"La liberté d'expression sur les réseaux sociaux en France est :", r:"Garantie, mais encadrée par la loi", e:"Injure, diffamation, harcèlement, appel à la haine ou apologie du terrorisme sont punis en ligne comme ailleurs.", f:["Totale, sans aucune limite", "Interdite sous un pseudonyme", "Réservée aux journalistes"]},
+{c:'principes', q:"Lequel de ces prénoms évoque un symbole de la République ?", r:"Marianne", e:"Figure de femme coiffée du bonnet phrygien, Marianne incarne la République depuis la Révolution.", f:["Juliette", "Charlotte", "Camille"]},
+{c:'principes', q:"Lequel de ces symboles représente la République française ?", r:"Le drapeau bleu, blanc, rouge", e:"Emblème national selon l'article 2 de la Constitution, avec l'hymne et la devise ; Marianne et le 14 Juillet sont aussi des symboles de la République.", f:["La fleur de lys", "L'aigle impérial", "La couronne royale"]},
+{c:'principes', q:"Où peut-on voir la devise de la République ?", r:"Sur le fronton des mairies, des écoles et des bâtiments publics", e:"« Liberté, Égalité, Fraternité » figure aussi sur les pièces de monnaie, les timbres et les documents officiels.", f:["Sur les billets de banque en euros", "Sur les panneaux de signalisation routière", "Sur la carte Vitale"]},
+{c:'principes', q:"Lesquels sont des symboles officiels de la République française ?", r:"Le drapeau tricolore, La Marseillaise et la devise", e:"Tous trois sont inscrits à l'article 2 de la Constitution de 1958 ; Marianne, le 14 Juillet et le sceau complètent les symboles de la République.", f:["La fleur de lys, le coq et l'aigle", "La tour Eiffel, le béret et la baguette", "Le lion, la couronne et l'hermine"]},
+{c:'principes', q:"Peut-on brûler publiquement un drapeau français ?", r:"Non, c'est puni par la loi", e:"Dégrader le drapeau tricolore dans un lieu public est une contravention ; l'outrager lors d'une manifestation publique est un délit puni de 7 500 euros d'amende.", f:["Oui, c'est une liberté d'expression sans limite", "Oui, si l'on en est le propriétaire", "Oui, uniquement lors d'une manifestation"]},
+{c:'principes', q:"Quand la sécurité sociale a-t-elle été établie en France ?", r:"En 1945", e:"Créée par les ordonnances d'octobre 1945, à la Libération, sur le programme du Conseil national de la Résistance.", f:["En 1905", "En 1936", "En 1968"]},
+{c:'principes', q:"Que commémore la fête nationale ?", r:"La prise de la Bastille, le 14 juillet 1789", e:"Fête nationale depuis 1880, le 14 Juillet rappelle aussi la fête de la Fédération du 14 juillet 1790.", f:["Le sacre de Napoléon Ier, en 1804", "L'armistice du 11 novembre 1918", "La libération de Paris, en 1944"]},
+{c:'principes', q:"Que porte Marianne sur la tête ?", r:"Un bonnet phrygien", e:"Porté par les révolutionnaires, le bonnet phrygien est un symbole de liberté.", f:["Une couronne royale", "Un casque de soldat", "Un chapeau à plumes"]},
+{c:'principes', q:"Que signifie le mot « fraternité » dans la devise française ?", r:"La solidarité et l'entraide entre les citoyens", e:"Chacun se reconnaît membre d'une même communauté ; le Conseil constitutionnel en a fait un principe à valeur constitutionnelle en 2018.", f:["L'obligation d'appartenir à une même religion", "Le droit de vivre sans payer d'impôts", "La priorité donnée à sa propre famille"]},
+{c:'principes', q:"Quel symbole de la République peut-on voir sur les maillots de l'équipe de France de football ?", r:"Le coq", e:"Le coq gaulois est l'emblème des équipes de France, symbole traditionnel de la nation sans être officiel.", f:["Le lion", "L'aigle", "Le loup"]},
+{c:'principes', q:"Quelle est la devise de la République française ?", r:"Liberté, Égalité, Fraternité", e:"Héritée de la Révolution, elle est inscrite à l'article 2 de la Constitution de 1958.", f:["Travail, Famille, Patrie", "Unité, Progrès, Justice", "Paix, Travail, Patrie"]},
+{c:'principes', q:"Qu'est-ce que la liberté d'association ?", r:"Le droit de créer une association, d'y adhérer ou d'en sortir", e:"Garantie par la loi du 1er juillet 1901, elle s'exerce sans autorisation préalable.", f:["L'obligation d'adhérer à un syndicat", "Le droit de se réunir réservé aux Français", "L'obligation d'appartenir à un parti politique"]},
+{c:'principes', q:"Qu'est-ce qu'une liberté ?", r:"Le droit de faire tout ce qui ne nuit pas à autrui", e:"Article 4 de la Déclaration de 1789 : seules les limites fixées par la loi peuvent la restreindre.", f:["Le droit de faire tout ce que l'on veut, sans limite", "Une autorisation accordée par le maire", "Un privilège réservé à certains citoyens"]},
+{c:'principes', q:"Selon la Constitution, la France est une République…", r:"Indivisible, laïque, démocratique et sociale", e:"Article 1er de la Constitution de 1958.", f:["Fédérale, religieuse et libérale", "Monarchique, laïque et sociale", "Divisible, chrétienne et démocratique"]},
+{c:'principes', q:"Sur quel document peut-on voir Marianne ?", r:"Sur les timbres-poste", e:"Elle figure aussi sur les petites pièces de centimes et sur le logo de la République des documents administratifs.", f:["Sur les billets de banque en euros", "Sur les tickets de métro", "Sur les factures d'électricité"]},
+{c:'principes', q:"Une des valeurs de la devise républicaine est l'Égalité. Qu'est-ce que cela signifie ?", r:"Tous les citoyens sont égaux devant la loi", e:"Article 1er de la Constitution : sans distinction d'origine, de race ou de religion.", f:["Tout le monde doit gagner le même salaire", "Les hommes ont plus de droits que les femmes", "Seuls les Français de naissance ont des droits"]},
+{c:'principes', q:"Une personne peut-elle changer librement de religion en France ?", r:"Oui", e:"La liberté de conscience permet de croire, de ne pas croire, de changer de religion ou d'en abandonner une.", f:["Non, c'est interdit", "Seulement avec l'accord de sa famille", "Seulement après 25 ans"]},
+{c:'principes', q:"Selon le principe de laïcité, que signifie la neutralité de l'État ?", r:"L'État ne favorise ni ne défavorise aucune religion", e:"L'administration et ses agents traitent tous les usagers de la même façon, quelles que soient leurs convictions.", f:["L'État finance toutes les religions à égalité", "L'État interdit les religions dans l'espace public", "L'État soutient la religion de la majorité"]},
+{c:'principes', q:"Que peut faire un usager du service public dans une mairie ?", r:"Porter un signe religieux s'il le souhaite", e:"La neutralité s'impose aux agents, pas aux usagers ; ceux-ci ne peuvent toutefois pas choisir leur agent ni perturber le service.", f:["Exiger d'être reçu par un agent du même sexe", "Refuser un agent d'une autre religion", "Exiger une priorité pour motif religieux"]},
+{c:'principes', q:"En France, il est possible pour l'État de financer :", r:"L'entretien des lieux de culte bâtis avant 1905", e:"Ils sont propriété publique ; pour le reste, la loi de 1905 interdit de subventionner un culte, sauf les aumôneries (écoles, prisons, hôpitaux).", f:["Le salaire des prêtres, pasteurs et imams", "La construction de nouvelles mosquées et églises", "Les cérémonies religieuses des fêtes nationales"]},
+{c:'principes', q:"En quelle année la loi de séparation des Églises et de l'État a-t-elle été votée ?", r:"En 1905", e:"Loi du 9 décembre 1905.", f:["En 1789", "En 1881", "En 1946"]},
+{c:'principes', q:"Que dit la loi de 1905 ?", r:"La République garantit la liberté de conscience et ne subventionne aucun culte", e:"Articles 1er et 2 : elle assure le libre exercice des cultes et ne reconnaît, ne salarie ni ne subventionne aucun culte.", b:"Elle sépare les Églises et l'État", f:["Elle fait du catholicisme la religion de l'État", "Elle interdit les religions dans l'espace public", "Elle fait rémunérer les prêtres par l'État"]},
+{c:'principes', q:"Que garantit le principe de laïcité ?", r:"La liberté de conscience et l'égalité de tous, quelle que soit leur religion", e:"L'État est neutre, et chacun pratique ou non une religion dans le respect de l'ordre public.", b:"La liberté de conscience", f:["Le monopole d'une religion d'État", "L'interdiction de toute pratique religieuse", "Le financement public des cultes"]},
+{c:'principes', q:"Quel jour célèbre-t-on officiellement la laïcité en France ?", r:"Le 9 décembre", e:"Journée nationale de la laïcité, date anniversaire de la loi de 1905.", f:["Le 14 juillet", "Le 1er mai", "Le 11 novembre"]},
+{c:'principes', q:"Quel symbole religieux peut être porté dans une école publique dans le respect de la laïcité ?", r:"Un signe discret, comme une petite croix ou une médaille", e:"La loi du 15 mars 2004 interdit aux élèves les signes religieux ostensibles (voile, kippa, grande croix).", f:["Un voile islamique", "Une kippa", "Une grande croix bien visible"]},
+{c:'principes', q:"Quel terme désigne précisément la haine ou les préjugés contre les Juifs ?", r:"L'antisémitisme", e:"Comme le racisme, il est puni par la loi lorsqu'il s'exprime par des injures, des provocations à la haine ou des discriminations.", f:["La xénophobie", "L'homophobie", "La misogynie"]},
+{c:'principes', q:"Quel texte est considéré comme le texte fondateur de la laïcité ?", r:"La loi du 9 décembre 1905", e:"Loi de séparation des Églises et de l'État.", f:["La loi du 1er juillet 1901", "Le Code civil de 1804", "L'édit de Nantes de 1598"]},
+{c:'principes', q:"Quelle institution française doit rester neutre en matière de religion ?", r:"L'État et ses services publics", e:"La mairie, l'école publique, l'hôpital public : la neutralité découle de l'article 1er de la Constitution.", f:["Les associations religieuses", "Les partis politiques", "Les entreprises privées"]},
+{c:'principes', q:"Qu'est-ce que la laïcité ?", r:"La séparation des religions et de l'État", e:"L'État est neutre et garantit à chacun la liberté de croire ou de ne pas croire, dans le respect de l'ordre public.", f:["L'interdiction de toutes les religions", "L'obligation de pratiquer une religion", "La domination d'une religion d'État"]},
+{c:'principes', q:"À l'école, la charte de la laïcité permet de :", r:"Expliquer aux élèves les règles de la laïcité et ce qu'elles garantissent", e:"Affichée depuis 2013 dans les écoles publiques, elle rappelle la neutralité de l'école, la liberté de conscience et le refus des discriminations.", b:"Expliquer aux élèves les règles de la laïcité", f:["Choisir la religion enseignée dans l'école", "Organiser des cours de catéchisme obligatoires", "Autoriser les élèves à refuser certains cours"]},
+{c:'principes', q:"Qui doit respecter et veiller à la neutralité religieuse dans les services publics ?", r:"Les agents du service public", e:"Ils ne peuvent manifester leurs convictions religieuses dans leurs fonctions ; la loi du 24 août 2021 étend ce devoir aux organismes privés chargés d'un service public.", f:["Uniquement les usagers", "Uniquement les élus locaux", "Les responsables religieux"]},
+{c:'principes', q:"Une personne déclare ne croire en aucun dieu. On peut dire :", r:"Qu'elle est athée", e:"La liberté de conscience protège aussi le droit de ne pas croire.", f:["Qu'elle est croyante", "Qu'elle est pratiquante", "Qu'elle est protestante"]},
 
 // ---- SYSTÈME INSTITUTIONNEL ET POLITIQUE ----
-{c:'institutions', q:"Comment est désigné le Premier ministre ?", r:"Il est nommé par le président de la République", e:"Article 8 de la Constitution ; le gouvernement est responsable devant l'Assemblée nationale."},
-{c:'institutions', q:"Qui peut se présenter aux élections présidentielles ?", r:"Un Français électeur d'au moins 18 ans, parrainé par 500 élus", e:"Les parrainages doivent venir d'au moins 30 départements ou collectivités d'outre-mer, sans dépasser un dixième pour l'un d'eux."},
-{c:'institutions', q:"À qui appartient la souveraineté nationale ?", r:"Au peuple", e:"Article 3 de la Constitution : il l'exerce par ses représentants et par la voie du référendum."},
-{c:'institutions', q:"Qui est élu lors des élections municipales ?", r:"Les conseillers municipaux", e:"Élus pour 6 ans au suffrage universel direct, ils élisent ensuite le maire parmi eux."},
-{c:'institutions', q:"L'inscription sur les listes électorales est :", r:"Obligatoire", e:"Le Code électoral l'impose sans la sanctionner ; les jeunes recensés à 18 ans et les nouveaux naturalisés sont inscrits d'office."},
-{c:'institutions', q:"Quelle condition est nécessaire pour voter aux élections présidentielles ?", r:"Être Français, majeur et inscrit sur les listes électorales", e:"Il faut aussi jouir de ses droits civils et politiques ; les citoyens européens ne votent pas à la présidentielle."},
-{c:'institutions', q:"Quelle condition faut-il remplir pour être candidat aux élections municipales ?", r:"Avoir 18 ans, être électeur et avoir une attache avec la commune", e:"Y être inscrit ou y payer des impôts locaux ; un citoyen européen peut être élu conseiller, mais pas maire ni adjoint."},
-{c:'institutions', q:"Parmi ces autorités, laquelle est élue ?", r:"Le maire", e:"Comme le président de la République et les parlementaires ; le préfet, le Premier ministre et les juges sont nommés."},
-{c:'institutions', q:"Quelles sont les fonctions du maire ?", r:"Il dirige la commune et représente l'État", e:"Il exécute les décisions du conseil municipal ; officier d'état civil et de police judiciaire, il célèbre les mariages et organise les élections."},
-{c:'institutions', q:"Qui peut se présenter aux élections présidentielles ?", r:"Tout Français électeur d'au moins 18 ans, parrainé par 500 élus", e:"Le candidat dépose aussi une déclaration de patrimoine auprès du Conseil constitutionnel."},
-{c:'institutions', q:"Une personne, n'ayant pas d'accès à internet, veut s'inscrire sur les listes électorales pour pouvoir voter aux prochaines élections politiques. Où peut-elle s'inscrire ?", r:"À la mairie de sa commune", e:"L'inscription se fait en mairie, par courrier ou en ligne sur service-public.fr."},
-{c:'institutions', q:"À quel âge peut-on devenir électeur ?", r:"À 18 ans", e:"La majorité électorale est fixée à 18 ans depuis la loi du 5 juillet 1974."},
-{c:'institutions', q:"En France, est-ce obligatoire de voter ?", r:"Non, c'est un droit et un devoir civique", e:"Seuls les grands électeurs des sénatoriales sont tenus de voter, sous peine d'amende."},
-{c:'institutions', q:"A-t-on le droit de ne pas respecter une loi ?", r:"Non", e:"La loi s'impose à tous ; on peut la contester par le vote, le débat ou un recours en justice, pas s'en affranchir."},
-{c:'institutions', q:"Comment sont désignés les députés ?", r:"Élus au suffrage universel direct", e:"Les 577 députés sont élus pour 5 ans au scrutin majoritaire à deux tours."},
-{c:'institutions', q:"Qui vote les lois ?", r:"Le Parlement : l'Assemblée nationale et le Sénat", e:"Article 24 de la Constitution."},
-{c:'institutions', q:"La séparation des pouvoirs est un principe fondamental. Quels sont les trois pouvoirs concernés ?", r:"Législatif, exécutif et judiciaire", e:"Théorisée par Montesquieu, elle est garantie par l'article 16 de la Déclaration de 1789."},
-{c:'institutions', q:"Qu'est-ce que l'État de droit ?", r:"Un État où tous, y compris l'État lui-même, sont soumis au droit", e:"Les décisions publiques doivent respecter la loi et peuvent être contestées devant des juges indépendants."},
-{c:'institutions', q:"Quelles sont les durées du mandat du conseil municipal et du maire ?", r:"6 ans pour les deux", e:"Le maire est élu par le conseil municipal pour la durée du mandat de celui-ci."},
-{c:'institutions', q:"Qui est élu lors des élections législatives ?", r:"Les députés", e:"Ils siègent à l'Assemblée nationale."},
-{c:'institutions', q:"Quelle est la durée du mandat du Président de la République française ?", r:"5 ans", e:"Quinquennat depuis le référendum de 2000 ; pas plus de deux mandats consécutifs depuis 2008."},
-{c:'institutions', q:"Quelle est la durée du mandat des députés ?", r:"5 ans", e:"Sauf dissolution de l'Assemblée nationale par le président de la République."},
-{c:'institutions', q:"Quelle est la durée du mandat des sénateurs ?", r:"6 ans", e:"Élus au suffrage universel indirect par des grands électeurs, ils sont renouvelés par moitié tous les 3 ans."},
-{c:'institutions', q:"Qui dirige l'action du gouvernement ?", r:"Le Premier ministre", e:"Article 21 de la Constitution."},
-{c:'institutions', q:"En France, est-ce possible d'adhérer à un parti politique ?", r:"Oui, librement", e:"Article 4 de la Constitution : les partis se forment et exercent leur activité librement."},
-{c:'institutions', q:"Qui sanctionne l'auteur d'un vol ?", r:"La justice", e:"Seul un tribunal peut prononcer une peine ; nul ne peut se faire justice soi-même."},
-{c:'institutions', q:"Qui gère les collèges publics ?", r:"Le département", e:"Le conseil départemental construit et entretient les collèges ; l'État rémunère les enseignants."},
-{c:'institutions', q:"Qui gère les écoles primaires et maternelles publiques ?", r:"La commune", e:"La mairie gère les bâtiments, la cantine et les inscriptions ; l'État rémunère les enseignants."},
-{c:'institutions', q:"Comment sont désignés les maires ?", r:"Élus par le conseil municipal", e:"Les conseillers municipaux, élus au suffrage universel direct, choisissent le maire parmi eux."},
-{c:'institutions', q:"Quelle collectivité territoriale est responsable des transports régionaux ?", r:"La région", e:"Elle organise les TER et les transports interurbains et scolaires depuis la loi NOTRe de 2015."},
-{c:'institutions', q:"Quelle est l'une des voies possibles pour modifier la Constitution ?", r:"Le référendum", e:"Article 89 : après le vote des deux assemblées, la révision est approuvée par référendum ou par le Parlement réuni en Congrès, à la majorité des trois cinquièmes."},
-{c:'institutions', q:"Qui assure l'intérim du président de la République en cas de décès ?", r:"Le président du Sénat", e:"Article 7 de la Constitution ; une nouvelle élection a lieu dans les 20 à 35 jours."},
-{c:'institutions', q:"Quel est le rôle du Conseil constitutionnel ?", r:"Vérifier que les lois respectent la Constitution", e:"Il contrôle aussi la régularité des élections nationales et des référendums."},
-{c:'institutions', q:"Quelle condition est obligatoire pour se présenter à l'élection présidentielle ?", r:"Avoir la nationalité française", e:"Il faut aussi avoir 18 ans, être électeur et réunir 500 parrainages d'élus."},
-{c:'institutions', q:"Combien y a-t-il de départements en France ?", r:"101", e:"96 en métropole et 5 en outre-mer ; Mayotte est le dernier devenu département, en 2011."},
-{c:'institutions', q:"Comment est organisé le découpage administratif de la France ?", r:"En communes, départements et régions", e:"Ce sont les collectivités territoriales de l'article 72 de la Constitution, avec les collectivités d'outre-mer."},
-{c:'institutions', q:"Qui représente l'État dans un département ?", r:"Le préfet", e:"Nommé en conseil des ministres, il veille à l'application des lois et à l'ordre public."},
-{c:'institutions', q:"Quel est le rôle du Président de la République ?", r:"Il veille au respect de la Constitution et garantit l'indépendance nationale", e:"Article 5 de la Constitution ; chef des armées, il nomme le Premier ministre et promulgue les lois."},
-{c:'institutions', q:"Quel est le rôle du Premier ministre ?", r:"Il dirige l'action du gouvernement", e:"Article 21 de la Constitution : il assure l'exécution des lois."},
-{c:'institutions', q:"Quel est le rôle du Défenseur des droits ?", r:"Défendre les droits des personnes et lutter contre les discriminations", e:"Autorité indépendante inscrite dans la Constitution en 2008, saisie gratuitement, notamment face aux administrations."},
-{c:'institutions', q:"En quelle année la citoyenneté européenne a-t-elle été créée ?", r:"En 1992", e:"Par le traité de Maastricht : tout national d'un État membre est citoyen de l'Union."},
-{c:'institutions', q:"Quel est le dernier État à avoir intégré l'Union Européenne en 2013 ?", r:"La Croatie", e:"Elle a rejoint l'Union le 1er juillet 2013."},
-{c:'institutions', q:"Qui a composé l'hymne de l'Union européenne ?", r:"Ludwig van Beethoven", e:"L'Ode à la joie est tirée de sa Neuvième Symphonie."},
-{c:'institutions', q:"Quand est célébrée la journée de l'Europe ?", r:"Le 9 mai", e:"En souvenir de la déclaration de Robert Schuman du 9 mai 1950."},
-{c:'institutions', q:"Où est le siège de la Banque centrale européenne ?", r:"À Francfort, en Allemagne", e:"La BCE conduit la politique monétaire de la zone euro."},
-{c:'institutions', q:"Où est le siège de la Commission européenne ?", r:"À Bruxelles, en Belgique", e:"La Commission propose les lois européennes et veille à leur application."},
-{c:'institutions', q:"Qui siège au Parlement européen ?", r:"Les députés européens", e:"720 eurodéputés élus en 2024 par les citoyens de l'Union, dont 81 pour la France."},
-{c:'institutions', q:"Les citoyens de l'Union européenne peuvent-ils voter aux élections locales dans un autre État de l'Union ?", r:"Oui, aux élections municipales", e:"Ils votent aussi aux élections européennes dans leur pays de résidence : un droit issu du traité de Maastricht."},
-{c:'institutions', q:"Combien d'États font partie de l'Union européenne au 1er janvier 2025 ?", r:"27", e:"Depuis le départ du Royaume-Uni en 2020."},
-{c:'institutions', q:"En quelle année le traité de Maastricht, qui marque la fondation de l'Union européenne, a-t-il été signé ?", r:"En 1992", e:"Signé le 7 février 1992, il entre en vigueur le 1er novembre 1993."},
-{c:'institutions', q:"Quel traité concerne la construction de l'Union européenne ?", r:"Le traité de Maastricht", e:"Les grandes étapes : traité de Paris (1951), traité de Rome (1957), Maastricht (1992) et Lisbonne (2007)."},
-{c:'institutions', q:"Quel État a quitté l'Union Européenne en 2020 ?", r:"Le Royaume-Uni", e:"Le Brexit, décidé par référendum en 2016, prend effet le 31 janvier 2020."},
-{c:'institutions', q:"Quelle est la devise de l'Union européenne ?", r:"« Unie dans la diversité »", e:"Adoptée en 2000."},
-{c:'institutions', q:"Quel est l'hymne de l'Union Européenne ?", r:"L'Ode à la joie", e:"Extrait de la Neuvième Symphonie de Beethoven, joué sans paroles."},
-{c:'institutions', q:"De quoi est composé le drapeau européen ?", r:"D'un cercle de 12 étoiles dorées sur fond bleu", e:"Le nombre d'étoiles ne varie pas : il symbolise l'unité et non le nombre d'États membres."},
-{c:'institutions', q:"Qui élit les députés européens ?", r:"Les citoyens de l'Union, au suffrage universel direct", e:"Tous les 5 ans depuis 1979 ; un citoyen européen résidant en France peut y voter."},
-{c:'institutions', q:"Où est le siège du Parlement européen ?", r:"À Strasbourg", e:"Les sessions plénières s'y tiennent ; une partie du travail se fait à Bruxelles."},
+{c:'institutions', q:"Comment est désigné le Premier ministre ?", r:"Il est nommé par le président de la République", e:"Article 8 de la Constitution ; le gouvernement est responsable devant l'Assemblée nationale.", f:["Il est élu au suffrage universel direct", "Il est élu par le Sénat", "Il est désigné par le Conseil constitutionnel"]},
+{c:'institutions', q:"Qui peut se présenter aux élections présidentielles ?", r:"Un Français électeur d'au moins 18 ans, parrainé par 500 élus", e:"Les parrainages doivent venir d'au moins 30 départements ou collectivités d'outre-mer, sans dépasser un dixième pour l'un d'eux.", f:["Tout résident en France depuis 5 ans", "Un Français d'au moins 35 ans, membre d'un parti", "Tout citoyen européen vivant en France"]},
+{c:'institutions', q:"À qui appartient la souveraineté nationale ?", r:"Au peuple", e:"Article 3 de la Constitution : il l'exerce par ses représentants et par la voie du référendum.", f:["Au président de la République", "Au Parlement", "Au gouvernement"]},
+{c:'institutions', q:"Qui est élu lors des élections municipales ?", r:"Les conseillers municipaux", e:"Élus pour 6 ans au suffrage universel direct, ils élisent ensuite le maire parmi eux.", f:["Les députés", "Les sénateurs", "Les préfets"]},
+{c:'institutions', q:"L'inscription sur les listes électorales est :", r:"Obligatoire", e:"Le Code électoral l'impose sans la sanctionner ; les jeunes recensés à 18 ans et les nouveaux naturalisés sont inscrits d'office.", f:["Interdite aux personnes naturalisées", "Réservée aux propriétaires", "Payante"]},
+{c:'institutions', q:"Quelle condition est nécessaire pour voter aux élections présidentielles ?", r:"Être Français, majeur et inscrit sur les listes électorales", e:"Il faut aussi jouir de ses droits civils et politiques ; les citoyens européens ne votent pas à la présidentielle.", f:["Résider en France depuis au moins 10 ans", "Être propriétaire de son logement", "Être membre d'un parti politique"]},
+{c:'institutions', q:"Quelle condition faut-il remplir pour être candidat aux élections municipales ?", r:"Avoir 18 ans, être électeur et avoir une attache avec la commune", e:"Y être inscrit ou y payer des impôts locaux ; un citoyen européen peut être élu conseiller, mais pas maire ni adjoint.", f:["Être né dans la commune", "Être propriétaire dans la commune", "Avoir au moins 30 ans"]},
+{c:'institutions', q:"Parmi ces autorités, laquelle est élue ?", r:"Le maire", e:"Comme le président de la République et les parlementaires ; le préfet, le Premier ministre et les juges sont nommés.", f:["Le préfet", "Le Premier ministre", "Le recteur d'académie"]},
+{c:'institutions', q:"Quelles sont les fonctions du maire ?", r:"Il dirige la commune et représente l'État", e:"Il exécute les décisions du conseil municipal ; officier d'état civil et de police judiciaire, il célèbre les mariages et organise les élections.", f:["Il vote les lois du pays", "Il juge les délits commis dans la commune", "Il nomme le préfet du département"]},
+{c:'institutions', q:"Qui peut se présenter aux élections présidentielles ?", r:"Tout Français électeur d'au moins 18 ans, parrainé par 500 élus", e:"Le candidat dépose aussi une déclaration de patrimoine auprès du Conseil constitutionnel.", f:["Tout étranger résidant en France depuis 10 ans", "Uniquement les anciens ministres", "Uniquement les députés en exercice"]},
+{c:'institutions', q:"Une personne, n'ayant pas d'accès à internet, veut s'inscrire sur les listes électorales pour pouvoir voter aux prochaines élections politiques. Où peut-elle s'inscrire ?", r:"À la mairie de sa commune", e:"L'inscription se fait en mairie, par courrier ou en ligne sur service-public.fr.", f:["À la préfecture de région", "Au commissariat de police", "Au bureau de poste"]},
+{c:'institutions', q:"À quel âge peut-on devenir électeur ?", r:"À 18 ans", e:"La majorité électorale est fixée à 18 ans depuis la loi du 5 juillet 1974.", f:["À 16 ans", "À 21 ans", "À 25 ans"]},
+{c:'institutions', q:"En France, est-ce obligatoire de voter ?", r:"Non, c'est un droit et un devoir civique", e:"Seuls les grands électeurs des sénatoriales sont tenus de voter, sous peine d'amende.", f:["Oui, sous peine de prison", "Oui, sous peine d'amende pour tous", "Oui, mais seulement pour la présidentielle"]},
+{c:'institutions', q:"A-t-on le droit de ne pas respecter une loi ?", r:"Non", e:"La loi s'impose à tous ; on peut la contester par le vote, le débat ou un recours en justice, pas s'en affranchir.", f:["Oui, si on ne l'a pas votée", "Oui, si elle nous semble injuste", "Oui, pour les étrangers"]},
+{c:'institutions', q:"Comment sont désignés les députés ?", r:"Élus au suffrage universel direct", e:"Les 577 députés sont élus pour 5 ans au scrutin majoritaire à deux tours.", f:["Nommés par le président de la République", "Élus par les sénateurs", "Désignés par les partis politiques"]},
+{c:'institutions', q:"Qui vote les lois ?", r:"Le Parlement : l'Assemblée nationale et le Sénat", e:"Article 24 de la Constitution.", f:["Le président de la République", "Le Conseil constitutionnel", "Le gouvernement seul"]},
+{c:'institutions', q:"La séparation des pouvoirs est un principe fondamental. Quels sont les trois pouvoirs concernés ?", r:"Législatif, exécutif et judiciaire", e:"Théorisée par Montesquieu, elle est garantie par l'article 16 de la Déclaration de 1789.", f:["Militaire, religieux et civil", "Économique, social et culturel", "Local, régional et national"]},
+{c:'institutions', q:"Qu'est-ce que l'État de droit ?", r:"Un État où tous, y compris l'État lui-même, sont soumis au droit", e:"Les décisions publiques doivent respecter la loi et peuvent être contestées devant des juges indépendants.", b:"Un État où tous sont soumis au droit, l'État compris", f:["Un État où le chef décide seul des lois", "Un État où la police fait la loi", "Un État dirigé par des juges"]},
+{c:'institutions', q:"Quelles sont les durées du mandat du conseil municipal et du maire ?", r:"6 ans pour les deux", e:"Le maire est élu par le conseil municipal pour la durée du mandat de celui-ci.", f:["5 ans pour les deux", "4 ans pour le conseil, 6 ans pour le maire", "6 ans pour le conseil, 3 ans pour le maire"]},
+{c:'institutions', q:"Qui est élu lors des élections législatives ?", r:"Les députés", e:"Ils siègent à l'Assemblée nationale.", f:["Les sénateurs", "Les conseillers municipaux", "Le président de la République"]},
+{c:'institutions', q:"Quelle est la durée du mandat du Président de la République française ?", r:"5 ans", e:"Quinquennat depuis le référendum de 2000 ; pas plus de deux mandats consécutifs depuis 2008.", f:["4 ans", "6 ans", "7 ans"]},
+{c:'institutions', q:"Quelle est la durée du mandat des députés ?", r:"5 ans", e:"Sauf dissolution de l'Assemblée nationale par le président de la République.", f:["4 ans", "6 ans", "7 ans"]},
+{c:'institutions', q:"Quelle est la durée du mandat des sénateurs ?", r:"6 ans", e:"Élus au suffrage universel indirect par des grands électeurs, ils sont renouvelés par moitié tous les 3 ans.", f:["4 ans", "5 ans", "9 ans"]},
+{c:'institutions', q:"Qui dirige l'action du gouvernement ?", r:"Le Premier ministre", e:"Article 21 de la Constitution.", f:["Le président du Sénat", "Le président de l'Assemblée nationale", "Le ministre de l'Intérieur"]},
+{c:'institutions', q:"En France, est-ce possible d'adhérer à un parti politique ?", r:"Oui, librement", e:"Article 4 de la Constitution : les partis se forment et exercent leur activité librement.", f:["Non, c'est interdit", "Oui, avec l'accord du préfet", "Seulement pour les fonctionnaires"]},
+{c:'institutions', q:"Qui sanctionne l'auteur d'un vol ?", r:"La justice", e:"Seul un tribunal peut prononcer une peine ; nul ne peut se faire justice soi-même.", f:["La victime elle-même", "Le maire de la commune", "Les voisins"]},
+{c:'institutions', q:"Qui gère les collèges publics ?", r:"Le département", e:"Le conseil départemental construit et entretient les collèges ; l'État rémunère les enseignants.", f:["La commune", "La région", "Une association de parents"]},
+{c:'institutions', q:"Qui gère les écoles primaires et maternelles publiques ?", r:"La commune", e:"La mairie gère les bâtiments, la cantine et les inscriptions ; l'État rémunère les enseignants.", f:["Le département", "La région", "Le ministère de la Culture"]},
+{c:'institutions', q:"Comment sont désignés les maires ?", r:"Élus par le conseil municipal", e:"Les conseillers municipaux, élus au suffrage universel direct, choisissent le maire parmi eux.", f:["Nommés par le préfet", "Élus par les députés", "Nommés par le président de la République"]},
+{c:'institutions', q:"Quelle collectivité territoriale est responsable des transports régionaux ?", r:"La région", e:"Elle organise les TER et les transports interurbains et scolaires depuis la loi NOTRe de 2015.", f:["La commune", "Le département", "L'Union européenne"]},
+{c:'institutions', q:"Quelle est l'une des voies possibles pour modifier la Constitution ?", r:"Le référendum", e:"Article 89 : après le vote des deux assemblées, la révision est approuvée par référendum ou par le Parlement réuni en Congrès, à la majorité des trois cinquièmes.", f:["Un décret du Premier ministre", "Une décision du Conseil d'État", "Une pétition en ligne"]},
+{c:'institutions', q:"Qui assure l'intérim du président de la République en cas de décès ?", r:"Le président du Sénat", e:"Article 7 de la Constitution ; une nouvelle élection a lieu dans les 20 à 35 jours.", f:["Le Premier ministre", "Le président de l'Assemblée nationale", "Le ministre de la Justice"]},
+{c:'institutions', q:"Quel est le rôle du Conseil constitutionnel ?", r:"Vérifier que les lois respectent la Constitution", e:"Il contrôle aussi la régularité des élections nationales et des référendums.", f:["Juger les crimes les plus graves", "Conseiller le président en politique étrangère", "Voter le budget de l'État"]},
+{c:'institutions', q:"Quelle condition est obligatoire pour se présenter à l'élection présidentielle ?", r:"Avoir la nationalité française", e:"Il faut aussi avoir 18 ans, être électeur et réunir 500 parrainages d'élus.", f:["Être né en France", "Avoir au moins 40 ans", "Être diplômé de l'enseignement supérieur"]},
+{c:'institutions', q:"Combien y a-t-il de départements en France ?", r:"101", e:"96 en métropole et 5 en outre-mer ; Mayotte est le dernier devenu département, en 2011.", f:["88", "96", "120"]},
+{c:'institutions', q:"Comment est organisé le découpage administratif de la France ?", r:"En communes, départements et régions", e:"Ce sont les collectivités territoriales de l'article 72 de la Constitution, avec les collectivités d'outre-mer.", f:["En États fédérés", "En provinces et en comtés", "En cantons souverains"]},
+{c:'institutions', q:"Qui représente l'État dans un département ?", r:"Le préfet", e:"Nommé en conseil des ministres, il veille à l'application des lois et à l'ordre public.", f:["Le maire du chef-lieu", "Le président du conseil départemental", "Le député de la circonscription"]},
+{c:'institutions', q:"Quel est le rôle du Président de la République ?", r:"Il veille au respect de la Constitution et garantit l'indépendance nationale", e:"Article 5 de la Constitution ; chef des armées, il nomme le Premier ministre et promulgue les lois.", b:"Veiller au respect de la Constitution", f:["Voter les lois", "Juger les affaires pénales", "Diriger les conseils municipaux"]},
+{c:'institutions', q:"Quel est le rôle du Premier ministre ?", r:"Il dirige l'action du gouvernement", e:"Article 21 de la Constitution : il assure l'exécution des lois.", f:["Il commande la police municipale", "Il préside le Sénat", "Il rend la justice"]},
+{c:'institutions', q:"Quel est le rôle du Défenseur des droits ?", r:"Défendre les droits des personnes et lutter contre les discriminations", e:"Autorité indépendante inscrite dans la Constitution en 2008, saisie gratuitement, notamment face aux administrations.", b:"Défendre les droits et lutter contre les discriminations", f:["Défendre l'État devant les tribunaux", "Représenter la France à l'étranger", "Commander les armées"]},
+{c:'institutions', q:"En quelle année la citoyenneté européenne a-t-elle été créée ?", r:"En 1992", e:"Par le traité de Maastricht : tout national d'un État membre est citoyen de l'Union.", f:["En 1957", "En 1979", "En 2002"]},
+{c:'institutions', q:"Quel est le dernier État à avoir intégré l'Union Européenne en 2013 ?", r:"La Croatie", e:"Elle a rejoint l'Union le 1er juillet 2013.", f:["La Roumanie", "La Bulgarie", "La Slovénie"]},
+{c:'institutions', q:"Qui a composé l'hymne de l'Union européenne ?", r:"Ludwig van Beethoven", e:"L'Ode à la joie est tirée de sa Neuvième Symphonie.", f:["Wolfgang Amadeus Mozart", "Frédéric Chopin", "Claude Debussy"]},
+{c:'institutions', q:"Quand est célébrée la journée de l'Europe ?", r:"Le 9 mai", e:"En souvenir de la déclaration de Robert Schuman du 9 mai 1950.", f:["Le 1er janvier", "Le 14 juillet", "Le 25 mars"]},
+{c:'institutions', q:"Où est le siège de la Banque centrale européenne ?", r:"À Francfort, en Allemagne", e:"La BCE conduit la politique monétaire de la zone euro.", f:["À Bruxelles, en Belgique", "À Paris, en France", "À Luxembourg"]},
+{c:'institutions', q:"Où est le siège de la Commission européenne ?", r:"À Bruxelles, en Belgique", e:"La Commission propose les lois européennes et veille à leur application.", f:["À Strasbourg, en France", "À Genève, en Suisse", "À Francfort, en Allemagne"]},
+{c:'institutions', q:"Qui siège au Parlement européen ?", r:"Les députés européens", e:"720 eurodéputés élus en 2024 par les citoyens de l'Union, dont 81 pour la France.", f:["Les chefs d'État des pays membres", "Les ministres des Affaires étrangères", "Les juges de la Cour de justice"]},
+{c:'institutions', q:"Les citoyens de l'Union européenne peuvent-ils voter aux élections locales dans un autre État de l'Union ?", r:"Oui, aux élections municipales", e:"Ils votent aussi aux élections européennes dans leur pays de résidence : un droit issu du traité de Maastricht.", f:["Non, jamais", "Oui, à toutes les élections nationales", "Oui, à l'élection présidentielle"]},
+{c:'institutions', q:"Combien d'États font partie de l'Union européenne au 1er janvier 2025 ?", r:"27", e:"Depuis le départ du Royaume-Uni en 2020.", f:["25", "28", "30"]},
+{c:'institutions', q:"En quelle année le traité de Maastricht, qui marque la fondation de l'Union européenne, a-t-il été signé ?", r:"En 1992", e:"Signé le 7 février 1992, il entre en vigueur le 1er novembre 1993.", f:["En 1957", "En 1986", "En 2007"]},
+{c:'institutions', q:"Quel traité concerne la construction de l'Union européenne ?", r:"Le traité de Maastricht", e:"Les grandes étapes : traité de Paris (1951), traité de Rome (1957), Maastricht (1992) et Lisbonne (2007).", f:["Le traité de Versailles", "Le traité de Westphalie", "Le traité de l'Atlantique Nord"]},
+{c:'institutions', q:"Quel État a quitté l'Union Européenne en 2020 ?", r:"Le Royaume-Uni", e:"Le Brexit, décidé par référendum en 2016, prend effet le 31 janvier 2020.", f:["La Suisse", "La Norvège", "Le Danemark"]},
+{c:'institutions', q:"Quelle est la devise de l'Union européenne ?", r:"« Unie dans la diversité »", e:"Adoptée en 2000.", f:["« Liberté, Égalité, Fraternité »", "« Un pour tous, tous pour un »", "« Paix et prospérité »"]},
+{c:'institutions', q:"Quel est l'hymne de l'Union Européenne ?", r:"L'Ode à la joie", e:"Extrait de la Neuvième Symphonie de Beethoven, joué sans paroles.", f:["La Marseillaise", "Le Boléro", "Les Quatre Saisons"]},
+{c:'institutions', q:"De quoi est composé le drapeau européen ?", r:"D'un cercle de 12 étoiles dorées sur fond bleu", e:"Le nombre d'étoiles ne varie pas : il symbolise l'unité et non le nombre d'États membres.", f:["D'un cercle de 27 étoiles dorées sur fond bleu", "De bandes bleues et jaunes", "D'une étoile blanche sur fond bleu"]},
+{c:'institutions', q:"Qui élit les députés européens ?", r:"Les citoyens de l'Union, au suffrage universel direct", e:"Tous les 5 ans depuis 1979 ; un citoyen européen résidant en France peut y voter.", f:["Les parlements nationaux", "Les chefs d'État et de gouvernement", "La Commission européenne"]},
+{c:'institutions', q:"Où est le siège du Parlement européen ?", r:"À Strasbourg", e:"Les sessions plénières s'y tiennent ; une partie du travail se fait à Bruxelles.", f:["À Francfort", "À Genève", "À Rome"]},
 
 // ---- DROITS ET DEVOIRS ----
-{c:'droits', q:"À quoi sert le droit de grève ?", r:"À cesser collectivement le travail pour défendre des revendications", e:"Reconnu par le Préambule de la Constitution de 1946, il s'exerce dans le cadre des lois."},
-{c:'droits', q:"Au nom de quoi l'État justifie-t-il la restriction des droits ?", r:"De l'ordre public et des droits d'autrui", e:"Sécurité, santé et tranquillité publiques : les libertés n'ont de limites que celles fixées par la loi (Déclaration de 1789, art. 4)."},
-{c:'droits', q:"Laquelle de ces citations est inscrite dans la Déclaration des Droits de l'Homme et du Citoyen de 1789 ?", r:"« Les hommes naissent et demeurent libres et égaux en droits »", e:"Article 1er de la Déclaration du 26 août 1789."},
-{c:'droits', q:"L'article 4 de la Déclaration des droits de l'homme et du citoyen affirme que « la liberté consiste à pouvoir faire tout ce qui ne nuit pas à autrui ». Qu'est-ce que cela signifie ?", r:"Chacun est libre tant qu'il ne porte pas atteinte aux droits des autres", e:"Les bornes de la liberté ne peuvent être fixées que par la loi."},
-{c:'droits', q:"Que dit l'article 1er de la Constitution française ?", r:"La France est une République indivisible, laïque, démocratique et sociale", e:"Elle assure l'égalité devant la loi de tous les citoyens sans distinction d'origine, de race ou de religion."},
-{c:'droits', q:"Que garantit la liberté de la presse ?", r:"Le droit de publier informations et opinions sans censure", e:"Loi du 29 juillet 1881 ; la diffamation et l'injure restent punies."},
-{c:'droits', q:"Que permet la liberté de circulation ?", r:"Se déplacer librement en France et en sortir", e:"Les citoyens européens peuvent aussi circuler et s'installer dans tout l'espace de l'Union."},
-{c:'droits', q:"Que signifie être citoyen d'un État ?", r:"En avoir la nationalité, avec ses droits et ses devoirs", e:"Voter, être élu ; mais aussi respecter les lois, payer ses impôts et participer à la défense."},
-{c:'droits', q:"Que sont les droits fondamentaux ?", r:"Les droits essentiels reconnus à toute personne", e:"Dignité, libertés, égalité : ils sont protégés par la Déclaration de 1789, le Préambule de 1946 et la Convention européenne des droits de l'homme."},
-{c:'droits', q:"Quel droit protège une personne contre une arrestation arbitraire ?", r:"Le droit à la sûreté", e:"Article 7 de la Déclaration de 1789 : nul ne peut être arrêté ou détenu que dans les cas prévus par la loi."},
-{c:'droits', q:"Quel est le texte fondateur établissant les droits et les devoirs de chaque citoyen ?", r:"La Déclaration des droits de l'homme et du citoyen de 1789", e:"Elle a valeur constitutionnelle, comme le Préambule de 1946."},
-{c:'droits', q:"Quel texte affirme que tous les hommes naissent libres et égaux en droits ?", r:"La Déclaration des droits de l'homme et du citoyen de 1789", e:"C'est son article 1er."},
-{c:'droits', q:"Quelle situation est une atteinte à la dignité humaine ?", r:"Imposer à une personne un travail ou un logement indignes", e:"Le Code pénal punit aussi la traite des êtres humains, l'esclavage et les traitements inhumains ou dégradants."},
-{c:'droits', q:"Qu'est-ce que la liberté d'expression ?", r:"Le droit de dire, d'écrire et de publier ses opinions", e:"Article 11 de la Déclaration de 1789 : chacun répond de ses abus dans les cas prévus par la loi."},
-{c:'droits', q:"Suite à une interpellation par la police, il est possible de :", r:"Garder le silence et demander un avocat", e:"En garde à vue, on peut aussi faire prévenir un proche et demander à voir un médecin."},
-{c:'droits', q:"Tous les citoyens français ont-ils une religion ?", r:"Non", e:"Chacun est libre d'avoir une religion ou de n'en avoir aucune."},
-{c:'droits', q:"À quel âge est la majorité numérique en France ?", r:"15 ans", e:"Loi du 7 juillet 2023 : avant 15 ans, l'inscription sur un réseau social requiert l'accord d'un parent."},
-{c:'droits', q:"Dans lequel de ces endroits est-on autorisé à fumer ?", r:"Chez soi", e:"Il est interdit de fumer dans les lieux publics fermés, les transports et les établissements scolaires, et depuis juillet 2025 sur les plages, dans les parcs et sous les abribus."},
-{c:'droits', q:"En France, la conduite sans permis d'une moto est :", r:"Un délit", e:"Puni d'un an de prison et de 15 000 euros d'amende par le Code de la route."},
-{c:'droits', q:"En quoi consiste le devoir de solidarité ?", r:"Contribuer à aider les plus vulnérables", e:"Par l'impôt et les cotisations qui financent la protection sociale, et en portant secours aux personnes en danger."},
-{c:'droits', q:"Est-ce légal d'être marié à plusieurs personnes en même temps ?", r:"Non, la polygamie est interdite", e:"Se remarier avant la dissolution du premier mariage est un délit : un an de prison et 45 000 euros d'amende."},
-{c:'droits', q:"Est-ce obligatoire de déclarer ses impôts chaque année en France ?", r:"Oui", e:"Même sans revenus imposables ; la déclaration se fait en ligne au printemps."},
-{c:'droits', q:"Est-il obligatoire de porter secours à une personne en danger ?", r:"Oui, sans se mettre soi-même en danger", e:"La non-assistance à personne en danger est punie de 5 ans de prison et 75 000 euros d'amende."},
-{c:'droits', q:"Être juré d'assises est :", r:"Un devoir civique obligatoire", e:"Refuser sans motif grave expose à une amende de 3 750 euros."},
-{c:'droits', q:"La vente d'alcool en France est interdite aux personnes de moins de :", r:"18 ans", e:"Depuis la loi du 21 juillet 2009, qui a étendu l'interdiction à toutes les boissons alcoolisées."},
-{c:'droits', q:"Le non-respect du code de la route est :", r:"Une infraction punie par la loi", e:"Selon sa gravité : amende, retrait de points, suspension du permis, voire prison pour les délits."},
-{c:'droits', q:"Lequel de ces crimes ou délits peut entrainer la privation des droits civils et politiques par un juge ?", r:"Par exemple la corruption ou la fraude électorale", e:"Le juge peut interdire les droits civiques, civils et de famille jusqu'à 10 ans pour un crime et 5 ans pour un délit."},
-{c:'droits', q:"Pour obtenir une carte d'identité, il faut :", r:"En faire la demande dans une mairie", e:"La demande se prépare en ligne puis se dépose, avec prise d'empreintes, dans une mairie équipée ; elle est gratuite sauf en cas de perte ou de vol."},
-{c:'droits', q:"Pour quel motif peut-on limiter la liberté d'expression ?", r:"Pour protéger l'ordre public et les droits d'autrui", e:"Injure, diffamation, appel à la haine ou à la violence sont punis par la loi de 1881."},
-{c:'droits', q:"Que doit faire un citoyen s'il est appelé à être juré dans un procès d'assises ?", r:"Se présenter : c'est une obligation", e:"Sauf motif grave reconnu ; une absence injustifiée est punie d'une amende pouvant atteindre 3 750 euros."},
-{c:'droits', q:"Quel est l'âge de la majorité civile en France ?", r:"18 ans", e:"Depuis la loi du 5 juillet 1974."},
-{c:'droits', q:"Quel est l'un des devoirs principaux d'un citoyen français ?", r:"Respecter les lois", e:"Il doit aussi payer ses impôts, participer à la défense et siéger comme juré s'il est tiré au sort."},
-{c:'droits', q:"Quelle est l'infraction la plus grave ?", r:"Le crime", e:"Les infractions sont, de la moins à la plus grave, la contravention, le délit et le crime, jugé par la cour d'assises ou la cour criminelle départementale."},
-{c:'droits', q:"Qu'est-ce que la citoyenneté numérique ?", r:"Utiliser internet de façon responsable, en respectant la loi et les autres", e:"Vie privée, interdiction du harcèlement et de la haine : les règles s'appliquent en ligne comme ailleurs."},
-{c:'droits', q:"Qu'est-ce que le devoir de mémoire ?", r:"Se souvenir des tragédies de l'histoire et de leurs victimes", e:"Pour qu'elles ne se reproduisent pas : Shoah, guerres mondiales, esclavage ont leurs journées de commémoration."},
-{c:'droits', q:"Qui peut être appelé à faire partie d'un jury d'assises en France ?", r:"Tout citoyen français de plus de 23 ans inscrit sur les listes électorales", e:"Les jurés sont tirés au sort ; ils doivent savoir lire et écrire en français et ne pas avoir été condamnés pour certaines infractions."},
-{c:'droits', q:"Une personne est privée de ses droits civils et politiques pendant 5 ans suite à une condamnation. Parmi ces propositions laquelle est correcte ? Pendant 5 ans,...", r:"… elle ne peut ni voter ni être élue", e:"Elle ne peut pas non plus être jurée ni exercer une fonction publique (Code pénal, art. 131-26)."},
+{c:'droits', q:"À quoi sert le droit de grève ?", r:"À cesser collectivement le travail pour défendre des revendications", e:"Reconnu par le Préambule de la Constitution de 1946, il s'exerce dans le cadre des lois.", b:"Cesser le travail pour défendre des revendications", f:["Ne plus payer ses impôts", "Bloquer l'accès aux services publics", "Être payé sans travailler"]},
+{c:'droits', q:"Au nom de quoi l'État justifie-t-il la restriction des droits ?", r:"De l'ordre public et des droits d'autrui", e:"Sécurité, santé et tranquillité publiques : les libertés n'ont de limites que celles fixées par la loi (Déclaration de 1789, art. 4).", f:["De la volonté du président", "Des intérêts des entreprises", "De la religion majoritaire"]},
+{c:'droits', q:"Laquelle de ces citations est inscrite dans la Déclaration des Droits de l'Homme et du Citoyen de 1789 ?", r:"« Les hommes naissent et demeurent libres et égaux en droits »", e:"Article 1er de la Déclaration du 26 août 1789.", f:["« L'État, c'est moi »", "« Je pense, donc je suis »", "« Travail, Famille, Patrie »"]},
+{c:'droits', q:"L'article 4 de la Déclaration des droits de l'homme et du citoyen affirme que « la liberté consiste à pouvoir faire tout ce qui ne nuit pas à autrui ». Qu'est-ce que cela signifie ?", r:"Chacun est libre tant qu'il ne porte pas atteinte aux droits des autres", e:"Les bornes de la liberté ne peuvent être fixées que par la loi.", b:"On est libre tant qu'on ne nuit pas aux autres", f:["On peut tout faire, sans aucune limite", "Seuls les citoyens français sont libres", "La liberté dépend de l'accord du maire"]},
+{c:'droits', q:"Que dit l'article 1er de la Constitution française ?", r:"La France est une République indivisible, laïque, démocratique et sociale", e:"Elle assure l'égalité devant la loi de tous les citoyens sans distinction d'origine, de race ou de religion.", f:["La France est une monarchie constitutionnelle", "La France est une République fédérale et religieuse", "Le président est élu pour 7 ans"]},
+{c:'droits', q:"Que garantit la liberté de la presse ?", r:"Le droit de publier informations et opinions sans censure", e:"Loi du 29 juillet 1881 ; la diffamation et l'injure restent punies.", f:["La validation des articles par l'État", "Le droit de diffamer sans risque", "La gratuité des journaux"]},
+{c:'droits', q:"Que permet la liberté de circulation ?", r:"Se déplacer librement en France et en sortir", e:"Les citoyens européens peuvent aussi circuler et s'installer dans tout l'espace de l'Union.", f:["Conduire sans permis", "Entrer dans n'importe quel logement", "Passer les frontières sans papiers"]},
+{c:'droits', q:"Que signifie être citoyen d'un État ?", r:"En avoir la nationalité, avec ses droits et ses devoirs", e:"Voter, être élu ; mais aussi respecter les lois, payer ses impôts et participer à la défense.", f:["Y résider depuis plus d'un an", "Y payer des impôts locaux", "Y être propriétaire d'un logement"]},
+{c:'droits', q:"Que sont les droits fondamentaux ?", r:"Les droits essentiels reconnus à toute personne", e:"Dignité, libertés, égalité : ils sont protégés par la Déclaration de 1789, le Préambule de 1946 et la Convention européenne des droits de l'homme.", f:["Les droits réservés aux plus riches", "Les avantages accordés aux fonctionnaires", "Les règles internes d'une entreprise"]},
+{c:'droits', q:"Quel droit protège une personne contre une arrestation arbitraire ?", r:"Le droit à la sûreté", e:"Article 7 de la Déclaration de 1789 : nul ne peut être arrêté ou détenu que dans les cas prévus par la loi.", f:["Le droit de grève", "Le droit de propriété", "Le droit d'association"]},
+{c:'droits', q:"Quel est le texte fondateur établissant les droits et les devoirs de chaque citoyen ?", r:"La Déclaration des droits de l'homme et du citoyen de 1789", e:"Elle a valeur constitutionnelle, comme le Préambule de 1946.", f:["Le Code civil de 1804", "Le traité de Maastricht", "Le Code de la route"]},
+{c:'droits', q:"Quel texte affirme que tous les hommes naissent libres et égaux en droits ?", r:"La Déclaration des droits de l'homme et du citoyen de 1789", e:"C'est son article 1er.", f:["Le Code civil de 1804", "La loi de 1905", "Le traité de Rome"]},
+{c:'droits', q:"Quelle situation est une atteinte à la dignité humaine ?", r:"Imposer à une personne un travail ou un logement indignes", e:"Le Code pénal punit aussi la traite des êtres humains, l'esclavage et les traitements inhumains ou dégradants.", f:["Refuser une invitation à dîner", "Critiquer un film à la télévision", "Demander un justificatif de domicile"]},
+{c:'droits', q:"Qu'est-ce que la liberté d'expression ?", r:"Le droit de dire, d'écrire et de publier ses opinions", e:"Article 11 de la Déclaration de 1789 : chacun répond de ses abus dans les cas prévus par la loi.", f:["Le droit d'insulter qui l'on veut", "L'obligation de donner son avis", "Le droit de diffuser de fausses informations"]},
+{c:'droits', q:"Suite à une interpellation par la police, il est possible de :", r:"Garder le silence et demander un avocat", e:"En garde à vue, on peut aussi faire prévenir un proche et demander à voir un médecin.", f:["Refuser de donner son identité", "S'enfuir si l'on se sent innocent", "Exiger d'être libéré immédiatement"]},
+{c:'droits', q:"Tous les citoyens français ont-ils une religion ?", r:"Non", e:"Chacun est libre d'avoir une religion ou de n'en avoir aucune.", f:["Oui, c'est obligatoire", "Oui, la religion catholique", "Oui, celle de leurs parents"]},
+{c:'droits', q:"À quel âge est la majorité numérique en France ?", r:"15 ans", e:"Loi du 7 juillet 2023 : avant 15 ans, l'inscription sur un réseau social requiert l'accord d'un parent.", f:["13 ans", "16 ans", "18 ans"]},
+{c:'droits', q:"Dans lequel de ces endroits est-on autorisé à fumer ?", r:"Chez soi", e:"Il est interdit de fumer dans les lieux publics fermés, les transports et les établissements scolaires, et depuis juillet 2025 sur les plages, dans les parcs et sous les abribus.", f:["Dans un restaurant", "Dans un bus", "Dans un hôpital"]},
+{c:'droits', q:"En France, la conduite sans permis d'une moto est :", r:"Un délit", e:"Puni d'un an de prison et de 15 000 euros d'amende par le Code de la route.", f:["Autorisé à la campagne", "Une simple contravention", "Autorisé le week-end"]},
+{c:'droits', q:"En quoi consiste le devoir de solidarité ?", r:"Contribuer à aider les plus vulnérables", e:"Par l'impôt et les cotisations qui financent la protection sociale, et en portant secours aux personnes en danger.", f:["Aider uniquement les membres de sa famille", "Donner aux associations religieuses", "Prêter sa voiture à ses voisins"]},
+{c:'droits', q:"Est-ce légal d'être marié à plusieurs personnes en même temps ?", r:"Non, la polygamie est interdite", e:"Se remarier avant la dissolution du premier mariage est un délit : un an de prison et 45 000 euros d'amende.", f:["Oui, avec l'accord de la première épouse", "Oui, si le mariage a eu lieu à l'étranger", "Oui, pour les hommes uniquement"]},
+{c:'droits', q:"Est-ce obligatoire de déclarer ses impôts chaque année en France ?", r:"Oui", e:"Même sans revenus imposables ; la déclaration se fait en ligne au printemps.", f:["Non, seulement tous les cinq ans", "Non, seulement si l'on est riche", "Non, seulement pour les Français"]},
+{c:'droits', q:"Est-il obligatoire de porter secours à une personne en danger ?", r:"Oui, sans se mettre soi-même en danger", e:"La non-assistance à personne en danger est punie de 5 ans de prison et 75 000 euros d'amende.", f:["Non, c'est le rôle des pompiers", "Non, seulement si c'est un proche", "Oui, même au péril de sa vie"]},
+{c:'droits', q:"Être juré d'assises est :", r:"Un devoir civique obligatoire", e:"Refuser sans motif grave expose à une amende de 3 750 euros.", f:["Un métier rémunéré", "Une activité bénévole facultative", "Réservé aux avocats"]},
+{c:'droits', q:"La vente d'alcool en France est interdite aux personnes de moins de :", r:"18 ans", e:"Depuis la loi du 21 juillet 2009, qui a étendu l'interdiction à toutes les boissons alcoolisées.", f:["16 ans", "21 ans", "15 ans"]},
+{c:'droits', q:"Le non-respect du code de la route est :", r:"Une infraction punie par la loi", e:"Selon sa gravité : amende, retrait de points, suspension du permis, voire prison pour les délits.", f:["Une simple recommandation", "Toléré la nuit", "Sans conséquence si personne ne voit"]},
+{c:'droits', q:"Lequel de ces crimes ou délits peut entrainer la privation des droits civils et politiques par un juge ?", r:"Par exemple la corruption ou la fraude électorale", e:"Le juge peut interdire les droits civiques, civils et de famille jusqu'à 10 ans pour un crime et 5 ans pour un délit.", b:"La corruption", f:["Le stationnement interdit", "Un excès de vitesse de 10 km/h", "Un ticket de bus non payé"]},
+{c:'droits', q:"Pour obtenir une carte d'identité, il faut :", r:"En faire la demande dans une mairie", e:"La demande se prépare en ligne puis se dépose, avec prise d'empreintes, dans une mairie équipée ; elle est gratuite sauf en cas de perte ou de vol.", f:["La demander au commissariat", "L'acheter dans un bureau de tabac", "La demander à son employeur"]},
+{c:'droits', q:"Pour quel motif peut-on limiter la liberté d'expression ?", r:"Pour protéger l'ordre public et les droits d'autrui", e:"Injure, diffamation, appel à la haine ou à la violence sont punis par la loi de 1881.", f:["Pour protéger le gouvernement des critiques", "Pour imposer une religion", "Pour interdire les opinions minoritaires"]},
+{c:'droits', q:"Que doit faire un citoyen s'il est appelé à être juré dans un procès d'assises ?", r:"Se présenter : c'est une obligation", e:"Sauf motif grave reconnu ; une absence injustifiée est punie d'une amende pouvant atteindre 3 750 euros.", f:["Il peut refuser sans raison", "Il doit payer un avocat", "Il doit envoyer un remplaçant"]},
+{c:'droits', q:"Quel est l'âge de la majorité civile en France ?", r:"18 ans", e:"Depuis la loi du 5 juillet 1974.", f:["16 ans", "20 ans", "21 ans"]},
+{c:'droits', q:"Quel est l'un des devoirs principaux d'un citoyen français ?", r:"Respecter les lois", e:"Il doit aussi payer ses impôts, participer à la défense et siéger comme juré s'il est tiré au sort.", f:["Adhérer à un parti politique", "Pratiquer une religion", "Posséder un logement"]},
+{c:'droits', q:"Quelle est l'infraction la plus grave ?", r:"Le crime", e:"Les infractions sont, de la moins à la plus grave, la contravention, le délit et le crime, jugé par la cour d'assises ou la cour criminelle départementale.", f:["La contravention", "Le délit", "L'amende"]},
+{c:'droits', q:"Qu'est-ce que la citoyenneté numérique ?", r:"Utiliser internet de façon responsable, en respectant la loi et les autres", e:"Vie privée, interdiction du harcèlement et de la haine : les règles s'appliquent en ligne comme ailleurs.", b:"Utiliser internet de façon responsable", f:["Pouvoir tout publier sans limite", "Posséder un ordinateur", "Voter uniquement par internet"]},
+{c:'droits', q:"Qu'est-ce que le devoir de mémoire ?", r:"Se souvenir des tragédies de l'histoire et de leurs victimes", e:"Pour qu'elles ne se reproduisent pas : Shoah, guerres mondiales, esclavage ont leurs journées de commémoration.", f:["Apprendre la Constitution par cœur", "Se souvenir de l'anniversaire de ses proches", "Effacer les événements douloureux de l'histoire"]},
+{c:'droits', q:"Qui peut être appelé à faire partie d'un jury d'assises en France ?", r:"Tout citoyen français de plus de 23 ans inscrit sur les listes électorales", e:"Les jurés sont tirés au sort ; ils doivent savoir lire et écrire en français et ne pas avoir été condamnés pour certaines infractions.", b:"Tout électeur français de plus de 23 ans", f:["Uniquement les avocats et les magistrats", "Uniquement les fonctionnaires", "Tout résident étranger majeur"]},
+{c:'droits', q:"Une personne est privée de ses droits civils et politiques pendant 5 ans suite à une condamnation. Parmi ces propositions laquelle est correcte ? Pendant 5 ans,...", r:"… elle ne peut ni voter ni être élue", e:"Elle ne peut pas non plus être jurée ni exercer une fonction publique (Code pénal, art. 131-26).", f:["… elle ne peut plus travailler", "… elle doit quitter le territoire", "… elle perd la nationalité française"]},
 
 // ---- HISTOIRE, GÉOGRAPHIE ET CULTURE ----
-{c:'histoire', q:"Parmi ces textes, lequel a été adopté sous Napoléon Ier ?", r:"Le Code civil", e:"Promulgué en 1804, le « Code Napoléon » fixe encore aujourd'hui les règles du droit civil."},
-{c:'histoire', q:"Qui a été président de la Ve République ?", r:"Charles de Gaulle, le premier, de 1959 à 1969", e:"Puis Pompidou, Giscard d'Estaing, Mitterrand, Chirac, Sarkozy, Hollande et Macron."},
-{c:'histoire', q:"Quel est l'objectif des lois scolaires de la IIIe République ?", r:"Rendre l'école primaire gratuite, obligatoire et laïque", e:"Ce sont les lois Jules Ferry de 1881 et 1882."},
-{c:'histoire', q:"Que signifie la date du 14 juillet pour les Français ?", r:"C'est la fête nationale", e:"Elle commémore la prise de la Bastille en 1789 et la fête de la Fédération en 1790."},
-{c:'histoire', q:"Pourquoi l'année 1958 est importante pour la France ?", r:"C'est la naissance de la Ve République", e:"La Constitution du 4 octobre 1958 est adoptée par référendum ; de Gaulle devient le premier président de ce régime."},
-{c:'histoire', q:"Lequel de ces pays est un pays fondateur de l'Union Européenne ?", r:"L'Allemagne, l'Italie, la Belgique, les Pays-Bas ou le Luxembourg", e:"Avec la France, ce sont les six signataires du traité de Paris (1951) puis du traité de Rome (1957)."},
-{c:'histoire', q:"Simone Veil est une figure importante de l'histoire française. Elle a notamment :", r:"Fait adopter la loi de 1975 autorisant l'IVG", e:"Rescapée d'Auschwitz, elle préside le premier Parlement européen élu en 1979 et repose au Panthéon depuis 2018."},
-{c:'histoire', q:"Dans quelle région est située une partie des plages du débarquement ayant permis d'engager la libération de la France ?", r:"La Normandie", e:"Le débarquement allié a lieu le 6 juin 1944."},
-{c:'histoire', q:"Dans quelle ville les rois de France étaient-ils couronnés ?", r:"Reims", e:"La plupart des rois y sont sacrés dans la cathédrale, en souvenir du baptême de Clovis."},
-{c:'histoire', q:"Quel roi de France a été guillotiné pendant la Révolution française ?", r:"Louis XVI", e:"Exécuté le 21 janvier 1793 à Paris."},
-{c:'histoire', q:"En quelle année a débuté la Révolution française ?", r:"En 1789", e:"Les états généraux s'ouvrent en mai, la Bastille est prise le 14 juillet."},
-{c:'histoire', q:"En quelle année Napoléon Ier est-il devenu empereur ?", r:"En 1804", e:"Sacré le 2 décembre 1804 à Notre-Dame de Paris."},
-{c:'histoire', q:"Lequel de ces personnages a un lien avec la République française ?", r:"Marianne", e:"Figure allégorique de la République depuis la Révolution."},
-{c:'histoire', q:"De quand date l'appel à la résistance du général de Gaulle ?", r:"Du 18 juin 1940", e:"Lancé depuis Londres, à la radio de la BBC."},
-{c:'histoire', q:"Qu'est-ce que la Shoah ?", r:"L'extermination des Juifs d'Europe par l'Allemagne nazie", e:"Près de 6 millions de Juifs ont été assassinés pendant la Seconde Guerre mondiale, dont quelque 76 000 déportés de France."},
-{c:'histoire', q:"Quel pays a été une colonie française ?", r:"L'Algérie", e:"Comme le Sénégal, Madagascar ou le Vietnam ; la plupart des colonies deviennent indépendantes entre 1954 et 1962."},
-{c:'histoire', q:"Qui a rendu l'école gratuite, laïque et obligatoire ?", r:"Jules Ferry", e:"Par les lois de 1881 et 1882."},
-{c:'histoire', q:"Depuis quand les Français élisent-ils le président de la République au suffrage universel direct ?", r:"Depuis 1962", e:"Décidé par le référendum du 28 octobre 1962 ; première élection en 1965."},
-{c:'histoire', q:"En quelle année l'Union européenne a-t-elle été fondée ?", r:"En 1992", e:"Par le traité de Maastricht, entré en vigueur en 1993, qui prolonge la Communauté économique européenne de 1957."},
-{c:'histoire', q:"Quand a eu lieu la Seconde guerre mondiale ?", r:"De 1939 à 1945", e:"Elle s'achève en Europe le 8 mai 1945."},
-{c:'histoire', q:"Quand a eu lieu la Première guerre mondiale ?", r:"De 1914 à 1918", e:"Elle s'achève par l'armistice du 11 novembre 1918."},
-{c:'histoire', q:"Sous quel président a été abolie la peine de mort en France ?", r:"François Mitterrand", e:"Loi du 9 octobre 1981, portée par le garde des Sceaux Robert Badinter."},
-{c:'histoire', q:"Que célèbre-t-on le 8 mai ?", r:"La victoire des Alliés sur l'Allemagne nazie en 1945", e:"Fin de la Seconde Guerre mondiale en Europe ; c'est un jour férié."},
-{c:'histoire', q:"Quelle est la première étape de la construction européenne en 1951 ?", r:"La Communauté européenne du charbon et de l'acier (CECA)", e:"Créée par le traité de Paris, signé par six pays."},
-{c:'histoire', q:"Qui était une figure de la Résistance française pendant la Seconde Guerre mondiale ?", r:"Jean Moulin", e:"Il unifie la Résistance intérieure avant de mourir en 1943 ; il repose au Panthéon depuis 1964."},
-{c:'histoire', q:"Le 11 novembre est un jour férié. À quoi correspond cette date ?", r:"À l'armistice de 1918", e:"Fin de la Première Guerre mondiale ; on y rend hommage à tous les morts pour la France."},
-{c:'histoire', q:"Depuis quand l'esclavage a-t-il été aboli en France ?", r:"Depuis 1848", e:"Décret du 27 avril 1848 ; une première abolition, en 1794, avait été annulée par Napoléon en 1802."},
-{c:'histoire', q:"Qui a aboli l'esclavage en France ?", r:"Victor Schœlcher", e:"Il est à l'origine du décret d'abolition du 27 avril 1848 ; il repose au Panthéon."},
-{c:'histoire', q:"Depuis quelle année l'école publique est-elle gratuite ?", r:"Depuis 1881", e:"Loi Jules Ferry du 16 juin 1881 ; elle devient obligatoire et laïque en 1882."},
-{c:'histoire', q:"En 1944, qu'est-ce qui a changé pour les femmes ?", r:"Elles obtiennent le droit de vote", e:"Ordonnance du 21 avril 1944 ; elles votent pour la première fois en 1945."},
-{c:'histoire', q:"Quelle organisation a été créée en 1945 après la Seconde Guerre mondiale ?", r:"L'Organisation des Nations unies (ONU)", e:"Sa charte est signée à San Francisco le 26 juin 1945 ; la France est membre permanent du Conseil de sécurité."},
-{c:'histoire', q:"En quelle année l'euro est-il devenu la monnaie officielle de la France ?", r:"En 2002", e:"Créé en 1999 pour les paiements scripturaux, l'euro circule en pièces et billets depuis le 1er janvier 2002."},
-{c:'histoire', q:"Lors de la seconde guerre mondiale, à quelle date la ville de Paris a-t-elle été libérée ?", r:"Le 25 août 1944", e:"Par la 2e division blindée du général Leclerc et les Forces françaises de l'intérieur."},
-{c:'histoire', q:"Quel était le principal port français impliqué dans la traite négrière au XVIIIe siècle ?", r:"Nantes", e:"Plus de 40 % des expéditions négrières françaises en sont parties."},
-{c:'histoire', q:"Quel célèbre philosophe des Lumières a dénoncé l'esclavage ?", r:"Montesquieu, Voltaire ou Condorcet", e:"Montesquieu le tourne en dérision dans De l'esprit des lois, Voltaire le dénonce dans Candide."},
-{c:'histoire', q:"Quelle œuvre a été écrite par Victor Hugo ?", r:"Les Misérables", e:"Il a aussi écrit Notre-Dame de Paris et Les Contemplations ; il repose au Panthéon."},
-{c:'histoire', q:"Quel peintre est français ?", r:"Claude Monet, Auguste Renoir, Paul Cézanne…", e:"Attention : Picasso était espagnol et Van Gogh néerlandais, même s'ils ont vécu en France."},
-{c:'histoire', q:"Quel plat est une spécialité de la cuisine française ?", r:"Le bœuf bourguignon, le pot-au-feu, la ratatouille…", e:"Le repas gastronomique des Français est inscrit au patrimoine immatériel de l'UNESCO depuis 2010."},
-{c:'histoire', q:"Qui était Marie Curie ?", r:"Une physicienne et chimiste, deux fois prix Nobel", e:"Pionnière de la radioactivité, prix Nobel de physique en 1903 et de chimie en 1911 ; elle repose au Panthéon."},
-{c:'histoire', q:"Qui a peint « La liberté guidant le peuple » ?", r:"Eugène Delacroix", e:"Peint en 1830 après les Trois Glorieuses, le tableau est exposé au Louvre."},
-{c:'histoire', q:"Dans quel grand musée parisien est exposée la Joconde ?", r:"Le Louvre", e:"Peinte par Léonard de Vinci, elle appartient aux collections royales depuis François Ier."},
-{c:'histoire', q:"Quel château célèbre se trouve près de Paris et symbolise le pouvoir royal de Louis XIV ?", r:"Le château de Versailles", e:"Louis XIV y installe la cour en 1682."},
-{c:'histoire', q:"Où peut-on voir des peintures préhistoriques en France ?", r:"Dans la grotte de Lascaux ou la grotte Chauvet", e:"Les grottes originales sont fermées pour les protéger : on visite des répliques fidèles, en Dordogne et en Ardèche."},
-{c:'histoire', q:"Quel peintre célèbre a peint les Nymphéas ?", r:"Claude Monet", e:"Peints dans son jardin de Giverny, ils sont exposés au musée de l'Orangerie à Paris."},
-{c:'histoire', q:"Pendant quelles journées peut-on visiter gratuitement des lieux culturels en France ?", r:"Les Journées européennes du patrimoine", e:"Chaque année, le troisième week-end de septembre."},
-{c:'histoire', q:"Que symbolise le 1er mai ?", r:"La fête du Travail", e:"C'est le seul jour férié obligatoirement chômé pour tous les salariés."},
-{c:'histoire', q:"Qui était Monsieur Rouget de Lisle ?", r:"L'auteur de La Marseillaise", e:"Officier, il compose ce chant de guerre à Strasbourg en 1792."},
-{c:'histoire', q:"À quelle occasion a été construite la Tour Eiffel ?", r:"Pour l'Exposition universelle de 1889", e:"Elle célèbre le centenaire de la Révolution française."},
-{c:'histoire', q:"Quelle chaîne de montagnes est située entre la France et l'Italie ?", r:"Les Alpes", e:"Elles culminent au mont Blanc, plus haut sommet de France."},
-{c:'histoire', q:"Qui était Molière ?", r:"Un auteur de théâtre et comédien du XVIIe siècle", e:"Auteur du Misanthrope et du Bourgeois gentilhomme ; le français est appelé « la langue de Molière »."},
-{c:'histoire', q:"Qui était Charles Baudelaire ?", r:"Un poète du XIXe siècle", e:"Auteur des Fleurs du mal, publiées en 1857."},
-{c:'histoire', q:"Qui était George Sand ?", r:"Une romancière du XIXe siècle", e:"Aurore Dupin de son vrai nom, auteure de La Mare au diable, engagée pour la liberté des femmes."},
-{c:'histoire', q:"Qui était Simone de Beauvoir ?", r:"Une philosophe et écrivaine féministe", e:"Auteure du Deuxième Sexe, publié en 1949."},
-{c:'histoire', q:"Qui était Albert Camus ?", r:"Un écrivain et philosophe, prix Nobel de littérature", e:"Auteur de L'Étranger et de La Peste, prix Nobel en 1957."},
-{c:'histoire', q:"Qui était Marguerite Yourcenar ?", r:"Une romancière, première femme élue à l'Académie française", e:"Élue en 1980 ; auteure des Mémoires d'Hadrien."},
-{c:'histoire', q:"Qui était Paul Cézanne ?", r:"Un peintre de la fin du XIXe siècle", e:"Né à Aix-en-Provence, il a souvent peint la montagne Sainte-Victoire ; il a ouvert la voie à la peinture moderne."},
-{c:'histoire', q:"Qui était Auguste Rodin ?", r:"Un sculpteur", e:"Auteur du Penseur et du Baiser ; un musée lui est consacré à Paris."},
-{c:'histoire', q:"Qui était un célèbre compositeur français ?", r:"Claude Debussy, Maurice Ravel, Hector Berlioz…", e:"Ravel a composé le Boléro, Bizet l'opéra Carmen."},
-{c:'histoire', q:"Qui était Auguste Renoir ?", r:"Un peintre impressionniste", e:"Son Bal du moulin de la Galette (1876) est exposé au musée d'Orsay."},
-{c:'histoire', q:"Quel musée est situé à Paris ?", r:"Le Louvre, le musée d'Orsay, le Centre Pompidou…", e:"Le Louvre est le musée le plus visité au monde."},
-{c:'histoire', q:"Quel monument historique se trouve sur une île en Normandie ?", r:"Le Mont-Saint-Michel", e:"L'abbaye et sa baie sont inscrites au patrimoine mondial de l'UNESCO depuis 1979."},
-{c:'histoire', q:"Quelle ville française fait partie des 10 plus grandes métropoles du pays ?", r:"Lyon, Marseille, Toulouse, Lille, Bordeaux, Nantes…", e:"Après Paris, Lyon et Marseille forment les plus grandes agglomérations."},
-{c:'histoire', q:"Quelle île fait partie des Antilles françaises ?", r:"La Guadeloupe ou la Martinique", e:"Ce sont des départements et régions d'outre-mer, dans la mer des Caraïbes."},
-{c:'histoire', q:"Quelle île est française ?", r:"La Corse, La Réunion, la Guadeloupe, la Martinique…", e:"La Corse est la plus grande île de la France métropolitaine."},
-{c:'histoire', q:"Quelle est la plus haute montagne de France ?", r:"Le mont Blanc", e:"Un peu plus de 4 800 mètres, dans les Alpes ; c'est le plus haut sommet d'Europe occidentale."},
-{c:'histoire', q:"Quelle île française est située dans l'océan Indien ?", r:"La Réunion (ou Mayotte)", e:"Toutes deux sont des départements d'outre-mer."},
-{c:'histoire', q:"Quel département français a une frontière avec le Brésil ?", r:"La Guyane", e:"C'est la plus longue frontière terrestre de la France, en Amérique du Sud."},
-{c:'histoire', q:"De quelle ville française décolle la fusée Ariane ?", r:"De Kourou, en Guyane", e:"Depuis le Centre spatial guyanais, proche de l'équateur."},
-{c:'histoire', q:"Quelle mer ou océan borde la France métropolitaine ?", r:"L'Atlantique, la Manche, la mer du Nord et la Méditerranée", e:"La métropole a plus de 5 000 km de côtes sur ces quatre façades."},
-{c:'histoire', q:"Quelle mer se situe entre la France et l'Angleterre ?", r:"La Manche", e:"Le tunnel sous la Manche la traverse depuis 1994."},
-{c:'histoire', q:"Quelle île est un département d'outre-mer français ?", r:"La Réunion, la Guadeloupe, la Martinique ou Mayotte", e:"Le cinquième département d'outre-mer, la Guyane, n'est pas une île."},
-{c:'histoire', q:"Qu'est-ce que la France d'outre-mer ?", r:"Les territoires français situés hors d'Europe", e:"Départements et régions d'outre-mer (Guadeloupe, Martinique, Guyane, La Réunion, Mayotte) et collectivités comme la Polynésie ou la Nouvelle-Calédonie."},
-{c:'histoire', q:"Quelle est la population approximative de la France en 2025 ?", r:"Environ 68,6 millions d'habitants", e:"Selon l'Insee au 1er janvier 2025, outre-mer compris."},
-{c:'histoire', q:"Quel est le principal port maritime de France ?", r:"Marseille-Fos", e:"Avec Le Havre et Dunkerque, il compte parmi les plus grands ports de commerce français."},
-{c:'histoire', q:"Combien y a-t-il de régions en France métropolitaine ?", r:"13", e:"Depuis la réforme de 2016 ; on en compte 18 avec les 5 régions d'outre-mer."},
-{c:'histoire', q:"Quelle chaîne de montagnes est située entre la France et l'Espagne ?", r:"Les Pyrénées", e:"La petite principauté d'Andorre s'y trouve, entre les deux pays."},
-{c:'histoire', q:"Quelle île française se trouve au sud-est du continent africain ?", r:"La Réunion", e:"À l'est de Madagascar, dans l'océan Indien ; Mayotte est l'autre département français de la zone."},
-{c:'histoire', q:"Quel est le chef-lieu de la région Auvergne-Rhône-Alpes ?", r:"Lyon", e:"Troisième ville de France par sa population."},
-{c:'histoire', q:"Quel est le chef-lieu de la région Bretagne ?", r:"Rennes", e:"Chef-lieu du département d'Ille-et-Vilaine."},
-{c:'histoire', q:"Quel est le chef-lieu de la région Provence-Alpes-Côte d'Azur ?", r:"Marseille", e:"Deuxième ville de France par sa population."},
-{c:'histoire', q:"Quel est le 101ème département français depuis 2011 ?", r:"Mayotte", e:"Devenu département le 31 mars 2011, après le référendum de 2009."},
-{c:'histoire', q:"Quelle région française est réputée pour ses stations de ski ?", r:"Auvergne-Rhône-Alpes", e:"Elle réunit la plupart des grandes stations des Alpes, en Savoie, Haute-Savoie et Isère."},
-{c:'histoire', q:"Quel fleuve traverse Paris ?", r:"La Seine", e:"Elle se jette dans la Manche au Havre."},
+{c:'histoire', q:"Parmi ces textes, lequel a été adopté sous Napoléon Ier ?", r:"Le Code civil", e:"Promulgué en 1804, le « Code Napoléon » fixe encore aujourd'hui les règles du droit civil.", f:["La Déclaration des droits de l'homme", "La Constitution de 1958", "La loi de 1905"]},
+{c:'histoire', q:"Qui a été président de la Ve République ?", r:"Charles de Gaulle, le premier, de 1959 à 1969", e:"Puis Pompidou, Giscard d'Estaing, Mitterrand, Chirac, Sarkozy, Hollande et Macron.", b:"Charles de Gaulle", f:["Jean Jaurès", "Georges Clemenceau", "Léon Blum"]},
+{c:'histoire', q:"Quel est l'objectif des lois scolaires de la IIIe République ?", r:"Rendre l'école primaire gratuite, obligatoire et laïque", e:"Ce sont les lois Jules Ferry de 1881 et 1882.", f:["Rendre l'école payante et religieuse", "Créer les grandes écoles d'ingénieurs", "Supprimer l'enseignement de l'histoire"]},
+{c:'histoire', q:"Que signifie la date du 14 juillet pour les Français ?", r:"C'est la fête nationale", e:"Elle commémore la prise de la Bastille en 1789 et la fête de la Fédération en 1790.", f:["C'est la fête du Travail", "C'est l'armistice de 1918", "C'est la journée de l'Europe"]},
+{c:'histoire', q:"Pourquoi l'année 1958 est importante pour la France ?", r:"C'est la naissance de la Ve République", e:"La Constitution du 4 octobre 1958 est adoptée par référendum ; de Gaulle devient le premier président de ce régime.", f:["C'est la fin de la Seconde Guerre mondiale", "C'est l'abolition de l'esclavage", "C'est l'adoption de l'euro"]},
+{c:'histoire', q:"Lequel de ces pays est un pays fondateur de l'Union Européenne ?", r:"L'Allemagne, l'Italie, la Belgique, les Pays-Bas ou le Luxembourg", e:"Avec la France, ce sont les six signataires du traité de Paris (1951) puis du traité de Rome (1957).", b:"L'Italie", f:["L'Espagne", "Le Royaume-Uni", "La Pologne"]},
+{c:'histoire', q:"Simone Veil est une figure importante de l'histoire française. Elle a notamment :", r:"Fait adopter la loi de 1975 autorisant l'IVG", e:"Rescapée d'Auschwitz, elle préside le premier Parlement européen élu en 1979 et repose au Panthéon depuis 2018.", f:["Été la première présidente de la République", "Fondé l'Union européenne en 1957", "Écrit les paroles de La Marseillaise"]},
+{c:'histoire', q:"Dans quelle région est située une partie des plages du débarquement ayant permis d'engager la libération de la France ?", r:"La Normandie", e:"Le débarquement allié a lieu le 6 juin 1944.", f:["L'Alsace", "L'Auvergne", "La Bourgogne"]},
+{c:'histoire', q:"Dans quelle ville les rois de France étaient-ils couronnés ?", r:"Reims", e:"La plupart des rois y sont sacrés dans la cathédrale, en souvenir du baptême de Clovis.", f:["Lyon", "Marseille", "Bordeaux"]},
+{c:'histoire', q:"Quel roi de France a été guillotiné pendant la Révolution française ?", r:"Louis XVI", e:"Exécuté le 21 janvier 1793 à Paris.", f:["Louis XIV", "Henri IV", "François Ier"]},
+{c:'histoire', q:"En quelle année a débuté la Révolution française ?", r:"En 1789", e:"Les états généraux s'ouvrent en mai, la Bastille est prise le 14 juillet.", f:["En 1715", "En 1804", "En 1848"]},
+{c:'histoire', q:"En quelle année Napoléon Ier est-il devenu empereur ?", r:"En 1804", e:"Sacré le 2 décembre 1804 à Notre-Dame de Paris.", f:["En 1789", "En 1799", "En 1815"]},
+{c:'histoire', q:"Lequel de ces personnages a un lien avec la République française ?", r:"Marianne", e:"Figure allégorique de la République depuis la Révolution.", f:["Astérix", "Cendrillon", "Le Petit Prince"]},
+{c:'histoire', q:"De quand date l'appel à la résistance du général de Gaulle ?", r:"Du 18 juin 1940", e:"Lancé depuis Londres, à la radio de la BBC.", f:["Du 6 juin 1944", "Du 8 mai 1945", "Du 11 novembre 1918"]},
+{c:'histoire', q:"Qu'est-ce que la Shoah ?", r:"L'extermination des Juifs d'Europe par l'Allemagne nazie", e:"Près de 6 millions de Juifs ont été assassinés pendant la Seconde Guerre mondiale, dont quelque 76 000 déportés de France.", f:["Une bataille de la Première Guerre mondiale", "Un traité de paix signé en 1945", "Une fête religieuse juive"]},
+{c:'histoire', q:"Quel pays a été une colonie française ?", r:"L'Algérie", e:"Comme le Sénégal, Madagascar ou le Vietnam ; la plupart des colonies deviennent indépendantes entre 1954 et 1962.", f:["Le Brésil", "L'Australie", "Le Japon"]},
+{c:'histoire', q:"Qui a rendu l'école gratuite, laïque et obligatoire ?", r:"Jules Ferry", e:"Par les lois de 1881 et 1882.", f:["Napoléon Ier", "Louis XIV", "Charles de Gaulle"]},
+{c:'histoire', q:"Depuis quand les Français élisent-ils le président de la République au suffrage universel direct ?", r:"Depuis 1962", e:"Décidé par le référendum du 28 octobre 1962 ; première élection en 1965.", f:["Depuis 1958", "Depuis 1945", "Depuis 1981"]},
+{c:'histoire', q:"En quelle année l'Union européenne a-t-elle été fondée ?", r:"En 1992", e:"Par le traité de Maastricht, entré en vigueur en 1993, qui prolonge la Communauté économique européenne de 1957.", f:["En 1945", "En 1969", "En 2004"]},
+{c:'histoire', q:"Quand a eu lieu la Seconde guerre mondiale ?", r:"De 1939 à 1945", e:"Elle s'achève en Europe le 8 mai 1945.", f:["De 1914 à 1918", "De 1936 à 1940", "De 1940 à 1948"]},
+{c:'histoire', q:"Quand a eu lieu la Première guerre mondiale ?", r:"De 1914 à 1918", e:"Elle s'achève par l'armistice du 11 novembre 1918.", f:["De 1870 à 1871", "De 1939 à 1945", "De 1910 à 1916"]},
+{c:'histoire', q:"Sous quel président a été abolie la peine de mort en France ?", r:"François Mitterrand", e:"Loi du 9 octobre 1981, portée par le garde des Sceaux Robert Badinter.", f:["Charles de Gaulle", "Jacques Chirac", "Valéry Giscard d'Estaing"]},
+{c:'histoire', q:"Que célèbre-t-on le 8 mai ?", r:"La victoire des Alliés sur l'Allemagne nazie en 1945", e:"Fin de la Seconde Guerre mondiale en Europe ; c'est un jour férié.", f:["La prise de la Bastille en 1789", "L'armistice de 1918", "La fête du Travail"]},
+{c:'histoire', q:"Quelle est la première étape de la construction européenne en 1951 ?", r:"La Communauté européenne du charbon et de l'acier (CECA)", e:"Créée par le traité de Paris, signé par six pays.", f:["La création de l'euro", "Le traité de Maastricht", "L'élargissement aux pays de l'Est"]},
+{c:'histoire', q:"Qui était une figure de la Résistance française pendant la Seconde Guerre mondiale ?", r:"Jean Moulin", e:"Il unifie la Résistance intérieure avant de mourir en 1943 ; il repose au Panthéon depuis 1964.", f:["Napoléon Bonaparte", "Louis XIV", "Victor Hugo"]},
+{c:'histoire', q:"Le 11 novembre est un jour férié. À quoi correspond cette date ?", r:"À l'armistice de 1918", e:"Fin de la Première Guerre mondiale ; on y rend hommage à tous les morts pour la France.", f:["À la prise de la Bastille", "À la victoire de 1945", "À la fête de la Fédération"]},
+{c:'histoire', q:"Depuis quand l'esclavage a-t-il été aboli en France ?", r:"Depuis 1848", e:"Décret du 27 avril 1848 ; une première abolition, en 1794, avait été annulée par Napoléon en 1802.", f:["Depuis 1789", "Depuis 1905", "Depuis 1945"]},
+{c:'histoire', q:"Qui a aboli l'esclavage en France ?", r:"Victor Schœlcher", e:"Il est à l'origine du décret d'abolition du 27 avril 1848 ; il repose au Panthéon.", f:["Jules Ferry", "Jean Jaurès", "Napoléon Ier"]},
+{c:'histoire', q:"Depuis quelle année l'école publique est-elle gratuite ?", r:"Depuis 1881", e:"Loi Jules Ferry du 16 juin 1881 ; elle devient obligatoire et laïque en 1882.", f:["Depuis 1789", "Depuis 1945", "Depuis 1968"]},
+{c:'histoire', q:"En 1944, qu'est-ce qui a changé pour les femmes ?", r:"Elles obtiennent le droit de vote", e:"Ordonnance du 21 avril 1944 ; elles votent pour la première fois en 1945.", f:["Elles peuvent ouvrir seules un compte bancaire", "Elles obtiennent le droit à l'IVG", "Elles peuvent enfin aller à l'école"]},
+{c:'histoire', q:"Quelle organisation a été créée en 1945 après la Seconde Guerre mondiale ?", r:"L'Organisation des Nations unies (ONU)", e:"Sa charte est signée à San Francisco le 26 juin 1945 ; la France est membre permanent du Conseil de sécurité.", f:["L'Union européenne", "L'OTAN", "La Société des Nations"]},
+{c:'histoire', q:"En quelle année l'euro est-il devenu la monnaie officielle de la France ?", r:"En 2002", e:"Créé en 1999 pour les paiements scripturaux, l'euro circule en pièces et billets depuis le 1er janvier 2002.", f:["En 1992", "En 1995", "En 2008"]},
+{c:'histoire', q:"Lors de la seconde guerre mondiale, à quelle date la ville de Paris a-t-elle été libérée ?", r:"Le 25 août 1944", e:"Par la 2e division blindée du général Leclerc et les Forces françaises de l'intérieur.", f:["Le 6 juin 1944", "Le 8 mai 1945", "Le 18 juin 1940"]},
+{c:'histoire', q:"Quel était le principal port français impliqué dans la traite négrière au XVIIIe siècle ?", r:"Nantes", e:"Plus de 40 % des expéditions négrières françaises en sont parties.", f:["Lyon", "Strasbourg", "Lille"]},
+{c:'histoire', q:"Quel célèbre philosophe des Lumières a dénoncé l'esclavage ?", r:"Montesquieu, Voltaire ou Condorcet", e:"Montesquieu le tourne en dérision dans De l'esprit des lois, Voltaire le dénonce dans Candide.", b:"Montesquieu", f:["René Descartes", "Blaise Pascal", "Jean Calvin"]},
+{c:'histoire', q:"Quelle œuvre a été écrite par Victor Hugo ?", r:"Les Misérables", e:"Il a aussi écrit Notre-Dame de Paris et Les Contemplations ; il repose au Panthéon.", f:["Le Petit Prince", "Les Fleurs du mal", "L'Étranger"]},
+{c:'histoire', q:"Quel peintre est français ?", r:"Claude Monet, Auguste Renoir, Paul Cézanne…", e:"Attention : Picasso était espagnol et Van Gogh néerlandais, même s'ils ont vécu en France.", b:"Claude Monet", f:["Pablo Picasso", "Vincent van Gogh", "Rembrandt"]},
+{c:'histoire', q:"Quel plat est une spécialité de la cuisine française ?", r:"Le bœuf bourguignon, le pot-au-feu, la ratatouille…", e:"Le repas gastronomique des Français est inscrit au patrimoine immatériel de l'UNESCO depuis 2010.", b:"Le bœuf bourguignon", f:["La paella", "La pizza", "Le goulash"]},
+{c:'histoire', q:"Qui était Marie Curie ?", r:"Une physicienne et chimiste, deux fois prix Nobel", e:"Pionnière de la radioactivité, prix Nobel de physique en 1903 et de chimie en 1911 ; elle repose au Panthéon.", f:["Une reine de France", "Une chanteuse d'opéra", "Une aviatrice"]},
+{c:'histoire', q:"Qui a peint « La liberté guidant le peuple » ?", r:"Eugène Delacroix", e:"Peint en 1830 après les Trois Glorieuses, le tableau est exposé au Louvre.", f:["Claude Monet", "Pablo Picasso", "Auguste Renoir"]},
+{c:'histoire', q:"Dans quel grand musée parisien est exposée la Joconde ?", r:"Le Louvre", e:"Peinte par Léonard de Vinci, elle appartient aux collections royales depuis François Ier.", f:["Le musée d'Orsay", "Le Centre Pompidou", "Le musée Rodin"]},
+{c:'histoire', q:"Quel château célèbre se trouve près de Paris et symbolise le pouvoir royal de Louis XIV ?", r:"Le château de Versailles", e:"Louis XIV y installe la cour en 1682.", f:["Le château de Chambord", "Le château de Chenonceau", "Le château du Haut-Kœnigsbourg"]},
+{c:'histoire', q:"Où peut-on voir des peintures préhistoriques en France ?", r:"Dans la grotte de Lascaux ou la grotte Chauvet", e:"Les grottes originales sont fermées pour les protéger : on visite des répliques fidèles, en Dordogne et en Ardèche.", b:"Dans la grotte de Lascaux", f:["Au château de Versailles", "À la cathédrale de Chartres", "Au Mont-Saint-Michel"]},
+{c:'histoire', q:"Quel peintre célèbre a peint les Nymphéas ?", r:"Claude Monet", e:"Peints dans son jardin de Giverny, ils sont exposés au musée de l'Orangerie à Paris.", f:["Paul Cézanne", "Eugène Delacroix", "Henri Matisse"]},
+{c:'histoire', q:"Pendant quelles journées peut-on visiter gratuitement des lieux culturels en France ?", r:"Les Journées européennes du patrimoine", e:"Chaque année, le troisième week-end de septembre.", f:["La fête de la Musique", "Les soldes d'hiver", "La Toussaint"]},
+{c:'histoire', q:"Que symbolise le 1er mai ?", r:"La fête du Travail", e:"C'est le seul jour férié obligatoirement chômé pour tous les salariés.", f:["La fête nationale", "La victoire de 1945", "La journée de l'Europe"]},
+{c:'histoire', q:"Qui était Monsieur Rouget de Lisle ?", r:"L'auteur de La Marseillaise", e:"Officier, il compose ce chant de guerre à Strasbourg en 1792.", f:["Un roi de France", "Le premier président de la République", "Un peintre impressionniste"]},
+{c:'histoire', q:"À quelle occasion a été construite la Tour Eiffel ?", r:"Pour l'Exposition universelle de 1889", e:"Elle célèbre le centenaire de la Révolution française.", f:["Pour le couronnement de Napoléon", "Pour les Jeux olympiques de 1924", "Pour fêter la fin de la Première Guerre mondiale"]},
+{c:'histoire', q:"Quelle chaîne de montagnes est située entre la France et l'Italie ?", r:"Les Alpes", e:"Elles culminent au mont Blanc, plus haut sommet de France.", f:["Les Pyrénées", "Le Massif central", "Les Vosges"]},
+{c:'histoire', q:"Qui était Molière ?", r:"Un auteur de théâtre et comédien du XVIIe siècle", e:"Auteur du Misanthrope et du Bourgeois gentilhomme ; le français est appelé « la langue de Molière ».", f:["Un roi de France du XVIIe siècle", "Un peintre impressionniste", "Un général de Napoléon"]},
+{c:'histoire', q:"Qui était Charles Baudelaire ?", r:"Un poète du XIXe siècle", e:"Auteur des Fleurs du mal, publiées en 1857.", f:["Un président de la République", "Un scientifique", "Un chef cuisinier"]},
+{c:'histoire', q:"Qui était George Sand ?", r:"Une romancière du XIXe siècle", e:"Aurore Dupin de son vrai nom, auteure de La Mare au diable, engagée pour la liberté des femmes.", f:["Une reine de France", "Une chanteuse des années 1960", "Une aviatrice"]},
+{c:'histoire', q:"Qui était Simone de Beauvoir ?", r:"Une philosophe et écrivaine féministe", e:"Auteure du Deuxième Sexe, publié en 1949.", f:["Une ministre de la Santé", "Une chanteuse", "Une physicienne"]},
+{c:'histoire', q:"Qui était Albert Camus ?", r:"Un écrivain et philosophe, prix Nobel de littérature", e:"Auteur de L'Étranger et de La Peste, prix Nobel en 1957.", f:["Un peintre cubiste", "Un président du Conseil", "Un compositeur d'opéras"]},
+{c:'histoire', q:"Qui était Marguerite Yourcenar ?", r:"Une romancière, première femme élue à l'Académie française", e:"Élue en 1980 ; auteure des Mémoires d'Hadrien.", f:["Une chanteuse de cabaret", "Une championne olympique", "Une ministre de la Culture"]},
+{c:'histoire', q:"Qui était Paul Cézanne ?", r:"Un peintre de la fin du XIXe siècle", e:"Né à Aix-en-Provence, il a souvent peint la montagne Sainte-Victoire ; il a ouvert la voie à la peinture moderne.", f:["Un sculpteur de la Renaissance", "Un écrivain des Lumières", "Un compositeur baroque"]},
+{c:'histoire', q:"Qui était Auguste Rodin ?", r:"Un sculpteur", e:"Auteur du Penseur et du Baiser ; un musée lui est consacré à Paris.", f:["Un architecte", "Un poète", "Un chanteur"]},
+{c:'histoire', q:"Qui était un célèbre compositeur français ?", r:"Claude Debussy, Maurice Ravel, Hector Berlioz…", e:"Ravel a composé le Boléro, Bizet l'opéra Carmen.", b:"Claude Debussy", f:["Ludwig van Beethoven", "Wolfgang Amadeus Mozart", "Giuseppe Verdi"]},
+{c:'histoire', q:"Qui était Auguste Renoir ?", r:"Un peintre impressionniste", e:"Son Bal du moulin de la Galette (1876) est exposé au musée d'Orsay.", f:["Un sculpteur", "Un romancier", "Un homme politique"]},
+{c:'histoire', q:"Quel musée est situé à Paris ?", r:"Le Louvre, le musée d'Orsay, le Centre Pompidou…", e:"Le Louvre est le musée le plus visité au monde.", b:"Le musée d'Orsay", f:["Le musée du Prado", "Le British Museum", "Le musée des Offices"]},
+{c:'histoire', q:"Quel monument historique se trouve sur une île en Normandie ?", r:"Le Mont-Saint-Michel", e:"L'abbaye et sa baie sont inscrites au patrimoine mondial de l'UNESCO depuis 1979.", f:["La tour Eiffel", "Le château de Chambord", "Le pont du Gard"]},
+{c:'histoire', q:"Quelle ville française fait partie des 10 plus grandes métropoles du pays ?", r:"Lyon, Marseille, Toulouse, Lille, Bordeaux, Nantes…", e:"Après Paris, Lyon et Marseille forment les plus grandes agglomérations.", b:"Lyon", f:["Chamonix", "Saint-Malo", "Arles"]},
+{c:'histoire', q:"Quelle île fait partie des Antilles françaises ?", r:"La Guadeloupe ou la Martinique", e:"Ce sont des départements et régions d'outre-mer, dans la mer des Caraïbes.", b:"La Martinique", f:["La Corse", "La Réunion", "Mayotte"]},
+{c:'histoire', q:"Quelle île est française ?", r:"La Corse, La Réunion, la Guadeloupe, la Martinique…", e:"La Corse est la plus grande île de la France métropolitaine.", b:"La Corse", f:["La Sicile", "La Sardaigne", "Malte"]},
+{c:'histoire', q:"Quelle est la plus haute montagne de France ?", r:"Le mont Blanc", e:"Un peu plus de 4 800 mètres, dans les Alpes ; c'est le plus haut sommet d'Europe occidentale.", f:["Le mont Ventoux", "Le puy de Dôme", "Le pic du Midi"]},
+{c:'histoire', q:"Quelle île française est située dans l'océan Indien ?", r:"La Réunion (ou Mayotte)", e:"Toutes deux sont des départements d'outre-mer.", b:"La Réunion", f:["La Guadeloupe", "La Martinique", "La Corse"]},
+{c:'histoire', q:"Quel département français a une frontière avec le Brésil ?", r:"La Guyane", e:"C'est la plus longue frontière terrestre de la France, en Amérique du Sud.", f:["La Martinique", "La Guadeloupe", "La Réunion"]},
+{c:'histoire', q:"De quelle ville française décolle la fusée Ariane ?", r:"De Kourou, en Guyane", e:"Depuis le Centre spatial guyanais, proche de l'équateur.", f:["De Toulouse", "De Brest", "De Cayenne"]},
+{c:'histoire', q:"Quelle mer ou océan borde la France métropolitaine ?", r:"L'Atlantique, la Manche, la mer du Nord et la Méditerranée", e:"La métropole a plus de 5 000 km de côtes sur ces quatre façades.", b:"L'océan Atlantique", f:["L'océan Pacifique", "L'océan Indien", "La mer Baltique"]},
+{c:'histoire', q:"Quelle mer se situe entre la France et l'Angleterre ?", r:"La Manche", e:"Le tunnel sous la Manche la traverse depuis 1994.", f:["La mer Méditerranée", "La mer Baltique", "La mer Noire"]},
+{c:'histoire', q:"Quelle île est un département d'outre-mer français ?", r:"La Réunion, la Guadeloupe, la Martinique ou Mayotte", e:"Le cinquième département d'outre-mer, la Guyane, n'est pas une île.", b:"La Réunion", f:["La Corse", "La Nouvelle-Calédonie", "Tahiti"]},
+{c:'histoire', q:"Qu'est-ce que la France d'outre-mer ?", r:"Les territoires français situés hors d'Europe", e:"Départements et régions d'outre-mer (Guadeloupe, Martinique, Guyane, La Réunion, Mayotte) et collectivités comme la Polynésie ou la Nouvelle-Calédonie.", f:["Les anciennes colonies devenues indépendantes", "Les régions françaises frontalières", "Les pays de l'Union européenne"]},
+{c:'histoire', q:"Quelle est la population approximative de la France en 2025 ?", r:"Environ 68,6 millions d'habitants", e:"Selon l'Insee au 1er janvier 2025, outre-mer compris.", f:["Environ 45 millions d'habitants", "Environ 85 millions d'habitants", "Environ 120 millions d'habitants"]},
+{c:'histoire', q:"Quel est le principal port maritime de France ?", r:"Marseille-Fos", e:"Avec Le Havre et Dunkerque, il compte parmi les plus grands ports de commerce français.", f:["Lyon", "Strasbourg", "Toulouse"]},
+{c:'histoire', q:"Combien y a-t-il de régions en France métropolitaine ?", r:"13", e:"Depuis la réforme de 2016 ; on en compte 18 avec les 5 régions d'outre-mer.", f:["12", "18", "22"]},
+{c:'histoire', q:"Quelle chaîne de montagnes est située entre la France et l'Espagne ?", r:"Les Pyrénées", e:"La petite principauté d'Andorre s'y trouve, entre les deux pays.", f:["Les Alpes", "Les Vosges", "Le Jura"]},
+{c:'histoire', q:"Quelle île française se trouve au sud-est du continent africain ?", r:"La Réunion", e:"À l'est de Madagascar, dans l'océan Indien ; Mayotte est l'autre département français de la zone.", f:["La Martinique", "La Corse", "Saint-Pierre-et-Miquelon"]},
+{c:'histoire', q:"Quel est le chef-lieu de la région Auvergne-Rhône-Alpes ?", r:"Lyon", e:"Troisième ville de France par sa population.", f:["Grenoble", "Clermont-Ferrand", "Saint-Étienne"]},
+{c:'histoire', q:"Quel est le chef-lieu de la région Bretagne ?", r:"Rennes", e:"Chef-lieu du département d'Ille-et-Vilaine.", f:["Brest", "Nantes", "Quimper"]},
+{c:'histoire', q:"Quel est le chef-lieu de la région Provence-Alpes-Côte d'Azur ?", r:"Marseille", e:"Deuxième ville de France par sa population.", f:["Nice", "Toulon", "Avignon"]},
+{c:'histoire', q:"Quel est le 101ème département français depuis 2011 ?", r:"Mayotte", e:"Devenu département le 31 mars 2011, après le référendum de 2009.", f:["La Guyane", "La Réunion", "La Corse"]},
+{c:'histoire', q:"Quelle région française est réputée pour ses stations de ski ?", r:"Auvergne-Rhône-Alpes", e:"Elle réunit la plupart des grandes stations des Alpes, en Savoie, Haute-Savoie et Isère.", f:["Bretagne", "Normandie", "Centre-Val de Loire"]},
+{c:'histoire', q:"Quel fleuve traverse Paris ?", r:"La Seine", e:"Elle se jette dans la Manche au Havre.", f:["La Loire", "Le Rhône", "La Garonne"]},
 
 // ---- VIVRE DANS LA SOCIÉTÉ FRANÇAISE ----
-{c:'societe', q:"Où faut-il déclarer la naissance d'un enfant ?", r:"À la mairie du lieu de naissance", e:"Au service d'état civil, qui établit l'acte de naissance."},
-{c:'societe', q:"Quelle action peut réaliser le locataire d'un logement sans l'autorisation du propriétaire ?", r:"Repeindre ou décorer le logement", e:"Les travaux de transformation, comme abattre une cloison, demandent l'accord écrit du propriétaire (loi du 6 juillet 1989)."},
-{c:'societe', q:"Quel mariage est reconnu légalement ?", r:"Le mariage civil, célébré en mairie", e:"Il doit précéder toute cérémonie religieuse ; il est ouvert aux couples de même sexe depuis 2013."},
-{c:'societe', q:"Le stationnement sur une place réservée aux personnes handicapées :", r:"Est interdit sans la carte de stationnement", e:"L'infraction coûte 135 euros d'amende et peut entraîner la mise en fourrière du véhicule."},
-{c:'societe', q:"Si une machine à laver est cassée, il est possible de :", r:"Faire jouer la garantie légale de conformité", e:"Pendant 2 ans après l'achat, le vendeur doit réparer ou remplacer gratuitement le produit défectueux."},
-{c:'societe', q:"Dans quel cas faut-il déclarer son enfant au service d'état civil ?", r:"Dans tous les cas, à chaque naissance", e:"Que les parents soient mariés ou non, français ou étrangers."},
-{c:'societe', q:"Quand faut-il déclarer son enfant au service d'état civil ?", r:"Dans les 5 jours qui suivent la naissance", e:"Le jour de l'accouchement n'est pas compté ; le délai passe à 8 jours si l'éloignement le justifie."},
-{c:'societe', q:"Quel numéro d'urgence permet d'appeler la police ?", r:"Le 17", e:"Le 112 est le numéro d'urgence européen ; le 18 joint les pompiers."},
-{c:'societe', q:"Quel numéro d'urgence permet d'appeler le SAMU ?", r:"Le 15", e:"Pour toute urgence médicale ; le 112 fonctionne aussi dans toute l'Europe."},
-{c:'societe', q:"Auprès de quelle institution les parents peuvent inscrire leurs enfants à l'école publique ?", r:"La mairie", e:"L'admission se fait ensuite auprès du directeur de l'école."},
-{c:'societe', q:"En cas de divorce, qui exerce l'autorité parentale ?", r:"Les deux parents", e:"Le divorce ne change rien à l'autorité parentale, qui reste conjointe sauf décision contraire du juge."},
-{c:'societe', q:"Quelle aide permet aux personnes qui ont des difficultés financières d'avoir un avocat ?", r:"L'aide juridictionnelle", e:"Selon ses ressources, l'État prend en charge tout ou partie des frais de justice et d'avocat."},
-{c:'societe', q:"Qui peut demander le divorce de personnes mariées ?", r:"L'un ou l'autre des époux, ou les deux", e:"La femme comme le mari ; personne d'autre ne peut le demander à leur place."},
-{c:'societe', q:"Auprès de quel organisme faut-il demander le remboursement des frais de santé ?", r:"L'Assurance maladie (la CPAM)", e:"La mutuelle complète ensuite le remboursement."},
-{c:'societe', q:"La contraception :", r:"Est libre, et gratuite pour les moins de 26 ans", e:"Autorisée par la loi Neuwirth de 1967 ; elle est remboursée par l'Assurance maladie."},
-{c:'societe', q:"Qu'est-ce que le principe de confidentialité dans le domaine de la santé ?", r:"Le secret médical", e:"Les informations de santé d'un patient ne peuvent être communiquées sans son accord ; tous les professionnels de santé y sont tenus."},
-{c:'societe', q:"À quoi sert la carte Vitale ?", r:"À justifier de ses droits à l'Assurance maladie", e:"Elle transmet les feuilles de soins par voie électronique, pour un remboursement plus rapide."},
-{c:'societe', q:"À quoi sert une mutuelle santé ?", r:"À compléter le remboursement de l'Assurance maladie", e:"Pour les salariés du privé, l'employeur doit en proposer une et en payer au moins la moitié."},
-{c:'societe', q:"Qu'est-ce que le tiers payant ?", r:"Ne pas avancer les frais de santé", e:"Le professionnel est payé directement par l'Assurance maladie, voire par la mutuelle."},
-{c:'societe', q:"L'inscription à l'Assurance maladie est :", r:"Obligatoire, et ouverte à tous les résidents réguliers", e:"La protection universelle maladie couvre toute personne qui travaille ou réside en France de manière stable et régulière."},
-{c:'societe', q:"L'avortement est-il possible en France ?", r:"Oui, jusqu'à 14 semaines de grossesse", e:"Autorisé par la loi Veil de 1975 ; la liberté d'y recourir est inscrite dans la Constitution depuis 2024."},
-{c:'societe', q:"Travailler sans être déclaré est :", r:"Illégal", e:"Le travail dissimulé prive le salarié de protection sociale ; l'employeur risque 3 ans de prison et 45 000 euros d'amende."},
-{c:'societe', q:"Qu'est-ce que le SMIC ?", r:"Le salaire minimum légal", e:"Le salaire minimum interprofessionnel de croissance est revalorisé au moins chaque 1er janvier."},
-{c:'societe', q:"Quelle est la première démarche à réaliser pour chercher un emploi ?", r:"S'inscrire à France Travail", e:"Anciennement Pôle emploi ; l'inscription ouvre l'accompagnement et, sous conditions, l'indemnisation."},
-{c:'societe', q:"Quelle est la durée légale du temps de travail par semaine ?", r:"35 heures", e:"Au-delà, les heures supplémentaires sont majorées."},
-{c:'societe', q:"Qui peut demander un congé parental d'éducation ?", r:"Le père comme la mère, s'ils sont salariés", e:"Avec au moins un an d'ancienneté, à la naissance ou à l'adoption d'un enfant."},
-{c:'societe', q:"Une personne étrangère, en situation régulière, peut créer son entreprise :", r:"Oui, si son titre de séjour le permet", e:"Les citoyens européens le peuvent librement ; certains titres de séjour l'autorisent expressément."},
-{c:'societe', q:"Une femme peut-elle créer son entreprise ?", r:"Oui, comme un homme", e:"Depuis la loi de 1965, une femme mariée peut exercer une profession sans l'autorisation de son mari."},
-{c:'societe', q:"Quels sont les textes qui définissent les règles au travail ?", r:"Le Code du travail, les conventions collectives et le contrat de travail", e:"Le règlement intérieur de l'entreprise les complète."},
-{c:'societe', q:"Quelles sont les affaires traitées par le conseil de prud'hommes ?", r:"Les litiges entre un salarié et son employeur", e:"Licenciement, salaires impayés, conditions de travail : des juges non professionnels, salariés et employeurs, y siègent."},
-{c:'societe', q:"Qui a le droit de se syndiquer ?", r:"Tout salarié, quelle que soit sa nationalité", e:"Droit garanti par le Préambule de 1946 ; un salarié ne peut être sanctionné pour son appartenance syndicale."},
-{c:'societe', q:"Est-il possible de licencier une femme enceinte ou en congé maternité, en raison de sa grossesse ?", r:"Non, c'est interdit", e:"La salariée est protégée pendant la grossesse, le congé maternité et les 10 semaines qui suivent."},
-{c:'societe', q:"L'instruction des enfants est obligatoire de :", r:"3 à 16 ans", e:"Depuis la loi du 26 juillet 2019 ; une formation reste obligatoire jusqu'à 18 ans."},
-{c:'societe', q:"Des parents ne respectent pas l'obligation d'instruction pour leurs enfants. Quelle sanction maximale risquent-ils ?", r:"6 mois de prison et 7 500 euros d'amende", e:"Après une mise en demeure restée sans effet ; compromettre gravement l'éducation d'un enfant est puni jusqu'à 2 ans de prison."},
-{c:'societe', q:"Quelle est la définition de l'autorité parentale ?", r:"Les droits et devoirs des parents pour protéger et élever l'enfant", e:"Article 371-1 du Code civil : elle s'exerce jusqu'à la majorité, sans violences physiques ou psychologiques."},
-{c:'societe', q:"Quel motif d'absence est accepté par l'école ?", r:"La maladie de l'enfant", e:"Aussi une réunion solennelle de famille ou une difficulté de transport ; toute absence doit être justifiée par les parents."},
-{c:'societe', q:"Jusqu'à quel âge l'école est-elle obligatoire ?", r:"16 ans", e:"Puis une formation reste obligatoire jusqu'à 18 ans."},
-{c:'societe', q:"À quel âge commence l'instruction obligatoire des enfants ?", r:"3 ans", e:"Depuis la rentrée 2019."},
-{c:'societe', q:"Comment s'appellent les établissements scolaires que les élèves intègrent après l'école élémentaire ?", r:"Le collège", e:"De la 6e à la 3e, avant le lycée."},
-{c:'societe', q:"En tant que parent d'élève, il est possible de :", r:"Voter aux élections des représentants de parents d'élèves", e:"Chaque parent est électeur et éligible, quelle que soit sa nationalité."},
-{c:'societe', q:"Quelle instruction est prévue pour les enfants qui ne parlent pas français ?", r:"Des cours de français adaptés, en plus de leur classe", e:"Les unités pour élèves allophones arrivants (UPE2A) les aident à suivre au plus vite une classe ordinaire."},
-{c:'societe', q:"S'agissant de l'accueil des enfants en situation de handicap à l'école, laquelle des propositions est vraie ?", r:"Tout enfant handicapé a droit à être scolarisé", e:"De préférence en classe ordinaire, depuis la loi du 11 février 2005 ; un accompagnant (AESH) peut l'aider."},
-{c:'societe', q:"Depuis le 1er juillet 2021, quelle est la durée du congé paternité ?", r:"28 jours", e:"25 jours de congé paternité et 3 jours de congé de naissance, dont 7 obligatoires."},
-{c:'societe', q:"Est-ce possible de punir physiquement ses enfants ?", r:"Non, c'est interdit", e:"La loi du 10 juillet 2019 proscrit toute violence éducative, fessée comprise."}
+{c:'societe', q:"Où faut-il déclarer la naissance d'un enfant ?", r:"À la mairie du lieu de naissance", e:"Au service d'état civil, qui établit l'acte de naissance.", f:["À la préfecture", "Au commissariat", "À la caisse d'allocations familiales"]},
+{c:'societe', q:"Quelle action peut réaliser le locataire d'un logement sans l'autorisation du propriétaire ?", r:"Repeindre ou décorer le logement", e:"Les travaux de transformation, comme abattre une cloison, demandent l'accord écrit du propriétaire (loi du 6 juillet 1989).", f:["Abattre une cloison", "Sous-louer le logement", "Construire une véranda"]},
+{c:'societe', q:"Quel mariage est reconnu légalement ?", r:"Le mariage civil, célébré en mairie", e:"Il doit précéder toute cérémonie religieuse ; il est ouvert aux couples de même sexe depuis 2013.", f:["Le mariage religieux seul", "Un mariage célébré par un notaire", "Un mariage conclu par simple contrat privé"]},
+{c:'societe', q:"Le stationnement sur une place réservée aux personnes handicapées :", r:"Est interdit sans la carte de stationnement", e:"L'infraction coûte 135 euros d'amende et peut entraîner la mise en fourrière du véhicule.", f:["Est autorisé pour moins de 10 minutes", "Est autorisé le dimanche", "Est gratuit pour tous"]},
+{c:'societe', q:"Si une machine à laver est cassée, il est possible de :", r:"Faire jouer la garantie légale de conformité", e:"Pendant 2 ans après l'achat, le vendeur doit réparer ou remplacer gratuitement le produit défectueux.", f:["Exiger un remboursement par l'État", "La déposer sur le trottoir", "Rien : aucun recours n'existe"]},
+{c:'societe', q:"Dans quel cas faut-il déclarer son enfant au service d'état civil ?", r:"Dans tous les cas, à chaque naissance", e:"Que les parents soient mariés ou non, français ou étrangers.", f:["Seulement si les parents sont mariés", "Seulement si les parents sont français", "Seulement si l'enfant est né à l'hôpital"]},
+{c:'societe', q:"Quand faut-il déclarer son enfant au service d'état civil ?", r:"Dans les 5 jours qui suivent la naissance", e:"Le jour de l'accouchement n'est pas compté ; le délai passe à 8 jours si l'éloignement le justifie.", f:["Dans le mois qui suit la naissance", "Avant les 3 ans de l'enfant", "Au moment de son entrée à l'école"]},
+{c:'societe', q:"Quel numéro d'urgence permet d'appeler la police ?", r:"Le 17", e:"Le 112 est le numéro d'urgence européen ; le 18 joint les pompiers.", f:["Le 15", "Le 18", "Le 115"]},
+{c:'societe', q:"Quel numéro d'urgence permet d'appeler le SAMU ?", r:"Le 15", e:"Pour toute urgence médicale ; le 112 fonctionne aussi dans toute l'Europe.", f:["Le 17", "Le 18", "Le 119"]},
+{c:'societe', q:"Auprès de quelle institution les parents peuvent inscrire leurs enfants à l'école publique ?", r:"La mairie", e:"L'admission se fait ensuite auprès du directeur de l'école.", f:["La préfecture", "La caisse d'allocations familiales", "Le commissariat"]},
+{c:'societe', q:"En cas de divorce, qui exerce l'autorité parentale ?", r:"Les deux parents", e:"Le divorce ne change rien à l'autorité parentale, qui reste conjointe sauf décision contraire du juge.", f:["Uniquement la mère", "Uniquement le père", "Les grands-parents"]},
+{c:'societe', q:"Quelle aide permet aux personnes qui ont des difficultés financières d'avoir un avocat ?", r:"L'aide juridictionnelle", e:"Selon ses ressources, l'État prend en charge tout ou partie des frais de justice et d'avocat.", f:["Le RSA", "L'allocation logement", "La prime d'activité"]},
+{c:'societe', q:"Qui peut demander le divorce de personnes mariées ?", r:"L'un ou l'autre des époux, ou les deux", e:"La femme comme le mari ; personne d'autre ne peut le demander à leur place.", f:["Uniquement le mari", "Uniquement la famille des époux", "Uniquement un responsable religieux"]},
+{c:'societe', q:"Auprès de quel organisme faut-il demander le remboursement des frais de santé ?", r:"L'Assurance maladie (la CPAM)", e:"La mutuelle complète ensuite le remboursement.", f:["La mairie", "La préfecture", "France Travail"]},
+{c:'societe', q:"La contraception :", r:"Est libre, et gratuite pour les moins de 26 ans", e:"Autorisée par la loi Neuwirth de 1967 ; elle est remboursée par l'Assurance maladie.", f:["Est interdite en France", "Est réservée aux femmes mariées", "Exige l'accord du conjoint"]},
+{c:'societe', q:"Qu'est-ce que le principe de confidentialité dans le domaine de la santé ?", r:"Le secret médical", e:"Les informations de santé d'un patient ne peuvent être communiquées sans son accord ; tous les professionnels de santé y sont tenus.", b:"Le secret médical : rien n'est révélé sans l'accord du patient", f:["L'obligation d'informer l'employeur de ses maladies", "Le partage du dossier médical avec toute la famille", "La publication des données de santé des patients"]},
+{c:'societe', q:"À quoi sert la carte Vitale ?", r:"À justifier de ses droits à l'Assurance maladie", e:"Elle transmet les feuilles de soins par voie électronique, pour un remboursement plus rapide.", f:["À payer ses achats en magasin", "À prouver sa nationalité", "À voter aux élections"]},
+{c:'societe', q:"À quoi sert une mutuelle santé ?", r:"À compléter le remboursement de l'Assurance maladie", e:"Pour les salariés du privé, l'employeur doit en proposer une et en payer au moins la moitié.", f:["À remplacer la carte Vitale", "À payer les impôts", "À obtenir un titre de séjour"]},
+{c:'societe', q:"Qu'est-ce que le tiers payant ?", r:"Ne pas avancer les frais de santé", e:"Le professionnel est payé directement par l'Assurance maladie, voire par la mutuelle.", f:["Payer ses soins en trois fois", "Faire payer ses soins par son employeur", "Payer un supplément au médecin"]},
+{c:'societe', q:"L'inscription à l'Assurance maladie est :", r:"Obligatoire, et ouverte à tous les résidents réguliers", e:"La protection universelle maladie couvre toute personne qui travaille ou réside en France de manière stable et régulière.", f:["Réservée aux Français", "Réservée aux salariés", "Facultative et payante"]},
+{c:'societe', q:"L'avortement est-il possible en France ?", r:"Oui, jusqu'à 14 semaines de grossesse", e:"Autorisé par la loi Veil de 1975 ; la liberté d'y recourir est inscrite dans la Constitution depuis 2024.", f:["Non, c'est interdit", "Oui, seulement avec l'accord du mari", "Oui, seulement pour les femmes majeures"]},
+{c:'societe', q:"Travailler sans être déclaré est :", r:"Illégal", e:"Le travail dissimulé prive le salarié de protection sociale ; l'employeur risque 3 ans de prison et 45 000 euros d'amende.", f:["Autorisé pendant un mois", "Autorisé pour les étudiants", "Autorisé si l'employeur est d'accord"]},
+{c:'societe', q:"Qu'est-ce que le SMIC ?", r:"Le salaire minimum légal", e:"Le salaire minimum interprofessionnel de croissance est revalorisé au moins chaque 1er janvier.", f:["Une aide au logement", "Un impôt sur le revenu", "Une prime de fin d'année"]},
+{c:'societe', q:"Quelle est la première démarche à réaliser pour chercher un emploi ?", r:"S'inscrire à France Travail", e:"Anciennement Pôle emploi ; l'inscription ouvre l'accompagnement et, sous conditions, l'indemnisation.", f:["S'inscrire à la mairie", "Demander un titre de séjour", "Ouvrir un compte bancaire"]},
+{c:'societe', q:"Quelle est la durée légale du temps de travail par semaine ?", r:"35 heures", e:"Au-delà, les heures supplémentaires sont majorées.", f:["30 heures", "39 heures", "40 heures"]},
+{c:'societe', q:"Qui peut demander un congé parental d'éducation ?", r:"Le père comme la mère, s'ils sont salariés", e:"Avec au moins un an d'ancienneté, à la naissance ou à l'adoption d'un enfant.", f:["Uniquement la mère", "Uniquement le père", "Uniquement les grands-parents"]},
+{c:'societe', q:"Une personne étrangère, en situation régulière, peut créer son entreprise :", r:"Oui, si son titre de séjour le permet", e:"Les citoyens européens le peuvent librement ; certains titres de séjour l'autorisent expressément.", f:["Non, jamais", "Oui, seulement après 10 ans en France", "Oui, seulement avec un associé français"]},
+{c:'societe', q:"Une femme peut-elle créer son entreprise ?", r:"Oui, comme un homme", e:"Depuis la loi de 1965, une femme mariée peut exercer une profession sans l'autorisation de son mari.", f:["Non, c'est interdit", "Oui, avec l'accord de son mari", "Oui, seulement si elle est célibataire"]},
+{c:'societe', q:"Quels sont les textes qui définissent les règles au travail ?", r:"Le Code du travail, les conventions collectives et le contrat de travail", e:"Le règlement intérieur de l'entreprise les complète.", b:"Le Code du travail et les conventions collectives", f:["Le Code de la route et le Code électoral", "Le règlement de copropriété", "Les statuts des partis politiques"]},
+{c:'societe', q:"Quelles sont les affaires traitées par le conseil de prud'hommes ?", r:"Les litiges entre un salarié et son employeur", e:"Licenciement, salaires impayés, conditions de travail : des juges non professionnels, salariés et employeurs, y siègent.", f:["Les litiges entre voisins", "Les accidents de la route", "Les divorces"]},
+{c:'societe', q:"Qui a le droit de se syndiquer ?", r:"Tout salarié, quelle que soit sa nationalité", e:"Droit garanti par le Préambule de 1946 ; un salarié ne peut être sanctionné pour son appartenance syndicale.", f:["Uniquement les fonctionnaires", "Uniquement les salariés français", "Uniquement les cadres"]},
+{c:'societe', q:"Est-il possible de licencier une femme enceinte ou en congé maternité, en raison de sa grossesse ?", r:"Non, c'est interdit", e:"La salariée est protégée pendant la grossesse, le congé maternité et les 10 semaines qui suivent.", f:["Oui, si l'entreprise le décide", "Oui, pendant la période d'essai", "Oui, avec l'accord du médecin du travail"]},
+{c:'societe', q:"L'instruction des enfants est obligatoire de :", r:"3 à 16 ans", e:"Depuis la loi du 26 juillet 2019 ; une formation reste obligatoire jusqu'à 18 ans.", f:["6 à 16 ans", "3 à 18 ans", "6 à 14 ans"]},
+{c:'societe', q:"Des parents ne respectent pas l'obligation d'instruction pour leurs enfants. Quelle sanction maximale risquent-ils ?", r:"6 mois de prison et 7 500 euros d'amende", e:"Après une mise en demeure restée sans effet ; compromettre gravement l'éducation d'un enfant est puni jusqu'à 2 ans de prison.", f:["Un simple rappel à l'ordre", "38 euros d'amende", "La perte de la nationalité"]},
+{c:'societe', q:"Quelle est la définition de l'autorité parentale ?", r:"Les droits et devoirs des parents pour protéger et élever l'enfant", e:"Article 371-1 du Code civil : elle s'exerce jusqu'à la majorité, sans violences physiques ou psychologiques.", f:["Le droit des parents de frapper l'enfant", "Le pouvoir du père seul sur les enfants", "Le droit de l'école de décider pour l'enfant"]},
+{c:'societe', q:"Quel motif d'absence est accepté par l'école ?", r:"La maladie de l'enfant", e:"Aussi une réunion solennelle de famille ou une difficulté de transport ; toute absence doit être justifiée par les parents.", f:["Un départ en vacances anticipé", "Une fête d'anniversaire", "Une journée de pluie"]},
+{c:'societe', q:"Jusqu'à quel âge l'école est-elle obligatoire ?", r:"16 ans", e:"Puis une formation reste obligatoire jusqu'à 18 ans.", f:["14 ans", "15 ans", "18 ans"]},
+{c:'societe', q:"À quel âge commence l'instruction obligatoire des enfants ?", r:"3 ans", e:"Depuis la rentrée 2019.", f:["2 ans", "5 ans", "6 ans"]},
+{c:'societe', q:"Comment s'appellent les établissements scolaires que les élèves intègrent après l'école élémentaire ?", r:"Le collège", e:"De la 6e à la 3e, avant le lycée.", f:["Le lycée", "L'université", "L'école maternelle"]},
+{c:'societe', q:"En tant que parent d'élève, il est possible de :", r:"Voter aux élections des représentants de parents d'élèves", e:"Chaque parent est électeur et éligible, quelle que soit sa nationalité.", f:["Choisir les enseignants de son enfant", "Modifier le programme scolaire", "Assister aux cours chaque jour"]},
+{c:'societe', q:"Quelle instruction est prévue pour les enfants qui ne parlent pas français ?", r:"Des cours de français adaptés, en plus de leur classe", e:"Les unités pour élèves allophones arrivants (UPE2A) les aident à suivre au plus vite une classe ordinaire.", f:["Aucune : ils doivent se débrouiller", "Une scolarité entièrement dans leur langue", "Une exclusion jusqu'à ce qu'ils parlent français"]},
+{c:'societe', q:"S'agissant de l'accueil des enfants en situation de handicap à l'école, laquelle des propositions est vraie ?", r:"Tout enfant handicapé a droit à être scolarisé", e:"De préférence en classe ordinaire, depuis la loi du 11 février 2005 ; un accompagnant (AESH) peut l'aider.", f:["Ils doivent rester à la maison", "Seulement dans des écoles privées", "Seulement à partir de 10 ans"]},
+{c:'societe', q:"Depuis le 1er juillet 2021, quelle est la durée du congé paternité ?", r:"28 jours", e:"25 jours de congé paternité et 3 jours de congé de naissance, dont 7 obligatoires.", f:["11 jours", "3 jours", "6 mois"]},
+{c:'societe', q:"Est-ce possible de punir physiquement ses enfants ?", r:"Non, c'est interdit", e:"La loi du 10 juillet 2019 proscrit toute violence éducative, fessée comprise.", f:["Oui, si c'est une simple fessée", "Oui, jusqu'à 10 ans", "Oui, si l'école est d'accord"]}
 ];
 
 /* ============================================================
@@ -1480,7 +1531,9 @@ let state = {
   current: 0,
   timeLeft: 2700,
   timerId: null,
-  finished: false
+  finished: false,
+  source: 'banque',    // 'banque' | 'officiel' | 'match' : d'où viennent les questions de la séance
+  restart: null        // relance un tirage neuf de la même source (bouton « Nouveau tirage »)
 };
 
 function shuffle(arr){
@@ -1563,6 +1616,7 @@ const screens = {
   results: document.getElementById('screen-results'),
   flashcards: document.getElementById('screen-flashcards'),
   officiel: document.getElementById('screen-officiel'),
+  match: document.getElementById('screen-match'),
   progress: document.getElementById('screen-progress')
 };
 function showScreen(name){
@@ -1703,8 +1757,46 @@ function renderOfficiel(){
   });
 }
 
+// le format se relit sur la carte cochée : state.duration, lui, change avec chaque séance
+// (« Revoir mes erreurs » le met à 0) et ne doit pas fixer le format du tirage suivant
 function startExam(){
-  state.questions = drawQuestions(state.nQuestions);
+  const sel = document.querySelector('.mode-card.selected');
+  beginRun(drawQuestions(parseInt(sel.dataset.n,10)), parseInt(sel.dataset.t,10), 'banque', startExam);
+}
+
+/* ---- examen blanc sur la liste officielle ---- */
+let usedOfficiel = new Set();
+
+// même anti-répétition que la banque : pas de redite avant d'avoir vu toute la liste
+function drawOfficiel(n){
+  let pool = OFFICIEL.map((_,i)=>i).filter(i=>!usedOfficiel.has(i));
+  if(pool.length < n){ usedOfficiel.clear(); pool = OFFICIEL.map((_,i)=>i); }
+  const ids = shuffle(pool).slice(0, n);
+  ids.forEach(i=>usedOfficiel.add(i));
+  return ids;
+}
+
+// des indices dans OFFICIEL aux questions d'examen ; les options sont mélangées par appareil
+function officielQuestions(ids){
+  return ids.map(i=>{
+    const x = OFFICIEL[i];
+    const good = x.b || x.r;
+    const options = shuffle([good, ...x.f]);
+    return {c:x.c, q:x.q, e:x.e, options, correct:options.indexOf(good)};
+  });
+}
+
+function startOfficielExam(n){
+  beginRun(officielQuestions(drawOfficiel(n)), n >= 40 ? 2700 : 1000, 'officiel', ()=>startOfficielExam(n));
+}
+document.getElementById('btn-of-exam').addEventListener('click', ()=>startOfficielExam(40));
+document.getElementById('btn-of-exam-short').addEventListener('click', ()=>startOfficielExam(15));
+
+function beginRun(questions, duration, source, restart){
+  state.source = source;
+  state.restart = restart;
+  state.questions = questions;
+  state.duration = duration;
   state.answers = new Array(state.questions.length).fill(null);
   state.flagged = new Array(state.questions.length).fill(false);
   state.current = 0;
@@ -1714,6 +1806,7 @@ function startExam(){
   document.getElementById('q-total').textContent = state.questions.length;
   buildQMap();
   renderQuestion();
+  renderMatchLine();
   showScreen('exam');
 
   clearInterval(state.timerId);
@@ -1725,6 +1818,10 @@ function startExam(){
     document.getElementById('timer').textContent = 'LIBRE';
   }
 }
+
+// encre et libellé d'une question : thème de la banque, ou catégorie de la liste officielle
+function inkAttr(item){ return item.c ? `data-c="${item.c}"` : `data-t="${item.theme}"`; }
+function inkLabel(item){ return item.c ? OFFICIEL_CATS[item.c].court : THEME_SHORT[item.theme]; }
 
 function tick(){
   state.timeLeft--;
@@ -1750,9 +1847,12 @@ function renderQuestion(){
   document.getElementById('progress-fill').style.width = ((idx+1)/state.questions.length*100)+'%';
 
   // l'encre de l'aplat est celle du thème ; le nom du thème se lit au pied de l'aplat
-  document.getElementById('question-plate').dataset.t = item.theme;
-  document.getElementById('theme-tag').textContent =
-    THEME_SHORT[item.theme] + (item.type==='situation' ? ' · mise en situation' : '');
+  const plate = document.getElementById('question-plate');
+  if(item.c){ delete plate.dataset.t; plate.dataset.c = item.c; }
+  else { delete plate.dataset.c; plate.dataset.t = item.theme; }
+  document.getElementById('theme-tag').textContent = inkLabel(item)
+    + (item.type==='situation' ? ' · mise en situation' : '')
+    + (state.source==='match' ? ' · duel' : '');
 
   document.getElementById('question-text').textContent = item.q;
 
@@ -1780,6 +1880,7 @@ function renderQuestion(){
 function selectOption(i){
   state.answers[state.current] = i;
   renderQuestion();
+  if(state.source==='match') matchPushProgress();
 }
 
 // ramène le haut de la question (sous la barre sticky) en haut de l'écran après un changement de question,
@@ -1975,13 +2076,17 @@ function finishExam(auto){
   let correct = 0;
   const perTheme = {};
 
+  // regroupement par thème (banque) ou par catégorie (liste officielle)
+  const groupOf = item => item.c || item.theme;
   state.questions.forEach((item,i)=>{
     const ok = state.answers[i]===item.correct;
     if(ok) correct++;
-    if(!perTheme[item.theme]) perTheme[item.theme] = {correct:0,total:0};
-    perTheme[item.theme].total++;
-    if(ok) perTheme[item.theme].correct++;
+    const g = groupOf(item);
+    if(!perTheme[g]) perTheme[g] = {correct:0,total:0};
+    perTheme[g].total++;
+    if(ok) perTheme[g].correct++;
   });
+  const officielle = state.questions.some(item=>item.c);
 
   const pct = Math.round(correct/total*100);
   const passed = correct >= passMark;
@@ -1993,32 +2098,45 @@ function finishExam(auto){
   document.getElementById('score-fraction').textContent = `${correct}/${total}`;
   document.getElementById('score-pct').textContent = `${pct}%`;
 
-  // theme bars
+  // barres par thème, ou par catégorie pour la liste officielle
+  document.getElementById('bars-title').textContent = officielle ? 'Résultat par catégorie' : 'Résultat par thème';
   const bars = document.getElementById('theme-bars');
   bars.innerHTML = '';
-  Object.keys(THEME_LABELS).forEach(key=>{
-    const d = perTheme[key];
+  const groups = officielle
+    ? Object.keys(OFFICIEL_CATS).map(k=>({key:k, label:OFFICIEL_CATS[k].label, attr:`data-c="${k}"`}))
+    : Object.keys(THEME_LABELS).map(k=>({key:k, label:THEME_LABELS[k], attr:`data-t="${k}"`}));
+  groups.forEach(g=>{
+    const d = perTheme[g.key];
     if(!d) return;
     const p = Math.round(d.correct/d.total*100);
     const row = document.createElement('div');
     row.innerHTML = `
       <div class="flex items-baseline justify-between gap-3">
-        <span class="text-[14px] leading-snug font-bold">${esc(THEME_LABELS[key])}</span>
+        <span class="text-[14px] leading-snug font-bold">${esc(g.label)}</span>
         <span class="figures shrink-0 text-[13.5px] whitespace-nowrap text-ink-soft">${d.correct}/${d.total} · ${p} %</span>
       </div>
       <div class="mt-1.5 h-2.5 w-full bg-ground-2">
-        <div class="ink-fill h-full" data-t="${key}" style="width:${p}%"></div>
+        <div class="ink-fill h-full" ${g.attr} style="width:${p}%"></div>
       </div>`;
     bars.appendChild(row);
   });
 
-  // carnet de suivi : enregistre la séance, met à jour série / points / tampons
+  // carnet de suivi : enregistre la séance, met à jour série / points / tampons.
+  // Les catégories officielles ne nourrissent pas la maîtrise par thème : deux de
+  // leurs clés (histoire, institutions) portent le même nom qu'un thème de la banque.
   const gain = recordSession({
-    correct, total, passed, perTheme,
+    correct, total, passed, perTheme: officielle ? {} : perTheme,
     timeLeft: state.duration > 0 ? state.timeLeft : null,
     duration: state.duration
   });
   renderSessionGain(gain);
+
+  // en duel, rien ne se rejoue en solo : ni le même tirage, ni un tirage neuf
+  const enDuel = state.source === 'match';
+  document.getElementById('btn-retry-same').classList.toggle('hidden', enDuel);
+  document.getElementById('btn-retry-new').classList.toggle('hidden', enDuel);
+  if(enDuel) matchFinish(correct, total);
+  renderMatchResult();
 
   buildReview('all');
   document.getElementById('cnt-all').textContent = total;
@@ -2055,7 +2173,7 @@ function buildReview(filter){
 
     div.innerHTML = `
       <div class="flex flex-wrap items-center gap-2">
-        <span class="theme-tag" data-t="${item.theme}">${esc(THEME_SHORT[item.theme])}</span>
+        <span class="theme-tag" ${inkAttr(item)}>${esc(inkLabel(item))}</span>
         ${srcTag(item)}
         ${item.type==='situation' ? '<span class="libelle text-ink-soft">mise en situation</span>' : ''}
       </div>
@@ -2091,7 +2209,7 @@ document.getElementById('btn-retry-same').addEventListener('click', ()=>{
   if(state.duration>0){ updateTimerDisplay(); state.timerId=setInterval(tick,1000); }
 });
 
-document.getElementById('btn-retry-new').addEventListener('click', startExam);
+document.getElementById('btn-retry-new').addEventListener('click', ()=>(state.restart || startExam)());
 
 document.getElementById('btn-retry-errors').addEventListener('click', ()=>{
   const wrongOriginal = state.questions
@@ -2107,8 +2225,11 @@ document.getElementById('btn-retry-errors').addEventListener('click', ()=>{
     const optionTexts = orig.options.map((text,i)=>({text, wasCorrect:i===orig.correct}));
     const order = shuffle(optionTexts);
     const correctPos = order.findIndex(x=>x.wasCorrect);
-    return {theme:orig.theme, type:orig.type, q:orig.q, e:orig.e, options:order.map(x=>x.text), correct:correctPos};
+    return {theme:orig.theme, c:orig.c, type:orig.type, neuf:orig.neuf, fiche:orig.fiche, q:orig.q, e:orig.e, options:order.map(x=>x.text), correct:correctPos};
   });
+  // la révision des erreurs d'un duel se fait en solo, hors de la salle
+  if(state.source === 'match') state.source = 'officiel';
+  renderMatchLine();
   state.answers = new Array(state.questions.length).fill(null);
   state.flagged = new Array(state.questions.length).fill(false);
   state.current = 0;
@@ -2529,7 +2650,7 @@ async function fbInit(){
   ]);
   const instance = app.initializeApp(FIREBASE_CONFIG);
   await auth.signInAnonymously(auth.getAuth(instance));
-  fb = {db: db.getDatabase(instance), ref: db.ref, set: db.set, onValue: db.onValue, off: db.off};
+  fb = {db: db.getDatabase(instance), ref: db.ref, set: db.set, update: db.update, get: db.get, remove: db.remove, onValue: db.onValue, off: db.off};
   return fb;
 }
 
@@ -2737,6 +2858,370 @@ document.getElementById('btn-carnet-reset').addEventListener('click', ()=>{
   saveProgress();
   renderCarnetChip();
   renderCarnet();
+});
+
+/* ============================================================
+   DUEL EN DIRECT (un contre un) — liste officielle
+   Même projet Firebase et mêmes règles que le relevé comparatif, sans
+   rien changer dans la console : une salle est un code sous duels/,
+   préfixé « 1V1- » (un code de relevé n'a jamais de tiret, les deux ne
+   se croisent pas). Chaque joueur n'écrit que sa propre ligne ; celle de
+   l'hôte porte en plus le format (n), le tirage (qids) et le départ
+   (startAt), que l'autre appareil lit pour lancer la même partie.
+   L'identifiant de joueur vit dans sessionStorage : deux onglets font
+   deux joueurs, et un rechargement retrouve sa propre ligne.
+   ============================================================ */
+const MATCH_FORMATS = {
+  15: {duree:1000, label:'15 questions · 17 min'},
+  40: {duree:2700, label:'40 questions · 45 min'}
+};
+
+const matchId = (()=>{
+  let id = null;
+  try{ id = sessionStorage.getItem('examen-civique-match-id'); }catch(e){}
+  if(!id){
+    id = 'm' + Math.random().toString(36).slice(2,10);
+    try{ sessionStorage.setItem('examen-civique-match-id', id); }catch(e){}
+  }
+  return id;
+})();
+
+function freshMatch(){
+  // played : startAt de la dernière partie lancée ici, pour ne jamais la relancer
+  // lastOpp : dernière ligne connue de l'adversaire, gardée s'il quitte la salle
+  // mine    : mon résultat de la partie en cours, posé à la fin de l'examen
+  return {phase:'form', code:null, error:null, players:{}, played:null, lastOpp:null, mine:null, starting:false};
+}
+let match = freshMatch();
+let matchUnsub = null;
+
+function matchPath(code){ return `duels/1V1-${code}`; }
+function matchMe(){ return match.players[matchId] || null; }
+function matchOpp(){
+  const id = Object.keys(match.players).find(k=>k !== matchId);
+  return id ? match.players[id] : null;
+}
+function matchHostRow(){
+  const id = Object.keys(match.players).find(k=>match.players[k] && match.players[k].host);
+  return id ? match.players[id] : null;
+}
+
+async function matchWrite(fields){
+  if(!match.code) return;
+  const {db, ref, update} = await fbInit();
+  await update(ref(db, `${matchPath(match.code)}/${matchId}`), {...fields, updatedAt: Date.now()});
+}
+
+async function matchEnter(code, asHost){
+  match = freshMatch();
+  match.phase = 'connexion';
+  match.code = code;
+  renderMatch();
+  try{
+    const {db, ref, get, set, onValue} = await fbInit();
+    const room = (await get(ref(db, matchPath(code)))).val() || {};
+    const others = Object.keys(room).filter(k=>k !== matchId);
+    const before = room[matchId];
+    const host = asHost || !!(before && before.host);
+    if(asHost && others.length) throw new Error('ce code est déjà pris, crée une autre salle');
+    if(!host && !others.some(k=>room[k] && room[k].host)) throw new Error('aucune salle ouverte avec ce code');
+    if(others.length >= 2) throw new Error('la salle est déjà complète');
+
+    const row = {name: progress.name || 'Sans nom', host, ready:false, answered:0, done:false, updatedAt:Date.now()};
+    if(host) row.n = (before && before.n) || 15;
+    await set(ref(db, `${matchPath(code)}/${matchId}`), row);
+    match.phase = 'salle';
+    matchUnsub = onValue(ref(db, matchPath(code)), snap=>onMatchSnapshot(snap.val() || {}), err=>{
+      match.phase = 'erreur';
+      match.error = err.message;
+      renderMatchViews();
+    });
+  }catch(err){
+    match.phase = 'erreur';
+    match.error = err.message;
+  }
+  renderMatch();
+}
+
+function onMatchSnapshot(players){
+  match.players = players;
+  const me = matchMe();
+  const opp = matchOpp();
+  const host = matchHostRow();
+  if(opp) match.lastOpp = opp;
+
+  // l'hôte tire les questions et pose le départ dès que les deux joueurs sont prêts
+  if(me && me.host && opp && me.ready && opp.ready && !me.done && !opp.done && !me.startAt && !match.starting){
+    match.starting = true;
+    const qids = shuffle(OFFICIEL.map((_,i)=>i)).slice(0, me.n || 15);
+    matchWrite({qids, startAt: Date.now()})
+      .catch(err=>{ match.error = err.message; })
+      .finally(()=>{ match.starting = false; });
+  }
+
+  // chaque appareil, hôte compris, démarre en lisant ce départ
+  if(me && me.ready && !me.done && host && host.startAt && host.qids && host.startAt !== match.played){
+    match.played = host.startAt;
+    match.mine = null;
+    const n = host.qids.length;
+    beginRun(officielQuestions(host.qids), (MATCH_FORMATS[n] || MATCH_FORMATS[15]).duree, 'match', ()=>startOfficielExam(n));
+  }
+  renderMatchViews();
+}
+
+// prêt pour la première partie comme pour une revanche : remet la ligne à zéro
+function matchSetReady(ready){
+  const fields = {ready, done:false, answered:0, correct:null, total:null, time:null};
+  const me = matchMe();
+  if(me && me.host){ fields.startAt = null; fields.qids = null; }
+  return matchWrite(fields).catch(err=>{ match.error = err.message; renderMatchViews(); });
+}
+
+function matchPushProgress(){
+  matchWrite({answered: state.answers.filter(a=>a!==null).length}).catch(()=>{});
+}
+
+function matchFinish(correct, total){
+  const time = state.duration - Math.max(0, state.timeLeft);
+  match.mine = {correct, total, time};
+  matchWrite({done:true, correct, total, time, answered: state.answers.filter(a=>a!==null).length})
+    .catch(err=>{ match.error = err.message; renderMatchResult(); });
+}
+
+function matchLeave(){
+  if(matchUnsub){ try{ matchUnsub(); }catch(e){} matchUnsub = null; }
+  const code = match.code;
+  const keep = {mine: match.mine, lastOpp: match.lastOpp};
+  match = Object.assign(freshMatch(), keep);
+  if(code && fb) fb.remove(fb.ref(fb.db, `${matchPath(code)}/${matchId}`)).catch(()=>{});
+  renderMatchViews();
+}
+
+function renderMatchViews(){
+  if(!screens.match.classList.contains('hidden')) renderMatch();
+  renderMatchLine();
+  if(!screens.results.classList.contains('hidden')) renderMatchResult();
+}
+
+const fmtDuree = s => `${Math.floor(s/60)} min ${String(s%60).padStart(2,'0')} s`;
+
+/* ---- la ligne d'adversaire, sous la barre de progression de l'examen ---- */
+function renderMatchLine(){
+  const line = document.getElementById('match-line');
+  const on = state.source === 'match' && !state.finished;
+  line.classList.toggle('hidden', !on);
+  if(!on) return;
+  const opp = matchOpp();
+  const name = esc((opp || match.lastOpp || {}).name || 'Ton adversaire');
+  line.innerHTML = !opp
+    ? `<b class="text-ink">${name}</b> a quitté la salle : termine, la victoire te revient.`
+    : opp.done
+      ? `Duel contre <b class="text-ink">${name}</b> · a terminé, à toi de finir.`
+      : `Duel contre <b class="text-ink">${name}</b> · ${opp.answered || 0}/${state.questions.length} réponses données`;
+}
+
+/* ---- le verdict du duel, en tête des résultats ---- */
+function renderMatchResult(){
+  const box = document.getElementById('match-result');
+  const on = state.source === 'match' && state.finished && !!match.mine;
+  box.classList.toggle('hidden', !on);
+  if(!on) return;
+
+  const me = match.mine;
+  const live = match.code ? matchOpp() : null;
+  const opp = live || match.lastOpp;
+  const oppName = (opp && opp.name) || 'Ton adversaire';
+  const termine = !!(opp && opp.done && opp.total);
+  const tranche = termine || !live;
+
+  let titre, note, teinte = 'text-ink';
+  if(!match.code){
+    titre = 'Salle quittée';
+    note = 'Ton score est enregistré dans le carnet, mais le duel n’a pas été départagé.';
+  } else if(termine){
+    const ecart = (me.correct - opp.correct) || (opp.time - me.time);
+    titre = ecart > 0 ? 'Victoire' : ecart < 0 ? 'Défaite' : 'Égalité';
+    teinte = ecart > 0 ? 'text-vert dark:text-vert-clair' : ecart < 0 ? 'text-vermillon-deep dark:text-vermillon-clair' : 'text-ink';
+    note = me.correct === opp.correct && ecart !== 0
+      ? 'Même score : le plus rapide l’emporte.'
+      : `${me.correct > opp.correct ? 'Tu' : esc(oppName)} ${me.correct > opp.correct ? 'as' : 'a'} répondu juste à plus de questions.`;
+    if(ecart === 0) note = 'Même score, même temps.';
+  } else if(!live){
+    titre = 'Victoire par forfait';
+    teinte = 'text-vert dark:text-vert-clair';
+    note = `${esc(oppName)} a quitté la salle avant la fin.`;
+  } else {
+    titre = 'En attente…';
+    note = `${esc(oppName)} répond encore : ${opp.answered || 0}/${me.total}. Le verdict s’affiche dès sa dernière réponse.`;
+  }
+
+  const ligne = (nom, score, temps, vous)=>`
+    <tr>
+      <th scope="row" class="border-t border-line py-2.5 pr-3 text-left text-[14px] font-bold">${esc(nom)}${vous ? ' <span class="font-normal text-ink-soft">· vous</span>' : ''}</th>
+      <td class="figures border-t border-line py-2.5 pl-4 text-right text-[14px]">${score}</td>
+      <td class="figures border-t border-line py-2.5 pl-4 text-right text-[14px] whitespace-nowrap text-ink-soft">${temps}</td>
+    </tr>`;
+
+  box.innerHTML = `
+    <p class="libelle text-ink-soft">Duel en direct</p>
+    <p class="affiche mt-2 text-[34px] sm:text-[44px] ${teinte}">${titre}</p>
+    <p class="mt-2 text-[14px] leading-relaxed text-ink">${note}</p>
+    <table class="mt-4 w-full border-collapse">
+      <caption class="sr-only">Scores du duel</caption>
+      <thead><tr><td></td><th scope="col" class="libelle pb-2 pl-4 text-right">Score</th><th scope="col" class="libelle pb-2 pl-4 text-right">Temps</th></tr></thead>
+      <tbody>
+        ${ligne(progress.name || 'Vous', `${me.correct}/${me.total}`, fmtDuree(me.time), true)}
+        ${opp ? ligne(oppName, termine ? `${opp.correct}/${opp.total}` : '…', termine ? fmtDuree(opp.time) : '—', false) : ''}
+      </tbody>
+    </table>
+    ${match.code ? `
+    <div class="mt-5 flex flex-col gap-2.5 sm:flex-row">
+      ${tranche ? '<button class="btn" id="match-rematch" type="button">Revanche</button>' : ''}
+      <button class="btn secondary" id="match-quit" type="button">Quitter la salle</button>
+    </div>` : ''}`;
+  if(match.code){
+    // la revanche n'apparaît qu'une fois le verdict tombé : sinon on quitterait l'écran sans le voir
+    if(tranche) document.getElementById('match-rematch').addEventListener('click', ()=>{
+      matchSetReady(true);
+      renderMatch();
+      showScreen('match');
+    });
+    document.getElementById('match-quit').addEventListener('click', ()=>{ matchLeave(); goHome(); });
+  }
+}
+
+/* ---- l'écran de la salle ---- */
+const CHAMP = 'w-full rounded-bloc border border-line bg-panel px-3 py-2.5 text-[15px] text-ink placeholder:text-ink-soft focus:border-nuit focus:outline-2 focus:outline-offset-1 focus:outline-or';
+
+function renderMatch(){
+  const body = document.getElementById('match-body');
+  const status = document.getElementById('match-status');
+
+  if(!duelConfigured()){
+    status.textContent = 'Indisponible';
+    body.innerHTML = `<p class="text-[14px] leading-relaxed text-ink-soft">Le duel en direct n’est pas disponible sur cette version.</p>`;
+    return;
+  }
+
+  if(match.phase === 'form'){
+    status.textContent = 'Hors salle';
+    body.innerHTML = `
+      <label class="libelle" for="match-name">Ton nom</label>
+      <input id="match-name" type="text" maxlength="24" value="${esc(progress.name)}" placeholder="Prénom" class="${CHAMP} mt-2">
+      <div class="mt-7 grid gap-7 sm:grid-cols-2 sm:gap-0">
+        <section class="flex flex-col sm:pr-8">
+          <h3 class="affiche text-[20px]">Créer une salle</h3>
+          <p class="mt-1.5 text-[13.5px] leading-relaxed text-ink-soft">Tu choisis le format, puis tu transmets le code à ton adversaire.</p>
+          <div class="mt-auto pt-4"><button class="btn full" id="match-create" type="button">Créer une salle</button></div>
+        </section>
+        <section class="flex flex-col border-t-2 border-line pt-7 sm:border-t-0 sm:border-l-2 sm:pt-0 sm:pl-8">
+          <h3 class="affiche text-[20px]">Rejoindre</h3>
+          <label class="libelle mt-3" for="match-code">Code de la salle</label>
+          <input id="match-code" type="text" maxlength="6" autocapitalize="characters" autocomplete="off" spellcheck="false" placeholder="6 caractères"
+            class="${CHAMP} figures mt-2 tracking-[.2em] uppercase placeholder:tracking-normal">
+          <div class="mt-auto pt-4"><button class="btn secondary full" id="match-join" type="button">Rejoindre</button></div>
+        </section>
+      </div>`;
+    document.getElementById('match-create').addEventListener('click', ()=>matchFromForm(true));
+    document.getElementById('match-join').addEventListener('click', ()=>matchFromForm(false));
+    document.getElementById('match-code').addEventListener('keydown', ev=>{ if(ev.key==='Enter') matchFromForm(false); });
+    return;
+  }
+
+  if(match.phase === 'connexion'){
+    status.textContent = 'Connexion…';
+    body.innerHTML = `<p class="text-[14px] leading-relaxed text-ink">Connexion à la salle <b class="figures tracking-[.15em]">${esc(match.code)}</b>…</p>`;
+    return;
+  }
+
+  const sortie = `<button class="lien mt-6 text-[13px] text-nuit dark:text-nuit-clair" id="match-leave" type="button">Quitter la salle</button>`;
+  const brancherSortie = ()=> document.getElementById('match-leave').addEventListener('click', matchLeave);
+
+  if(match.phase === 'erreur'){
+    status.textContent = 'Erreur';
+    body.innerHTML = `
+      <p class="text-[14px] leading-relaxed text-vermillon-deep dark:text-vermillon-clair">Impossible d’entrer dans la salle : ${esc(match.error || 'connexion impossible')}.</p>
+      <button class="btn secondary mt-4" id="match-back" type="button">Revenir au choix de salle</button>`;
+    document.getElementById('match-back').addEventListener('click', matchLeave);
+    return;
+  }
+
+  const me = matchMe();
+  const opp = matchOpp();
+  const host = matchHostRow();
+  if(!me || !host){
+    status.textContent = 'Salle fermée';
+    body.innerHTML = `<p class="text-[14px] leading-relaxed text-ink">${!me ? 'Ta place dans la salle a été perdue.' : 'L’hôte a quitté la salle.'} Crée une nouvelle salle ou rejoins-en une autre.</p>` + sortie;
+    brancherSortie();
+    return;
+  }
+
+  const n = host.n || 15;
+  status.textContent = !opp ? 'En attente d’un adversaire' : (me.ready && opp.ready && !me.done && !opp.done) ? 'Départ…' : 'Salle complète';
+
+  const statut = p => p.done ? 'Partie terminée' : p.ready ? 'Prêt' : 'Pas encore prêt';
+  const joueur = (p, vous)=>`
+    <li class="flex items-center justify-between gap-3 border-t-2 border-line py-3">
+      <span class="text-[15px] font-bold">${esc(p.name || 'Sans nom')}${vous ? ' <span class="font-normal text-ink-soft">· vous</span>' : ''}${p.host ? ' <span class="libelle ml-1 text-ink-soft">hôte</span>' : ''}</span>
+      <span class="libelle ${p.ready && !p.done ? 'text-vert dark:text-vert-clair' : 'text-ink-soft'}">${statut(p)}</span>
+    </li>`;
+
+  const format = me.host
+    ? `<div class="mt-3 flex flex-wrap gap-2">${[15,40].map(k=>`
+        <button type="button" class="chip${k===n ? ' active' : ''}" data-n="${k}" ${me.ready ? 'disabled' : ''}>${MATCH_FORMATS[k].label}</button>`).join('')}</div>`
+    : `<p class="mt-2 text-[15px] font-bold">${MATCH_FORMATS[n].label} <span class="font-normal text-ink-soft">· choisi par l’hôte</span></p>`;
+
+  const action = me.done
+    ? `<button class="btn full mt-6 text-[17px]" id="match-ready" type="button">Revanche</button>`
+    : me.ready
+      ? `<button class="btn secondary full mt-6" id="match-ready" type="button">Je ne suis plus prêt</button>`
+      : `<button class="btn full mt-6 text-[17px]" id="match-ready" type="button">Je suis prêt</button>`;
+
+  body.innerHTML = `
+    <p class="libelle text-ink-soft">Code de la salle</p>
+    <p class="affiche figures mt-2 text-[44px] tracking-[.12em] sm:text-[56px]">${esc(match.code)}</p>
+    <p class="mt-2 text-[13.5px] leading-relaxed text-ink-soft">${opp ? 'Les deux joueurs sont là.' : 'Transmets ce code à ton adversaire : il le saisit dans « Rejoindre ».'}</p>
+
+    <h3 class="libelle mt-7 text-ink-soft">Format</h3>
+    ${format}
+
+    <h3 class="libelle mt-7 text-ink-soft">Joueurs</h3>
+    <ul class="mt-2 list-none border-b-2 border-line p-0">
+      ${joueur(me, true)}
+      ${opp ? joueur(opp, false) : `<li class="border-t-2 border-line py-3 text-[14px] text-ink-soft">En attente d’un adversaire…</li>`}
+    </ul>
+
+    ${action}
+    <p class="mt-3 text-[13px] leading-relaxed text-ink-soft">La partie démarre sur les deux téléphones dès que les deux joueurs sont prêts.</p>
+    ${match.error ? `<p class="mt-3 text-[13px] text-vermillon-deep dark:text-vermillon-clair">Dernière synchronisation en échec : ${esc(match.error)}.</p>` : ''}
+    ${sortie}`;
+
+  body.querySelectorAll('.chip[data-n]').forEach(chip=>{
+    chip.addEventListener('click', ()=>{ matchWrite({n: parseInt(chip.dataset.n,10)}).catch(()=>{}); });
+  });
+  document.getElementById('match-ready').addEventListener('click', ()=>matchSetReady(me.done ? true : !me.ready));
+  brancherSortie();
+}
+
+function matchFromForm(asHost){
+  progress.name = (document.getElementById('match-name').value || '').trim().slice(0,24);
+  saveProgress();
+  let code = newDuelCode();
+  if(!asHost){
+    const input = document.getElementById('match-code');
+    code = (input.value || '').trim().toUpperCase();
+    if(!/^[A-Z0-9]{6}$/.test(code)){
+      input.focus();
+      input.classList.add('border-vermillon');
+      return;
+    }
+  }
+  matchEnter(code, asHost);
+}
+
+document.getElementById('btn-match').addEventListener('click', ()=>{
+  renderMatch();
+  showScreen('match');
 });
 
 renderCarnetChip();
